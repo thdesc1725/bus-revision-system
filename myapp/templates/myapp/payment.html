@@ -1,0 +1,128 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+
+<style>
+.payment-hero {
+    background: linear-gradient(to right, #ff9966, #ff5e62);
+    padding: 35px;
+    color: white;
+    text-align: center;
+    animation: fadeIn 1.2s;
+}
+
+.payment-card {
+    margin-top: -20px;
+    padding: 30px;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    animation: slideUp 1.2s;
+}
+
+.pay-btn {
+    background: #28a745;
+    color: white;
+    padding: 10px 28px;
+    border-radius: 25px;
+    font-size: 18px;
+    border: none;
+}
+
+.pay-btn:hover {
+    background: #218838;
+    color: white;
+}
+
+.cancel-btn {
+    background: #dc3545;
+    color: white;
+    padding: 10px 28px;
+    border-radius: 25px;
+    font-size: 18px;
+    border: none;
+    text-decoration: none;
+}
+
+.cancel-btn:hover {
+    background: #c82333;
+    color: white;
+    text-decoration: none;
+}
+
+.summary-box {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+@keyframes fadeIn {
+    from {opacity:0;}
+    to {opacity:1;}
+}
+
+@keyframes slideUp {
+    from {transform: translateY(40px); opacity:0;}
+    to {transform: translateY(0); opacity:1;}
+}
+</style>
+
+<div class="payment-hero">
+    <h1>💳 Payment Page</h1>
+    <p>Review your booking and complete payment</p>
+</div>
+
+<div class="container mt-4">
+    <div class="payment-card">
+        <h3 class="text-center mb-4">Booking Summary</h3>
+
+        <div class="summary-box">
+            <div class="row mb-2">
+                <div class="col-md-6"><b>Booking ID:</b></div>
+                <div class="col-md-6">{{ book.id }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><b>Bus Name:</b></div>
+                <div class="col-md-6">{{ book.bus_name }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><b>From:</b></div>
+                <div class="col-md-6">{{ book.source }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><b>To:</b></div>
+                <div class="col-md-6">{{ book.dest }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><b>Seats:</b></div>
+                <div class="col-md-6">{{ book.nos }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><b>Price per Seat:</b></div>
+                <div class="col-md-6">₹ {{ book.price }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><b>Total Amount:</b></div>
+                <div class="col-md-6"><b>₹ {{ book.total_price }}</b></div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><b>Date:</b></div>
+                <div class="col-md-6">{{ book.date }}</div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6"><b>Time:</b></div>
+                <div class="col-md-6">{{ book.time }}</div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'payment_success' book.id %}" class="btn pay-btn mr-2">
+                Pay Now
+            </a>
+            <a href="{% url 'payment_failed' book.id %}" class="btn cancel-btn">
+                Cancel Payment
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

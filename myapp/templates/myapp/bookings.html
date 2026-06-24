@@ -31,6 +31,7 @@
     padding: 10px 25px;
     border-radius: 25px;
     font-size: 18px;
+    border: none;
 }
 
 .bill-btn:hover {
@@ -58,10 +59,9 @@
 }
 </style>
 
-<!-- HEADER -->
 <div class="confirm-hero">
     <h1>✅ Booking Confirmed</h1>
-    <p>Your ticket has been successfully booked</p>
+    <p>Your payment was successful and your ticket is confirmed</p>
 </div>
 
 <div class="container">
@@ -74,25 +74,22 @@
 
         <h4 class="mt-4">Bill Details</h4>
 
-        <!-- Button to Open Modal -->
         <button type="button" class="btn bill-btn" data-toggle="modal" data-target="#myModal">
             View Bill
         </button>
 
-        <!-- Modal -->
         <div class="modal fade" id="myModal">
             <div class="modal-dialog">
                 <div class="modal-content">
 
-                    <!-- Modal Header -->
                     <div class="modal-header">
                         <h4 class="modal-title">🧾 Ticket Bill</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
-                    <!-- Modal Body -->
                     <div class="modal-body">
                         <ul class="list-group list-group-flush text-left">
+                            <li class="list-group-item"><b>Booking ID:</b> {{ book.id }}</li>
                             <li class="list-group-item"><b>Bus Name:</b> {{ book.bus_name }}</li>
                             <li class="list-group-item"><b>From:</b> {{ book.source }}</li>
                             <li class="list-group-item"><b>To:</b> {{ book.dest }}</li>
@@ -101,10 +98,12 @@
                             <li class="list-group-item"><b>Total Cost:</b> ₹{{ cost }}</li>
                             <li class="list-group-item"><b>Date:</b> {{ book.date }}</li>
                             <li class="list-group-item"><b>Time:</b> {{ book.time }}</li>
+                            <li class="list-group-item"><b>Payment Status:</b> {{ book.payment_status }}</li>
+                            <li class="list-group-item"><b>Payment ID:</b> {{ book.payment_id }}</li>
+                            <li class="list-group-item"><b>Booking Status:</b> {{ book.status }}</li>
                         </ul>
                     </div>
 
-                    <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
                     </div>
@@ -113,10 +112,10 @@
             </div>
         </div>
 
-        <form action="{% url 'home' %}" method="post" class="mt-4">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Go to Home</button>
-        </form>
+        <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn btn-primary">Go to Home</a>
+            <a href="{% url 'seebookings' %}" class="btn btn-info">My Bookings</a>
+        </div>
 
     </div>
 </div>
