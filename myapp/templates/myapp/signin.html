@@ -1,0 +1,99 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+
+<style>
+  .login-hero {
+    background: linear-gradient(to right, #00416A, #1CB5E0);
+    padding: 50px;
+    color: white;
+    text-align: center;
+    border-radius: 12px;
+    animation: fadeIn 2s;
+  }
+
+  .login-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 65, 106, 0.3);
+    animation: slideUp 1.5s;
+  }
+
+  .login-card h2 {
+    color: #00416A;
+    margin-bottom: 20px;
+  }
+
+  .btn-main {
+    padding: 10px 30px;
+    background: #1CB5E0;
+    color: white;
+    border-radius: 25px;
+    font-size: 18px;
+    border: none;
+    transition: 0.3s;
+  }
+
+  .btn-main:hover {
+    background: #00416A;
+    color: white;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+</style>
+
+<div class="container mt-4">
+
+  <div class="login-hero">
+    <h1>🚌 Vallacar Transit</h1>
+    <p>Secure Bus Reservation System</p>
+  </div>
+
+  <div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+
+      <div class="login-card">
+        <h2 class="text-center">Login</h2>
+
+        <form action="{% url 'signin' %}" method="post">
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label>Username</label>
+            <input name="name" class="form-control" type="text" required>
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <input name="password" class="form-control" type="password" required>
+          </div>
+
+          <div class="text-center mt-3">
+            <button type="submit" class="btn-main">Sign In</button>
+          </div>
+
+        </form>
+
+        <p class="text-danger text-center mt-3">{{error}}</p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

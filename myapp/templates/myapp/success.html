@@ -1,0 +1,71 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+
+<style>
+.login-hero {
+  min-height: 70vh;
+  background: linear-gradient(to right, #00416A, #1CB5E0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 1.5s;
+}
+
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,65,106,0.4);
+  text-align: center;
+  width: 100%;
+  max-width: 450px;
+}
+
+.login-card h2 {
+  color: #00416A;
+  margin-bottom: 20px;
+}
+
+.login-card p {
+  font-size: 18px;
+  color: #333;
+}
+
+.btn-hero {
+  margin-top: 20px;
+  padding: 10px 30px;
+  background: #1CB5E0;
+  color: white;
+  border-radius: 25px;
+  border: none;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.btn-hero:hover {
+  background: #00416A;
+  color: white;
+}
+
+@keyframes fadeIn {
+  from {opacity:0;}
+  to {opacity:1;}
+}
+</style>
+
+<div class="login-hero">
+  <div class="login-card">
+
+    <form action="{% url 'signout' %}" method="post">
+      {% csrf_token %}
+
+      <h2>Welcome 🎉</h2>
+      <p><b>{{user}}</b> successfully logged in! (ID: {{id}})</p>
+
+      <button type="submit" class="btn-hero">Sign Out</button>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

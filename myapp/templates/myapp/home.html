@@ -1,0 +1,137 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+
+<style>
+  .hero {
+    background: linear-gradient(to right, #00416A, #1CB5E0);
+    padding: 60px;
+    color: white;
+    text-align: center;
+    animation: fadeIn 2s;
+  }
+
+  .hero h1 {
+    font-size: 45px;
+  }
+
+  .hero p {
+    font-size: 18px;
+  }
+
+  .features {
+    display: flex;
+    justify-content: space-around;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .card {
+    width: 30%;
+    padding: 20px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 0 12px rgba(0, 65, 106, 0.3);
+    transition: transform 0.3s;
+    animation: slideUp 1.5s;
+  }
+
+  .card h2 {
+    color: #00416A;
+  }
+
+  .card:hover {
+    transform: scale(1.05);
+  }
+
+  .card img {
+    width: 100%;
+    border-radius: 10px;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .about {
+    padding: 40px;
+    background: #eef7ff;
+    text-align: center;
+  }
+
+  .about h2 {
+    color: #00416A;
+  }
+
+  .btn-main {
+    padding: 12px 30px;
+    background: #1CB5E0;
+    color: white;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+  }
+
+  .btn-main:hover {
+    background: #00416A;
+    color: white;
+    text-decoration: none;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+</style>
+
+<!-- HERO SECTION -->
+<div class="hero">
+  <h1>🚌 Welcome to Bus Reservation System</h1>
+  <p>Book your bus tickets easily, safely and quickly</p>
+  <br>
+  <a href="/findbus" class="btn-main">Book Now</a>
+</div>
+
+<!-- FEATURES -->
+<div class="features">
+
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957">
+    <h2>Easy Booking</h2>
+    <p>Reserve seats online without standing in long queues.</p>
+  </div>
+
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1509749837427-ac94a2553d0e">
+    <h2>Live Bus Info</h2>
+    <p>Check bus timings, routes and seat availability.</p>
+  </div>
+
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
+    <h2>Safe Travel</h2>
+    <p>We provide secure and reliable bus services.</p>
+  </div>
+
+</div>
+
+<!-- ABOUT SECTION -->
+<div class="about">
+  <h2>About This Project</h2>
+  <p>
+    This Bus Reservation System is developed using Django Framework.
+    It allows users to register, login, search buses, book seats and manage bookings.
+    The system helps passengers save time and travel comfortably.
+  </p>
+</div>
+
+{% endblock %}

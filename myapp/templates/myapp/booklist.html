@@ -1,0 +1,145 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+
+<style>
+.page-header {
+    background: linear-gradient(to right, #00416A, #1CB5E0);
+    padding: 30px;
+    color: white;
+    text-align: center;
+    animation: fadeIn 1.5s;
+}
+
+.booking-card {
+    margin-top: -20px;
+    padding: 25px;
+    border-radius: 15px;
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    animation: slideUp 1.5s;
+}
+
+.table thead {
+    background: #00416A;
+    color: white;
+}
+
+.table tbody tr:hover {
+    background-color: #eef7ff;
+}
+
+.cancel-card {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 15px;
+    background: #f8f9fa;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+.btn-cancel {
+    background: #dc3545;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 25px;
+    font-size: 18px;
+}
+
+.btn-cancel:hover {
+    background: #c82333;
+    color: white;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes slideUp {
+    from {transform: translateY(40px); opacity:0;}
+    to {transform: translateY(0); opacity:1;}
+}
+</style>
+
+<!-- HEADER -->
+<div class="page-header">
+    <h1>📋 My Bookings</h1>
+    <p>{{ msg }}</p>
+</div>
+
+<div class="container">
+
+    <!-- BOOKING LIST -->
+    <div class="booking-card">
+
+        <h3 class="text-center mb-4">Booking History</h3>
+
+        <table class="table table-bordered table-hover text-center">
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>User Name</th>
+                    <th>Bus</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th>Seats</th>
+                    <th>Price</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for row in book_list %}
+                <tr>
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.bus_name }}</td>
+                    <td>{{ row.source }}</td>
+                    <td>{{ row.dest }}</td>
+                    <td>{{ row.nos }}</td>
+                    <td>₹ {{ row.price }}</td>
+                    <td>{{ row.date }}</td>
+                    <td>{{ row.time }}</td>
+                    <td>
+                        {% if row.status == "CONFIRMED" %}
+                            <span class="badge badge-success">Confirmed</span>
+                        {% else %}
+                            <span class="badge badge-danger">{{ row.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    <!-- CANCEL FORM -->
+    <div class="cancel-card">
+
+        <h3 class="text-center mb-3">❌ Cancel Booking</h3>
+
+        <form action="{% url 'cancellings' %}" method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Booking ID</label>
+                <input name="bus_id" class="form-control" type="number" placeholder="Enter Booking ID" required>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-cancel">Cancel Booking</button>
+            </div>
+
+            {% if error %}
+                <p class="text-danger text-center mt-3">{{ error }}</p>
+            {% endif %}
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

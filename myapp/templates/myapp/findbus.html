@@ -1,0 +1,97 @@
+{% extends 'myapp/base.html' %}
+{% block content %}
+
+<style>
+.search-hero {
+    background: linear-gradient(to right, #00416A, #1CB5E0);
+    padding: 40px;
+    color: white;
+    text-align: center;
+    animation: fadeIn 1.5s;
+}
+
+.search-card {
+    margin-top: -30px;
+    padding: 30px;
+    border-radius: 15px;
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    animation: slideUp 1.5s;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+.btn-search {
+    background: orange;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 25px;
+    font-size: 18px;
+}
+
+.btn-search:hover {
+    background: darkorange;
+    color: white;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes slideUp {
+    from {transform: translateY(50px); opacity:0;}
+    to {transform: translateY(0); opacity:1;}
+}
+</style>
+
+<!-- HERO HEADER -->
+<div class="search-hero">
+    <h1>🔍 Find Your Bus</h1>
+    <p>Search buses by route and date</p>
+</div>
+
+<!-- SEARCH FORM -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="search-card">
+
+                <h3 class="text-center mb-4">Bus Search</h3>
+
+                <form action="{% url 'findbus' %}" method="post">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label>From</label>
+                        <input name="source" class="form-control" placeholder="Enter source city" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Destination</label>
+                        <input name="destination" class="form-control" placeholder="Enter destination city" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input name="date" class="form-control" type="date" required>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-search">Find Bus</button>
+                    </div>
+
+                    {% if error %}
+                        <p class="text-danger text-center mt-3">{{ error }}</p>
+                    {% endif %}
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
