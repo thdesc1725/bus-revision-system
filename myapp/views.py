@@ -1,23 +1,34 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from .models import Bus, Book
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+import os
+import qrcode
 from decimal import Decimal
 from datetime import datetime
 
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect, get_object_or_404
 
+from .models import Bus, Book
+
+
+# =========================
+# HOME
+# =========================
 def home(request):
     if request.user.is_authenticated:
         return render(request, "myapp/home.html")
-    else:
-        return render(request, "myapp/signin.html")
+    return render(request, "myapp/signin.html")
 
 
+# =========================
+# FIND BUS
+# =========================
 @login_required(login_url="signin")
 def findbus(request):
     context = {}
+
     if request.method == "POST":
         source_r = request.POST.get("source")
         dest_r = request.POST.get("destination")
@@ -29,25 +40,33 @@ def findbus(request):
             context["error"] = "Please select a valid date"
             return render(request, "myapp/findbus.html", context)
 
-        bus_list = Bus.objects.filter(source=source_r, dest=dest_r, date=date_r)
+        bus_list = Bus.objects.filter(
+            source__iexact=source_r,
+            dest__iexact=dest_r,
+            date=date_r
+        )
 
         if bus_list.exists():
             return render(request, "myapp/list.html", {"bus_list": bus_list})
         else:
-            context["error"] = "Sorry no buses available"
+            context["error"] = "Sorry, no buses available for selected route/date."
             return render(request, "myapp/findbus.html", context)
 
     return render(request, "myapp/findbus.html")
 
 
+# =========================
+# CREATE BOOKING -> PAYMENT PAGE
+# =========================
 @login_required(login_url="signin")
 def bookings(request):
     """
-    Step 1:
-    Create booking with PENDING status
-    and redirect user to payment page.
+    User selects bus and seats.
+    Booking created with PENDING status.
+    Then redirect to payment page.
     """
     context = {}
+
     if request.method == "POST":
         try:
             bus_id = int(request.POST.get("bus_id"))
@@ -57,7 +76,7 @@ def bookings(request):
             return render(request, "myapp/findbus.html", context)
 
         if seats_r <= 0:
-            context["error"] = "Number of seats must be greater than 0"
+            context["error"] = "Seat count must be greater than 0"
             return render(request, "myapp/findbus.html", context)
 
         try:
@@ -72,18 +91,18 @@ def bookings(request):
 
         total_cost = Decimal(seats_r) * bus.price
 
-        # create booking as pending (do not reduce seats yet)
+        # Create booking in pending state
         book = Book.objects.create(
-            name=request.user.username,
             email=request.user.email,
+            name=request.user.username,
             userid=request.user.id,
+            busid=bus.id,
             bus_name=bus.bus_name,
             source=bus.source,
-            busid=bus.id,
             dest=bus.dest,
+            nos=seats_r,
             price=bus.price,
             total_price=total_cost,
-            nos=seats_r,
             date=bus.date,
             time=bus.time,
             status="PENDING",
@@ -92,85 +111,134 @@ def bookings(request):
 
         return redirect("payment", booking_id=book.id)
 
-    return render(request, "myapp/findbus.html")
+    return redirect("findbus")
 
 
+# =========================
+# PAYMENT PAGE WITH UPI QR
+# =========================
 @login_required(login_url="signin")
 def payment_page(request, booking_id):
     """
-    Step 2:
-    Show payment page for pending booking.
+    Show booking details + UPI QR
     """
     book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
 
+    # If already paid and confirmed
     if book.status == "CONFIRMED":
-        return render(request, "myapp/bookings.html", {"book": book, "cost": book.total_price})
+        messages.success(request, "This booking is already confirmed.")
+        return redirect("seebookings")
 
-    return render(request, "myapp/payment.html", {"book": book})
+    # Your UPI details
+    upi_id = "yourupi@oksbi"   # <-- change this
+    payee_name = "Bus Ticket Booking"
 
+    # UPI payment link
+    upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={book.total_price}&cu=INR&tn=Booking#{book.id}"
 
-@login_required(login_url="signin")
-def payment_success(request, booking_id):
-    """
-    Step 3:
-    Demo payment success.
-    On success:
-    - check seat availability again
-    - reduce seats
-    - mark booking confirmed
-    """
-    book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
+    # Create QR folder if not exists
+    qr_folder = os.path.join(settings.MEDIA_ROOT, "qr_codes")
+    os.makedirs(qr_folder, exist_ok=True)
 
-    if book.status == "CONFIRMED":
-        return render(request, "myapp/bookings.html", {"book": book, "cost": book.total_price})
+    qr_filename = f"booking_{book.id}.png"
+    qr_path = os.path.join(qr_folder, qr_filename)
 
-    bus = get_object_or_404(Bus, id=book.busid)
+    # Generate QR only if not exists
+    if not os.path.exists(qr_path):
+        qr_img = qrcode.make(upi_link)
+        qr_img.save(qr_path)
 
-    # re-check seats before confirming
-    if int(bus.rem) < int(book.nos):
-        book.status = "CANCELLED"
-        book.payment_status = "FAILED"
-        book.save()
-        return render(request, "myapp/error.html", {
-            "error": "Payment failed because seats are no longer available."
-        })
+    qr_url = settings.MEDIA_URL + "qr_codes/" + qr_filename
 
-    # reduce seats now
-    bus.rem = int(bus.rem) - int(book.nos)
-    bus.save()
-
-    # confirm booking
-    book.status = "CONFIRMED"
-    book.payment_status = "PAID"
-    book.payment_id = f"PAY{book.id}{request.user.id}"
-    book.save()
-
-    return render(request, "myapp/bookings.html", {
+    return render(request, "myapp/payment.html", {
         "book": book,
-        "cost": book.total_price
+        "qr_url": qr_url,
+        "upi_id": upi_id,
     })
 
 
+# =========================
+# SUBMIT PAYMENT PROOF
+# =========================
 @login_required(login_url="signin")
-def payment_failed(request, booking_id):
+def submit_payment(request, booking_id):
     """
-    Optional failure route.
+    User uploads UTR/UPI ref no + screenshot
+    Payment status becomes PENDING_VERIFICATION
     """
     book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
+
+    if request.method != "POST":
+        return redirect("payment", booking_id=book.id)
+
+    upi_reference = request.POST.get("upi_reference")
+    screenshot = request.FILES.get("payment_screenshot")
+
+    # Rebuild QR in case of error rendering again
+    upi_id = "yourupi@oksbi"   # <-- change this
+    payee_name = "Bus Ticket Booking"
+    upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={book.total_price}&cu=INR&tn=Booking#{book.id}"
+
+    qr_folder = os.path.join(settings.MEDIA_ROOT, "qr_codes")
+    os.makedirs(qr_folder, exist_ok=True)
+
+    qr_filename = f"booking_{book.id}.png"
+    qr_path = os.path.join(qr_folder, qr_filename)
+
+    if not os.path.exists(qr_path):
+        qr_img = qrcode.make(upi_link)
+        qr_img.save(qr_path)
+
+    qr_url = settings.MEDIA_URL + "qr_codes/" + qr_filename
+
+    if not upi_reference or not screenshot:
+        return render(request, "myapp/payment.html", {
+            "book": book,
+            "qr_url": qr_url,
+            "upi_id": upi_id,
+            "error": "Please enter UPI reference number and upload screenshot."
+        })
+
+    # Save payment proof
+    book.upi_reference = upi_reference
+    book.payment_screenshot = screenshot
+    book.payment_status = "PENDING_VERIFICATION"
+    book.save()
+
+    messages.success(request, "Payment proof submitted successfully. Waiting for admin verification.")
+    return redirect("seebookings")
+
+
+# =========================
+# CANCEL PAYMENT BEFORE ADMIN VERIFICATION
+# =========================
+@login_required(login_url="signin")
+def payment_failed(request, booking_id):
+    book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
+
+    if book.status == "CONFIRMED":
+        return render(request, "myapp/error.html", {
+            "error": "This booking is already confirmed and cannot be cancelled."
+        })
+
     book.payment_status = "FAILED"
     book.status = "CANCELLED"
     book.save()
 
     return render(request, "myapp/error.html", {
-        "error": "Payment failed or cancelled."
+        "error": "Payment cancelled."
     })
 
 
+# =========================
+# CANCEL BOOKING AFTER CONFIRMATION
+# =========================
 @login_required(login_url="signin")
 def cancellings(request):
     context = {}
+
     if request.method == "POST":
-        booking_id = request.POST.get("bus_id")
+        booking_id = request.POST.get("booking_id")
 
         if not booking_id:
             context["error"] = "Invalid booking ID"
@@ -179,16 +247,25 @@ def cancellings(request):
         try:
             book = Book.objects.get(id=int(booking_id), userid=request.user.id)
 
-            # only restore seats if booking was confirmed
+            # already cancelled
+            if book.status == "CANCELLED":
+                return render(request, "myapp/error.html", {
+                    "error": "This booking is already cancelled."
+                })
+
+            # restore seats only if confirmed
             if book.status == "CONFIRMED":
                 bus = Bus.objects.get(id=book.busid)
                 bus.rem = int(bus.rem) + int(book.nos)
                 bus.save()
 
             book.status = "CANCELLED"
-            book.payment_status = "REFUNDED" if book.payment_status == "PAID" else book.payment_status
-            book.save()
 
+            if book.payment_status == "PAID":
+                book.payment_status = "REFUNDED"
+
+            book.save()
+            messages.success(request, "Booking cancelled successfully.")
             return redirect("seebookings")
 
         except Book.DoesNotExist:
@@ -198,25 +275,31 @@ def cancellings(request):
     return redirect("seebookings")
 
 
+# =========================
+# VIEW USER BOOKINGS
+# =========================
 @login_required(login_url="signin")
 def seebookings(request):
-    context = {}
     id_r = request.user.id
     book_list = Book.objects.filter(userid=id_r).order_by('-id')
 
-    if book_list.exists():
-        return render(request, "myapp/booklist.html", {"book_list": book_list})
-    else:
-        context["error"] = "Sorry no buses booked"
-        return render(request, "myapp/findbus.html", context)
+    return render(request, "myapp/booklist.html", {"book_list": book_list})
 
 
+# =========================
+# SIGNUP
+# =========================
 def signup(request):
     context = {}
+
     if request.method == "POST":
         name_r = request.POST.get("name")
         email_r = request.POST.get("email")
         password_r = request.POST.get("password")
+
+        if not name_r or not email_r or not password_r:
+            context["error"] = "All fields are required"
+            return render(request, "myapp/signup.html", context)
 
         if User.objects.filter(username=name_r).exists():
             context["error"] = "Username already exists"
@@ -228,41 +311,52 @@ def signup(request):
             password=password_r,
         )
 
-        if user:
-            login(request, user)
-            return render(request, "myapp/thank.html")
-        else:
-            context["error"] = "Provide valid credentials"
-            return render(request, "myapp/signup.html", context)
+        login(request, user)
+        return render(request, "myapp/thank.html")
 
     return render(request, "myapp/signup.html", context)
 
 
+# =========================
+# SIGNIN
+# =========================
 def signin(request):
     context = {}
+
     if request.method == "POST":
         name_r = request.POST.get("name")
         password_r = request.POST.get("password")
+
         user = authenticate(request, username=name_r, password=password_r)
 
         if user:
             login(request, user)
-            context["user"] = name_r
-            context["id"] = request.user.id
-            return render(request, "myapp/success.html", context)
+            return render(request, "myapp/success.html", {
+                "user": user.username,
+                "id": user.id
+            })
         else:
             context["error"] = "Provide valid credentials"
             return render(request, "myapp/signin.html", context)
 
-    context["error"] = "You are not logged in"
     return render(request, "myapp/signin.html", context)
 
 
+# =========================
+# SIGNOUT
+# =========================
 def signout(request):
     logout(request)
-    return render(request, "myapp/signin.html", {"error": "You have been logged out"})
+    return render(request, "myapp/signin.html", {
+        "error": "You have been logged out"
+    })
 
 
+# =========================
+# SUCCESS PAGE
+# =========================
+@login_required(login_url="signin")
 def success(request):
-    context = {"user": request.user}
-    return render(request, "myapp/success.html", context)
+    return render(request, "myapp/success.html", {
+        "user": request.user
+    })

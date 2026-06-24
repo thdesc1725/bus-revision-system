@@ -1,140 +1,50 @@
 {% extends 'myapp/base.html' %}
 {% block content %}
 
-<style>
-.page-header {
-    background: linear-gradient(to right, #00416A, #1CB5E0);
-    padding: 30px;
-    color: white;
-    text-align: center;
-    animation: fadeIn 1.5s;
-}
+<div class="container" style="margin-top:30px;">
+    <h2>Available Buses</h2>
 
-.bus-card {
-    margin-top: -20px;
-    padding: 25px;
-    border-radius: 15px;
-    background: #ffffff;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    animation: slideUp 1.5s;
-}
-
-.table thead {
-    background: #00416A;
-    color: white;
-}
-
-.table tbody tr:hover {
-    background-color: #f1f7ff;
-}
-
-.book-card {
-    margin-top: 30px;
-    padding: 20px;
-    border-radius: 15px;
-    background: #f8f9fa;
-    box-shadow: 0 0 10px rgba(0,0,0,0.15);
-}
-
-.btn-book {
-    background: orange;
-    color: white;
-    padding: 10px 30px;
-    border-radius: 25px;
-    font-size: 18px;
-}
-
-.btn-book:hover {
-    background: darkorange;
-    color: white;
-}
-
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
-@keyframes slideUp {
-    from {transform: translateY(40px); opacity:0;}
-    to {transform: translateY(0); opacity:1;}
-}
-</style>
-
-<div class="page-header">
-    <h1>🚌 Available Buses</h1>
-    <p>Select your bus and proceed to payment</p>
-</div>
-
-<div class="container">
-    <div class="bus-card">
-
-        <h3 class="text-center mb-4">Bus List</h3>
-
-        <table class="table table-bordered table-hover text-center">
-            <thead>
+    {% if bus_list %}
+        <table border="1" cellpadding="10" cellspacing="0" width="100%" style="border-collapse:collapse; background:#fff;">
+            <thead style="background:#0f4c81; color:white;">
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
+                    <th>Bus</th>
                     <th>Source</th>
                     <th>Destination</th>
-                    <th>Total Seats</th>
-                    <th>Seats Left</th>
-                    <th>Price</th>
                     <th>Date</th>
                     <th>Time</th>
+                    <th>Available Seats</th>
+                    <th>Price</th>
+                    <th>Book</th>
                 </tr>
             </thead>
-
             <tbody>
-            {% for row in bus_list %}
+                {% for bus in bus_list %}
                 <tr>
-                    <td>{{ row.id }}</td>
-                    <td>{{ row.bus_name }}</td>
-                    <td>{{ row.source }}</td>
-                    <td>{{ row.dest }}</td>
-                    <td>{{ row.nos }}</td>
+                    <td>{{ bus.bus_name }}</td>
+                    <td>{{ bus.source }}</td>
+                    <td>{{ bus.dest }}</td>
+                    <td>{{ bus.date }}</td>
+                    <td>{{ bus.time }}</td>
+                    <td>{{ bus.rem }}</td>
+                    <td>₹ {{ bus.price }}</td>
                     <td>
-                        {% if row.rem > 5 %}
-                            <span class="text-success font-weight-bold">{{ row.rem }}</span>
-                        {% else %}
-                            <span class="text-danger font-weight-bold">{{ row.rem }}</span>
-                        {% endif %}
+                        <form method="post" action="{% url 'bookings' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="bus_id" value="{{ bus.id }}">
+                            <input type="number" name="no_seats" min="1" max="{{ bus.rem }}" placeholder="Seats" required style="width:80px; padding:6px;">
+                            <button type="submit" style="padding:8px 12px; background:#28a745; color:white; border:none; border-radius:5px;">
+                                Reserve
+                            </button>
+                        </form>
                     </td>
-                    <td>₹ {{ row.price }}</td>
-                    <td>{{ row.date }}</td>
-                    <td>{{ row.time }}</td>
                 </tr>
-            {% endfor %}
+                {% endfor %}
             </tbody>
         </table>
-
-    </div>
-
-    <div class="book-card">
-        <h3 class="text-center mb-3">🎫 Book Your Seat</h3>
-
-        <form action="{% url 'bookings' %}" method="post">
-            {% csrf_token %}
-
-            <div class="form-group">
-                <label>Bus ID</label>
-                <input name="bus_id" class="form-control" type="number" placeholder="Enter Bus ID" required>
-            </div>
-
-            <div class="form-group">
-                <label>Number of Seats</label>
-                <input name="no_seats" class="form-control" type="number" min="1" placeholder="Enter seats" required>
-            </div>
-
-            <div class="text-center">
-                <button type="submit" class="btn btn-book">Proceed to Payment</button>
-            </div>
-
-            {% if error %}
-                <p class="text-danger text-center mt-3">{{ error }}</p>
-            {% endif %}
-        </form>
-    </div>
+    {% else %}
+        <p>No buses found.</p>
+    {% endif %}
 </div>
 
 {% endblock %}

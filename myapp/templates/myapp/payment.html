@@ -2,126 +2,372 @@
 {% block content %}
 
 <style>
-.payment-hero {
-    background: linear-gradient(to right, #ff9966, #ff5e62);
-    padding: 35px;
-    color: white;
-    text-align: center;
-    animation: fadeIn 1.2s;
-}
+    .payment-wrapper{
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
 
-.payment-card {
-    margin-top: -20px;
-    padding: 30px;
-    border-radius: 15px;
-    background: #fff;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    animation: slideUp 1.2s;
-}
+    .payment-top{
+        background: linear-gradient(135deg, #0f4c81, #1cb5e0);
+        color: #fff;
+        border-radius: 18px;
+        padding: 28px;
+        text-align: center;
+        margin-bottom: 25px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
 
-.pay-btn {
-    background: #28a745;
-    color: white;
-    padding: 10px 28px;
-    border-radius: 25px;
-    font-size: 18px;
-    border: none;
-}
+    .payment-grid{
+        display: grid;
+        grid-template-columns: 1.2fr 0.9fr;
+        gap: 24px;
+    }
 
-.pay-btn:hover {
-    background: #218838;
-    color: white;
-}
+    .ticket-card, .pay-card{
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        overflow: hidden;
+    }
 
-.cancel-btn {
-    background: #dc3545;
-    color: white;
-    padding: 10px 28px;
-    border-radius: 25px;
-    font-size: 18px;
-    border: none;
-    text-decoration: none;
-}
+    .ticket-head{
+        background: linear-gradient(135deg, #ff7b00, #ffb347);
+        color: #fff;
+        padding: 22px;
+    }
 
-.cancel-btn:hover {
-    background: #c82333;
-    color: white;
-    text-decoration: none;
-}
+    .ticket-body{
+        padding: 25px;
+    }
 
-.summary-box {
-    background: #f8f9fa;
-    border-radius: 12px;
-    padding: 20px;
-}
+    .ticket-route{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8fbff;
+        border: 2px dashed #c9dfff;
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 20px;
+    }
 
-@keyframes fadeIn {
-    from {opacity:0;}
-    to {opacity:1;}
-}
+    .city-box h4{
+        margin: 0;
+        color: #0f4c81;
+        font-weight: 700;
+    }
 
-@keyframes slideUp {
-    from {transform: translateY(40px); opacity:0;}
-    to {transform: translateY(0); opacity:1;}
-}
+    .city-box p{
+        margin: 4px 0 0;
+        color: #666;
+    }
+
+    .route-arrow{
+        font-size: 28px;
+        color: #ff7b00;
+        font-weight: bold;
+    }
+
+    .ticket-table{
+        width: 100%;
+    }
+
+    .ticket-table tr{
+        border-bottom: 1px solid #eee;
+    }
+
+    .ticket-table td{
+        padding: 12px 8px;
+        font-size: 15px;
+    }
+
+    .ticket-table td:first-child{
+        color: #666;
+        width: 45%;
+    }
+
+    .ticket-table td:last-child{
+        font-weight: 600;
+        color: #111;
+    }
+
+    .total-box{
+        margin-top: 20px;
+        background: linear-gradient(135deg, #fff5e8, #fff0da);
+        border: 1px solid #ffd29b;
+        border-radius: 16px;
+        padding: 18px;
+        text-align: center;
+    }
+
+    .total-box h3{
+        margin: 0;
+        color: #d35400;
+        font-weight: 800;
+    }
+
+    .pay-head{
+        background: linear-gradient(135deg, #11998e, #38ef7d);
+        color: #fff;
+        padding: 22px;
+        text-align: center;
+    }
+
+    .pay-body{
+        padding: 25px;
+        text-align: center;
+    }
+
+    .qr-box{
+        background: #f8f9fa;
+        border-radius: 18px;
+        padding: 18px;
+        margin-bottom: 20px;
+        border: 1px solid #eee;
+    }
+
+    .qr-box img{
+        max-width: 240px;
+        width: 100%;
+        border-radius: 12px;
+        background: #fff;
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .upi-box{
+        background: #eef8ff;
+        border: 1px solid #cfe9ff;
+        border-radius: 14px;
+        padding: 12px;
+        margin-top: 15px;
+        font-size: 15px;
+        text-align: left;
+    }
+
+    .form-control{
+        border-radius: 12px;
+        padding: 12px;
+        width: 100%;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+    }
+
+    .upload-label{
+        text-align: left;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+        color: #333;
+    }
+
+    .btn-pay{
+        background: linear-gradient(135deg, #ff7b00, #ff9f43);
+        color: #fff;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 30px;
+        font-size: 17px;
+        font-weight: 700;
+        width: 100%;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .btn-pay:hover{
+        color: #fff;
+        opacity: 0.95;
+    }
+
+    .btn-cancel{
+        display: inline-block;
+        margin-top: 14px;
+        color: #dc3545;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .note-box{
+        margin-top: 15px;
+        text-align: left;
+        background: #fffaf0;
+        border: 1px solid #ffe0a3;
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 14px;
+    }
+
+    .alert{
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    .alert-danger{
+        background: #ffe8e8;
+        color: #b30000;
+        border: 1px solid #ffb5b5;
+    }
+
+    .alert-success{
+        background: #e9fff0;
+        color: #0f7a35;
+        border: 1px solid #9be2b1;
+    }
+
+    @media(max-width: 991px){
+        .payment-grid{
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<div class="payment-hero">
-    <h1>💳 Payment Page</h1>
-    <p>Review your booking and complete payment</p>
-</div>
+<div class="payment-wrapper">
 
-<div class="container mt-4">
-    <div class="payment-card">
-        <h3 class="text-center mb-4">Booking Summary</h3>
+    <div class="payment-top">
+        <h2>Secure Bus Ticket Payment</h2>
+        <p class="mb-0">Review your ticket details and complete payment using UPI QR</p>
+    </div>
 
-        <div class="summary-box">
-            <div class="row mb-2">
-                <div class="col-md-6"><b>Booking ID:</b></div>
-                <div class="col-md-6">{{ book.id }}</div>
+    <div class="payment-grid">
+
+        <!-- LEFT SIDE TICKET -->
+        <div class="ticket-card">
+            <div class="ticket-head">
+                <h3 class="mb-1">🎫 Ticket Summary</h3>
+                <p class="mb-0">Booking ID: {{ book.id }}</p>
             </div>
-            <div class="row mb-2">
-                <div class="col-md-6"><b>Bus Name:</b></div>
-                <div class="col-md-6">{{ book.bus_name }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-6"><b>From:</b></div>
-                <div class="col-md-6">{{ book.source }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-6"><b>To:</b></div>
-                <div class="col-md-6">{{ book.dest }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-6"><b>Seats:</b></div>
-                <div class="col-md-6">{{ book.nos }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-6"><b>Price per Seat:</b></div>
-                <div class="col-md-6">₹ {{ book.price }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-6"><b>Total Amount:</b></div>
-                <div class="col-md-6"><b>₹ {{ book.total_price }}</b></div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-6"><b>Date:</b></div>
-                <div class="col-md-6">{{ book.date }}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-6"><b>Time:</b></div>
-                <div class="col-md-6">{{ book.time }}</div>
+
+            <div class="ticket-body">
+                <div class="ticket-route">
+                    <div class="city-box">
+                        <h4>{{ book.source }}</h4>
+                        <p>Source</p>
+                    </div>
+
+                    <div class="route-arrow">→</div>
+
+                    <div class="city-box" style="text-align:right;">
+                        <h4>{{ book.dest }}</h4>
+                        <p>Destination</p>
+                    </div>
+                </div>
+
+                <table class="ticket-table">
+                    <tr>
+                        <td>Passenger Name</td>
+                        <td>{{ book.name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Bus Name</td>
+                        <td>{{ book.bus_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Travel Date</td>
+                        <td>{{ book.date }}</td>
+                    </tr>
+                    <tr>
+                        <td>Departure Time</td>
+                        <td>{{ book.time }}</td>
+                    </tr>
+                    <tr>
+                        <td>Seats</td>
+                        <td>{{ book.nos }}</td>
+                    </tr>
+                    <tr>
+                        <td>Price / Seat</td>
+                        <td>₹ {{ book.price }}</td>
+                    </tr>
+                    <tr>
+                        <td>Payment Status</td>
+                        <td>{{ book.payment_status }}</td>
+                    </tr>
+                    <tr>
+                        <td>Booking Status</td>
+                        <td>{{ book.status }}</td>
+                    </tr>
+                </table>
+
+                <div class="total-box">
+                    <p class="mb-1">Total Payable Amount</p>
+                    <h3>₹ {{ book.total_price }}</h3>
+                </div>
             </div>
         </div>
 
-        <div class="text-center mt-4">
-            <a href="{% url 'payment_success' book.id %}" class="btn pay-btn mr-2">
-                Pay Now
-            </a>
-            <a href="{% url 'payment_failed' book.id %}" class="btn cancel-btn">
-                Cancel Payment
-            </a>
+        <!-- RIGHT SIDE PAYMENT -->
+        <div class="pay-card">
+            <div class="pay-head">
+                <h3 class="mb-1">📲 UPI Payment</h3>
+                <p class="mb-0">Scan QR and upload payment proof</p>
+            </div>
+
+            <div class="pay-body">
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if error %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endif %}
+
+                <div class="qr-box">
+                    {% if qr_url %}
+                        <img src="{{ qr_url }}" alt="UPI QR Code">
+                    {% endif %}
+
+                    <div class="upi-box">
+                        <div><b>UPI ID:</b> {{ upi_id }}</div>
+                        <div><b>Amount:</b> ₹ {{ book.total_price }}</div>
+                    </div>
+                </div>
+
+                <form method="post" action="{% url 'submit_payment' book.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <label class="upload-label">UPI Transaction / Reference Number</label>
+                    <input type="text"
+                           name="upi_reference"
+                           class="form-control"
+                           placeholder="Enter UPI Ref No / UTR Number"
+                           required>
+
+                    <label class="upload-label mt-3">Upload Payment Screenshot</label>
+                    <input type="file"
+                           name="payment_screenshot"
+                           class="form-control"
+                           accept="image/*"
+                           required>
+
+                    <button type="submit" class="btn-pay">
+                        Submit Payment Proof
+                    </button>
+                </form>
+
+                <a href="{% url 'payment_failed' book.id %}" class="btn-cancel">
+                    Cancel Payment
+                </a>
+
+                <div class="note-box">
+                    <b>Instructions:</b>
+                    <ul style="margin-bottom:0; padding-left:18px;">
+                        <li>Scan the QR using any UPI app.</li>
+                        <li>Pay exact amount: <b>₹ {{ book.total_price }}</b></li>
+                        <li>Enter transaction/reference/UTR number.</li>
+                        <li>Upload payment screenshot and submit.</li>
+                        <li>Admin will verify your payment and confirm booking.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>
 

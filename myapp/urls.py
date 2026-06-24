@@ -2,18 +2,21 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name="home"),
-    path('findbus', views.findbus, name="findbus"),
-    path('bookings', views.bookings, name="bookings"),
-    path('cancellings', views.cancellings, name="cancellings"),
-    path('seebookings', views.seebookings, name="seebookings"),
-    path('signup', views.signup, name="signup"),
-    path('signin', views.signin, name="signin"),
-    path('success', views.success, name="success"),
-    path('signout', views.signout, name="signout"),
+    path('', views.home, name='home'),
+    path('home/', views.home, name='home'),
 
-    # payment urls
+    path('signup/', views.signup, name='signup'),
+    path('signin/', views.signin, name='signin'),
+    path('signout/', views.signout, name='signout'),
+    path('success/', views.success, name='success'),
+
+    path('findbus/', views.findbus, name='findbus'),
+    path('bookings/', views.bookings, name='bookings'),
+    path('seebookings/', views.seebookings, name='seebookings'),
+    path('cancel/', views.cancellings, name='cancellings'),
+
+    # Payment URLs
     path('payment/<int:booking_id>/', views.payment_page, name='payment'),
-    path('payment-success/<int:booking_id>/', views.payment_success, name='payment_success'),
+    path('submit-payment/<int:booking_id>/', views.submit_payment, name='submit_payment'),
     path('payment-failed/<int:booking_id>/', views.payment_failed, name='payment_failed'),
 ]
