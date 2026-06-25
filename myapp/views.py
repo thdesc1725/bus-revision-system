@@ -45,7 +45,7 @@ def findbus(request):
             source__iexact=source_r,
             dest__iexact=dest_r,
             date=date_r
-        )
+        ).order_by("time")
 
         if bus_list.exists():
             return render(request, "myapp/list.html", {"bus_list": bus_list})
@@ -54,6 +54,17 @@ def findbus(request):
             return render(request, "myapp/findbus.html", context)
 
     return render(request, "myapp/findbus.html")
+
+
+# =========================
+# DIRECT RESERVE PAGE FROM HOME
+# =========================
+@login_required(login_url="signin")
+def reserve_bus(request, bus_id):
+    bus = get_object_or_404(Bus, id=bus_id)
+    return render(request, "myapp/list.html", {
+        "bus_list": [bus]
+    })
 
 
 # =========================
@@ -126,7 +137,7 @@ def payment_page(request, booking_id):
         messages.success(request, "This booking is already confirmed.")
         return redirect("seebookings")
 
-    upi_id = "yourupi@oksbi"   # <-- yaha apna real UPI daalna
+    upi_id = "yourupi@oksbi"   # Replace with your real UPI ID
     payee_name = "TravelMate"
 
     upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={book.total_price}&cu=INR&tn=Booking#{book.id}"
@@ -273,12 +284,16 @@ def seebookings(request):
 # SIGNUP
 # =========================
 def signup(request):
+    # if already logged in, don't show signup again
+    if request.user.is_authenticated:
+        return redirect("home")
+
     context = {}
 
     if request.method == "POST":
-        name_r = request.POST.get("name")
-        email_r = request.POST.get("email")
-        password_r = request.POST.get("password")
+        name_r = request.POST.get("name", "").strip()
+        email_r = request.POST.get("email", "").strip()
+        password_r = request.POST.get("password", "").strip()
 
         if not name_r or not email_r or not password_r:
             context["error"] = "All fields are required"
@@ -288,14 +303,23 @@ def signup(request):
             context["error"] = "Username already exists"
             return render(request, "myapp/signup.html", context)
 
+        if User.objects.filter(email=email_r).exists():
+            context["error"] = "Email already registered"
+            return render(request, "myapp/signup.html", context)
+
         user = User.objects.create_user(
             username=name_r,
             email=email_r,
             password=password_r,
         )
 
+        # auto login after signup
         login(request, user)
-        return render(request, "myapp/thank.html")
+
+        # thank page show after signup
+        return render(request, "myapp/thank.html", {
+            "user": user.username
+        })
 
     return render(request, "myapp/signup.html", context)
 
@@ -304,11 +328,19 @@ def signup(request):
 # SIGNIN
 # =========================
 def signin(request):
+    # if already logged in, don't show signin again
+    if request.user.is_authenticated:
+        return redirect("home")
+
     context = {}
 
     if request.method == "POST":
-        name_r = request.POST.get("name")
-        password_r = request.POST.get("password")
+        name_r = request.POST.get("name", "").strip()
+        password_r = request.POST.get("password", "").strip()
+
+        if not name_r or not password_r:
+            context["error"] = "Please enter username and password"
+            return render(request, "myapp/signin.html", context)
 
         user = authenticate(request, username=name_r, password=password_r)
 

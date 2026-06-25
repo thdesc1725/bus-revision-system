@@ -15,6 +15,9 @@ urlpatterns = [
     path('seebookings/', views.seebookings, name='seebookings'),
     path('cancel/', views.cancellings, name='cancellings'),
 
+    # NEW: direct reserve page from home page bus card
+    path('reserve-bus/<int:bus_id>/', views.reserve_bus, name='reserve_bus'),
+
     # Payment
     path('payment/<int:booking_id>/', views.payment_page, name='payment'),
     path('submit-payment/<int:booking_id>/', views.submit_payment, name='submit_payment'),

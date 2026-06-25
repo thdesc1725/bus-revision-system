@@ -1,50 +1,305 @@
 {% extends 'myapp/base.html' %}
+{% load static %}
 {% block content %}
 
-<div class="container" style="margin-top:30px;">
-    <h2>Available Buses</h2>
+<style>
+    :root{
+        --navy:#0f2747;
+        --blue:#245c97;
+        --gold:#f4b544;
+        --line:#e7eef7;
+        --soft:#f8fbff;
+        --white:#ffffff;
+        --text:#142133;
+        --muted:#667085;
+        --shadow:0 16px 40px rgba(15, 39, 71, 0.10);
+    }
 
-    {% if bus_list %}
-        <table border="1" cellpadding="10" cellspacing="0" width="100%" style="border-collapse:collapse; background:#fff;">
-            <thead style="background:#0f4c81; color:white;">
-                <tr>
-                    <th>Bus</th>
-                    <th>Source</th>
-                    <th>Destination</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Available Seats</th>
-                    <th>Price</th>
-                    <th>Book</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for bus in bus_list %}
-                <tr>
-                    <td>{{ bus.bus_name }}</td>
-                    <td>{{ bus.source }}</td>
-                    <td>{{ bus.dest }}</td>
-                    <td>{{ bus.date }}</td>
-                    <td>{{ bus.time }}</td>
-                    <td>{{ bus.rem }}</td>
-                    <td>₹ {{ bus.price }}</td>
-                    <td>
-                        <form method="post" action="{% url 'bookings' %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="bus_id" value="{{ bus.id }}">
-                            <input type="number" name="no_seats" min="1" max="{{ bus.rem }}" placeholder="Seats" required style="width:80px; padding:6px;">
-                            <button type="submit" style="padding:8px 12px; background:#28a745; color:white; border:none; border-radius:5px;">
-                                Reserve
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No buses found.</p>
-    {% endif %}
+    body{
+        background: linear-gradient(180deg, #f6f9fe 0%, #eef4fb 45%, #f8fbff 100%);
+        color:var(--text);
+    }
+
+    .bus-list-page{
+        padding: 40px 0 70px;
+    }
+
+    .page-head{
+        text-align:center;
+        margin-bottom:28px;
+    }
+
+    .page-tag{
+        display:inline-block;
+        padding:10px 16px;
+        border-radius:999px;
+        background:#eef5ff;
+        border:1px solid #d8e7fb;
+        color:var(--blue);
+        font-size:13px;
+        font-weight:900;
+        margin-bottom:14px;
+    }
+
+    .page-head h2{
+        margin:0;
+        font-size:40px;
+        font-weight:900;
+        color:var(--text);
+    }
+
+    .page-head p{
+        max-width:850px;
+        margin:12px auto 0;
+        color:var(--muted);
+        font-size:16px;
+        line-height:1.8;
+        font-weight:500;
+    }
+
+    .bus-table-wrap{
+        background:#fff;
+        border:1px solid var(--line);
+        border-radius:24px;
+        box-shadow:var(--shadow);
+        overflow:hidden;
+    }
+
+    .table-responsive{
+        width:100%;
+        overflow-x:auto;
+    }
+
+    .bus-table{
+        width:100%;
+        border-collapse:collapse;
+        min-width:1050px;
+    }
+
+    .bus-table thead th{
+        background:linear-gradient(135deg, #102a4d, #204e84);
+        color:#fff;
+        padding:18px 16px;
+        font-size:14px;
+        font-weight:900;
+        text-align:center;
+        white-space:nowrap;
+    }
+
+    .bus-table tbody tr{
+        border-bottom:1px solid #edf3ff;
+        transition:.25s ease;
+    }
+
+    .bus-table tbody tr:hover{
+        background:#f9fbff;
+    }
+
+    .bus-table tbody td{
+        padding:18px 14px;
+        text-align:center;
+        vertical-align:middle;
+        color:var(--text);
+        font-size:15px;
+        font-weight:700;
+    }
+
+    .bus-name-badge{
+        display:inline-block;
+        background:#eef5ff;
+        color:#173b68;
+        border:1px solid #dbe9ff;
+        border-radius:999px;
+        padding:8px 14px;
+        font-weight:900;
+    }
+
+    .price-badge{
+        display:inline-block;
+        background:linear-gradient(135deg, #fff5df, #fff0d1);
+        border:1px solid #ffdca2;
+        color:#d07b00;
+        border-radius:999px;
+        padding:8px 14px;
+        font-weight:900;
+        min-width:110px;
+    }
+
+    .seat-input{
+        width:90px;
+        border:1px solid #d9e6f7;
+        border-radius:12px;
+        padding:10px 12px;
+        outline:none;
+        text-align:center;
+        font-weight:800;
+        background:#fff;
+    }
+
+    .reserve-btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        min-width:120px;
+        padding:12px 18px;
+        border:none;
+        border-radius:14px;
+        background:linear-gradient(135deg, #f4b544, #ffd16d);
+        color:#162033;
+        font-weight:900;
+        box-shadow:0 12px 24px rgba(244,181,68,.24);
+        transition:.25s ease;
+        cursor:pointer;
+    }
+
+    .reserve-btn:hover{
+        transform:translateY(-2px);
+    }
+
+    .action-form{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+        flex-wrap:wrap;
+    }
+
+    .back-wrap{
+        margin-top:24px;
+        text-align:center;
+    }
+
+    .back-btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        padding:14px 22px;
+        border-radius:16px;
+        text-decoration:none !important;
+        background:#eef5ff;
+        color:#173b68;
+        font-weight:900;
+        border:1px solid #d8e7fb;
+    }
+
+    .error-box{
+        max-width:900px;
+        margin:0 auto 22px;
+        background:#fff2f2;
+        border:1px solid #ffd5d5;
+        color:#b42318;
+        border-radius:18px;
+        padding:16px 18px;
+        font-weight:700;
+    }
+
+    .empty-box{
+        background:#fff;
+        border:1px solid var(--line);
+        border-radius:24px;
+        box-shadow:var(--shadow);
+        padding:40px 24px;
+        text-align:center;
+    }
+
+    .empty-box h3{
+        margin:0 0 10px;
+        font-size:28px;
+        font-weight:900;
+    }
+
+    .empty-box p{
+        margin:0;
+        color:var(--muted);
+        line-height:1.8;
+    }
+</style>
+
+<div class="bus-list-page">
+    <div class="container">
+
+        <div class="page-head">
+            <div class="page-tag">Available Buses</div>
+            <h2>Available Buses</h2>
+            <p>Select the number of seats and click <strong>Reserve</strong> to continue.</p>
+        </div>
+
+        {% if error %}
+            <div class="error-box">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        {% if bus_list %}
+            <div class="bus-table-wrap">
+                <div class="table-responsive">
+                    <table class="bus-table">
+                        <thead>
+                            <tr>
+                                <th>Bus</th>
+                                <th>Source</th>
+                                <th>Destination</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Available Seats</th>
+                                <th>Price</th>
+                                <th>Seats</th>
+                                <th>Book</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for bus in bus_list %}
+                                <tr>
+                                    <td>
+                                        <span class="bus-name-badge">{{ bus.bus_name }}</span>
+                                    </td>
+                                    <td>{{ bus.source }}</td>
+                                    <td>{{ bus.dest }}</td>
+                                    <td>{{ bus.date }}</td>
+                                    <td>{{ bus.time }}</td>
+                                    <td>{{ bus.rem }}</td>
+                                    <td>
+                                        <span class="price-badge">₹ {{ bus.price }}</span>
+                                    </td>
+                                    <td>
+                                        <form action="{% url 'bookings' %}" method="post" class="action-form">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="bus_id" value="{{ bus.id }}">
+                                            <input
+                                                type="number"
+                                                name="no_seats"
+                                                class="seat-input"
+                                                min="1"
+                                                max="{{ bus.rem }}"
+                                                value="1"
+                                                required
+                                            >
+                                    </td>
+                                    <td>
+                                            <button type="submit" class="reserve-btn">
+                                                Reserve
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-box">
+                <h3>No buses available</h3>
+                <p>No buses found for the selected route/date.</p>
+            </div>
+        {% endif %}
+
+        <div class="back-wrap">
+            <a href="{% url 'home' %}" class="back-btn">← Back to Home</a>
+        </div>
+
+    </div>
 </div>
 
 {% endblock %}

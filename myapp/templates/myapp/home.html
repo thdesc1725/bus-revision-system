@@ -69,7 +69,6 @@
         flex-direction:column;
     }
 
-    /* top transparent strip */
     .hero-top-strip{
         display:flex;
         align-items:center;
@@ -168,7 +167,6 @@
         background:rgba(255,255,255,.20);
     }
 
-    /* hero content */
     .hero-main{
         display:grid;
         grid-template-columns: 1.08fr .92fr;
@@ -220,53 +218,6 @@
         font-weight:500;
     }
 
-    .hero-actions{
-        display:flex;
-        flex-wrap:wrap;
-        gap:14px;
-        margin-bottom:28px;
-    }
-
-    .hero-btn{
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        min-width:190px;
-        padding:15px 22px;
-        border-radius:16px;
-        font-size:15px;
-        font-weight:900;
-        text-decoration:none !important;
-        transition:.25s ease;
-        border:none;
-        cursor:pointer;
-    }
-
-    .hero-btn.primary{
-        background:linear-gradient(135deg, #f4b544, #ffd16d);
-        color:#162033;
-        box-shadow:0 14px 28px rgba(244,181,68,.30);
-    }
-
-    .hero-btn.primary:hover{
-        transform:translateY(-2px);
-        color:#162033;
-    }
-
-    .hero-btn.secondary{
-        background:rgba(255,255,255,.14);
-        color:#fff;
-        border:1px solid rgba(255,255,255,.24);
-        backdrop-filter: blur(8px);
-    }
-
-    .hero-btn.secondary:hover{
-        transform:translateY(-2px);
-        color:#fff;
-        background:rgba(255,255,255,.18);
-    }
-
-    /* FEATURE CARDS CLICKABLE */
     .hero-feature-grid{
         display:grid;
         grid-template-columns: repeat(4, 1fr);
@@ -320,7 +271,6 @@
         font-weight:600;
     }
 
-    /* hero right side */
     .hero-right{
         position:relative;
         min-height:480px;
@@ -652,7 +602,7 @@
     .bus-bottom{
         display:flex;
         align-items:center;
-        justify-content:space-between;
+        justify-content:flex-start;
         gap:14px;
         flex-wrap:wrap;
     }
@@ -680,26 +630,6 @@
         font-size:24px;
         font-weight:900;
         line-height:1;
-    }
-
-    .book-btn{
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        min-width:165px;
-        padding:14px 18px;
-        border-radius:16px;
-        background:linear-gradient(135deg, #f4b544, #ffd16d);
-        color:#162033;
-        text-decoration:none !important;
-        font-weight:900;
-        box-shadow:0 14px 28px rgba(244,181,68,.24);
-        transition:.25s ease;
-    }
-
-    .book-btn:hover{
-        color:#162033;
-        transform:translateY(-2px);
     }
 
     .no-bus{
@@ -1113,20 +1043,13 @@
     }
 
     @media (max-width: 575px){
-        .hero-actions{
-            flex-direction:column;
-        }
-        .hero-btn{
-            width:100%;
-        }
         .hero-strip-btn{
             width:100%;
         }
         .bus-bottom{
             flex-direction:column;
-            align-items:stretch;
+            align-items:flex-start;
         }
-        .book-btn,
         .cta-btn{
             width:100%;
         }
@@ -1144,7 +1067,6 @@
             <div class="hero-bg-wrap">
                 <div class="hero-overlay-content">
 
-                    <!-- top transparent header style strip -->
                     <div class="hero-top-strip">
                         <div class="hero-strip-left">
                             <div class="hero-strip-logo">
@@ -1163,7 +1085,6 @@
                     </div>
 
                     <div class="hero-main">
-                        <!-- LEFT CONTENT -->
                         <div class="hero-left">
                             <div class="hero-badge">🚌 Premium Bus Booking Platform</div>
 
@@ -1178,37 +1099,29 @@
                                 with a modern, clean and professional travel experience.
                             </p>
 
-                            
-
-                            <!-- CLICKABLE FEATURE CARDS -->
                             <div class="hero-feature-grid">
-                                <div class="hero-feature-card"
-                                     onclick="openServicePanel('fastSearch')">
+                                <div class="hero-feature-card" onclick="openServicePanel('fastSearch')">
                                     <h4>Fast Search</h4>
                                     <p>Find routes and buses quickly with a smooth booking flow.</p>
                                 </div>
 
-                                <div class="hero-feature-card"
-                                     onclick="openServicePanel('easyBooking')">
+                                <div class="hero-feature-card" onclick="openServicePanel('easyBooking')">
                                     <h4>Easy Booking</h4>
                                     <p>Reserve your trip in a simple and passenger-friendly interface.</p>
                                 </div>
 
-                                <div class="hero-feature-card"
-                                     onclick="openServicePanel('trackStatus')">
+                                <div class="hero-feature-card" onclick="openServicePanel('trackStatus')">
                                     <h4>Track Status</h4>
                                     <p>Check booking and payment updates anytime from My Bookings.</p>
                                 </div>
 
-                                <div class="hero-feature-card"
-                                     onclick="openServicePanel('secureUPI')">
+                                <div class="hero-feature-card" onclick="openServicePanel('secureUPI')">
                                     <h4>Secure UPI</h4>
                                     <p>Pay safely with QR based UPI payment and screenshot proof.</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- RIGHT CONTENT -->
                         <div class="hero-right">
                             <div class="logo-orbit">
                                 <div class="orbit-badge one">Luxury Buses</div>
@@ -1345,10 +1258,6 @@
                                         <small>Price / Seat</small>
                                         <div>₹ {{ bus.price }}</div>
                                     </div>
-
-                                    <a href="{% url 'findbus' %}" class="book-btn">
-                                        Book This Route
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -1362,7 +1271,7 @@
                         There are currently no buses added to the system. Once buses are available,
                         they will automatically appear here.
                     </p>
-                    <a href="{% url 'findbus' %}" class="hero-btn primary">Go to Find Bus</a>
+                    <a href="{% url 'findbus' %}" class="cta-btn">Go to Find Bus</a>
                 </div>
             {% endif %}
         </div>
@@ -1413,7 +1322,7 @@
         <div class="container">
             <div class="cta-card">
                 <div class="cta-content">
-                    <h2></h2>
+                    <h2>Start Your Journey With TripX</h2>
                     <p>
                         Search routes, reserve your seat and complete your travel booking with TripX —
                         a modern bus reservation experience for your users.
@@ -1443,9 +1352,7 @@
         <h3 id="panelTitle">Service Title</h3>
         <p id="panelDesc">Service description</p>
 
-        <div class="panel-points" id="panelPoints">
-            <!-- JS points here -->
-        </div>
+        <div class="panel-points" id="panelPoints"></div>
 
         <div class="panel-actions">
             <a href="{% url 'findbus' %}" class="panel-btn primary">Go to Find Bus</a>
@@ -1594,5 +1501,4 @@
         }
     });
 </script>
-
 {% endblock %}
