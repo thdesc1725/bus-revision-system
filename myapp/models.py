@@ -55,7 +55,11 @@ class Book(models.Model):
     date = models.DateField()
     time = models.TimeField()
 
-    status = models.CharField(max_length=20, choices=TICKET_STATUSES, default=PENDING)
+    status = models.CharField(
+        max_length=20,
+        choices=TICKET_STATUSES,
+        default=PENDING
+    )
 
     payment_status = models.CharField(
         max_length=30,
@@ -64,7 +68,6 @@ class Book(models.Model):
     )
 
     payment_id = models.CharField(max_length=100, blank=True, null=True)
-
     payment_screenshot = models.ImageField(upload_to='payments/', blank=True, null=True)
     upi_reference = models.CharField(max_length=100, blank=True, null=True)
 

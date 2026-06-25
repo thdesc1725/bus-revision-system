@@ -858,7 +858,6 @@
                     </div>
                 </div>
 
-                <!-- Only your actual model details -->
                 <div class="ticket-info-grid">
                     <div class="info-item">
                         <div class="info-label">Passenger Name</div>
@@ -962,12 +961,16 @@
                     <div class="qr-frame">
                         {% if qr_url %}
                             <img src="{{ qr_url }}" alt="UPI QR Code">
+                        {% else %}
+                            <div style="padding:40px 20px; color:#64748b; font-weight:700;">
+                                QR code not available
+                            </div>
                         {% endif %}
                     </div>
 
                     <div class="upi-details">
                         <div class="upi-row">
-                            <small>D</small>
+                            <small>UPI ID</small>
                             <div>{{ upi_id }}</div>
                         </div>
 
@@ -1069,7 +1072,7 @@
 
                 setTimeout(function(){
                     form.submit();
-                }, 2000);   // 2 second loading animation
+                }, 2000);
             });
         }
     })();

@@ -123,9 +123,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # =========================
 # EMAIL SETTINGS
 # IMPORTANT:
-# 1) Use your Gmail address below
-# 2) DO NOT use your normal Gmail password
-# 3) Use Google APP PASSWORD here
+# Use Gmail + Google App Password
 # =========================
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

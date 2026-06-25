@@ -1,5 +1,8 @@
 from django.contrib import admin, messages
 from django.utils.html import format_html
+from django.conf import settings
+from django.core.mail import send_mail
+
 from .models import Bus, Book
 
 
@@ -116,7 +119,18 @@ class BookAdmin(admin.ModelAdmin):
         approved_count = 0
 
         for book in queryset:
+            # already confirmed -> skip
             if book.status == 'CONFIRMED':
+                continue
+
+            # optional strict check:
+            # only approve when payment proof submitted
+            if book.payment_status != 'PENDING_VERIFICATION':
+                self.message_user(
+                    request,
+                    f"Booking #{book.id} cannot be approved because payment proof is not submitted.",
+                    level=messages.WARNING
+                )
                 continue
 
             try:
@@ -134,6 +148,7 @@ class BookAdmin(admin.ModelAdmin):
                 book.status = 'CANCELLED'
                 book.payment_status = 'FAILED'
                 book.save()
+
                 self.message_user(
                     request,
                     f"Booking #{book.id} cancelled because seats are not available.",
@@ -145,6 +160,7 @@ class BookAdmin(admin.ModelAdmin):
             bus.rem = int(bus.rem) - int(book.nos)
             bus.save()
 
+            # confirm booking
             book.status = 'CONFIRMED'
             book.payment_status = 'PAID'
 
@@ -152,14 +168,66 @@ class BookAdmin(admin.ModelAdmin):
                 book.payment_id = f"PAY{book.id}{book.userid}"
 
             book.save()
+
+            # =========================
+            # SEND CONFIRMATION EMAIL
+            # =========================
+            subject = "Bus Ticket Confirmed"
+            message = f"""
+Hello {book.name},
+
+Your bus ticket has been CONFIRMED successfully.
+
+Ticket Details:
+Booking ID: {book.id}
+Bus Name: {book.bus_name}
+From: {book.source}
+To: {book.dest}
+Journey Date: {book.date}
+Journey Time: {book.time}
+Number of Seats: {book.nos}
+Price per Seat: ₹{book.price}
+Total Price: ₹{book.total_price}
+
+Ticket Status: {book.status}
+Payment Status: {book.payment_status}
+Payment ID: {book.payment_id}
+
+Thank you for booking with us.
+"""
+
+            try:
+                result = send_mail(
+                    subject,
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [book.email],
+                    fail_silently=False,
+                )
+                print("ADMIN APPROVAL MAIL RESULT =", result)
+                print("MAIL SENT TO =", book.email)
+
+            except Exception as e:
+                print("ADMIN APPROVAL EMAIL ERROR =", str(e))
+                self.message_user(
+                    request,
+                    f"Booking #{book.id} approved but email failed: {str(e)}",
+                    level=messages.WARNING
+                )
+
             approved_count += 1
 
-        self.message_user(request, f"{approved_count} booking(s) approved successfully.")
+        self.message_user(
+            request,
+            f"{approved_count} booking(s) approved successfully.",
+            level=messages.SUCCESS
+        )
 
     approve_payment.short_description = "Approve selected payment(s)"
 
     def reject_payment(self, request, queryset):
         updated = 0
+
         for book in queryset:
             if book.status == 'CONFIRMED':
                 continue
@@ -169,6 +237,10 @@ class BookAdmin(admin.ModelAdmin):
             book.save()
             updated += 1
 
-        self.message_user(request, f"{updated} booking(s) rejected/cancelled successfully.")
+        self.message_user(
+            request,
+            f"{updated} booking(s) rejected/cancelled successfully.",
+            level=messages.SUCCESS
+        )
 
     reject_payment.short_description = "Reject selected payment(s)"

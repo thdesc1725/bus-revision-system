@@ -8,7 +8,6 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Bus, Book
@@ -19,7 +18,8 @@ from .models import Bus, Book
 # =========================
 def home(request):
     if request.user.is_authenticated:
-        return render(request, "myapp/home.html")
+        bus_list = Bus.objects.all().order_by("date", "time")
+        return render(request, "myapp/home.html", {"bus_list": bus_list})
     return render(request, "myapp/signin.html")
 
 
@@ -61,12 +61,6 @@ def findbus(request):
 # =========================
 @login_required(login_url="signin")
 def bookings(request):
-    """
-    User selects bus and seats.
-    Booking created with PENDING status.
-    Email sent immediately after booking creation.
-    Then redirect to payment page.
-    """
     context = {}
 
     if request.method == "POST":
@@ -75,26 +69,25 @@ def bookings(request):
             seats_r = int(request.POST.get("no_seats"))
         except (TypeError, ValueError):
             context["error"] = "Invalid bus ID or seat count"
-            return render(request, "myapp/findbus.html", context)
+            return render(request, "myapp/error.html", context)
 
         if seats_r <= 0:
             context["error"] = "Seat count must be greater than 0"
-            return render(request, "myapp/findbus.html", context)
+            return render(request, "myapp/error.html", context)
 
         try:
             bus = Bus.objects.get(id=bus_id)
         except Bus.DoesNotExist:
             context["error"] = "Bus not found"
-            return render(request, "myapp/findbus.html", context)
+            return render(request, "myapp/error.html", context)
 
         if int(bus.rem) < seats_r:
             context["error"] = "Sorry, not enough seats available"
-            return render(request, "myapp/findbus.html", context)
+            return render(request, "myapp/error.html", context)
 
-        # Make sure logged-in user has email
         if not request.user.email:
-            context["error"] = "Your account does not have an email address. Please sign up with a valid email."
-            return render(request, "myapp/findbus.html", context)
+            context["error"] = "Your account does not have an email address."
+            return render(request, "myapp/error.html", context)
 
         total_cost = Decimal(seats_r) * bus.price
 
@@ -112,53 +105,14 @@ def bookings(request):
             total_price=total_cost,
             date=bus.date,
             time=bus.time,
-            status="PENDING",
-            payment_status="PENDING",
+            status=Book.PENDING,
+            payment_status=Book.PAYMENT_PENDING,
         )
 
-        # SEND EMAIL IMMEDIATELY AFTER BOOKING CREATION
-        subject = "Bus Booking Created Successfully"
-        message = f"""
-Hello {book.name},
-
-Your bus booking has been created successfully.
-
-Booking Details:
-Booking ID: {book.id}
-Bus Name: {book.bus_name}
-From: {book.source}
-To: {book.dest}
-Journey Date: {book.date}
-Journey Time: {book.time}
-Number of Seats: {book.nos}
-Price per Seat: ₹{book.price}
-Total Price: ₹{book.total_price}
-
-Booking Status: {book.status}
-Payment Status: {book.payment_status}
-
-Please complete your payment to confirm the booking.
-
-Thank you for booking with us.
-"""
-
-        try:
-            result = send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [book.email],
-                fail_silently=False,
-            )
-            print("MAIL RESULT =", result)
-            print("MAIL SENT TO =", book.email)
-        except Exception as e:
-            print("EMAIL ERROR =", str(e))
-
-        messages.success(request, "Booking created successfully. Confirmation email attempted.")
+        messages.success(request, "Booking created successfully. Please complete payment.")
         return redirect("payment", booking_id=book.id)
 
-    return redirect("findbus")
+    return redirect("home")
 
 
 # =========================
@@ -166,18 +120,14 @@ Thank you for booking with us.
 # =========================
 @login_required(login_url="signin")
 def payment_page(request, booking_id):
-    """
-    Show booking details + UPI QR
-    """
     book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
 
-    if book.status == "CONFIRMED":
+    if book.status == Book.CONFIRMED:
         messages.success(request, "This booking is already confirmed.")
         return redirect("seebookings")
 
-    # change to your real UPI
-    upi_id = "yourupi@oksbi"
-    payee_name = "Vallacar Transit"
+    upi_id = "yourupi@oksbi"   # <-- yaha apna real UPI daalna
+    payee_name = "TravelMate"
 
     upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={book.total_price}&cu=INR&tn=Booking#{book.id}"
 
@@ -205,10 +155,6 @@ def payment_page(request, booking_id):
 # =========================
 @login_required(login_url="signin")
 def submit_payment(request, booking_id):
-    """
-    User uploads UTR/UPI ref no + screenshot
-    Payment status becomes PENDING_VERIFICATION
-    """
     book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
 
     if request.method != "POST":
@@ -218,7 +164,7 @@ def submit_payment(request, booking_id):
     screenshot = request.FILES.get("payment_screenshot")
 
     upi_id = "yourupi@oksbi"
-    payee_name = "Vallacar Transit"
+    payee_name = "TravelMate"
     upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={book.total_price}&cu=INR&tn=Booking#{book.id}"
 
     qr_folder = os.path.join(settings.MEDIA_ROOT, "qr_codes")
@@ -243,7 +189,7 @@ def submit_payment(request, booking_id):
 
     book.upi_reference = upi_reference
     book.payment_screenshot = screenshot
-    book.payment_status = "PENDING_VERIFICATION"
+    book.payment_status = Book.PAYMENT_PENDING_VERIFICATION
     book.save()
 
     messages.success(request, "Payment proof submitted successfully. Waiting for admin verification.")
@@ -257,13 +203,13 @@ def submit_payment(request, booking_id):
 def payment_failed(request, booking_id):
     book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
 
-    if book.status == "CONFIRMED":
+    if book.status == Book.CONFIRMED:
         return render(request, "myapp/error.html", {
             "error": "This booking is already confirmed and cannot be cancelled."
         })
 
-    book.payment_status = "FAILED"
-    book.status = "CANCELLED"
+    book.payment_status = Book.PAYMENT_FAILED
+    book.status = Book.CANCELLED
     book.save()
 
     return render(request, "myapp/error.html", {
@@ -288,20 +234,20 @@ def cancellings(request):
         try:
             book = Book.objects.get(id=int(booking_id), userid=request.user.id)
 
-            if book.status == "CANCELLED":
+            if book.status == Book.CANCELLED:
                 return render(request, "myapp/error.html", {
                     "error": "This booking is already cancelled."
                 })
 
-            if book.status == "CONFIRMED":
+            if book.status == Book.CONFIRMED:
                 bus = Bus.objects.get(id=book.busid)
                 bus.rem = int(bus.rem) + int(book.nos)
                 bus.save()
 
-            book.status = "CANCELLED"
+            book.status = Book.CANCELLED
 
-            if book.payment_status == "PAID":
-                book.payment_status = "REFUNDED"
+            if book.payment_status == Book.PAYMENT_PAID:
+                book.payment_status = Book.PAYMENT_REFUNDED
 
             book.save()
             messages.success(request, "Booking cancelled successfully.")
@@ -319,7 +265,7 @@ def cancellings(request):
 # =========================
 @login_required(login_url="signin")
 def seebookings(request):
-    book_list = Book.objects.filter(userid=request.user.id).order_by('-id')
+    book_list = Book.objects.filter(userid=request.user.id).order_by("-id")
     return render(request, "myapp/booklist.html", {"book_list": book_list})
 
 
@@ -397,4 +343,4 @@ def success(request):
     return render(request, "myapp/success.html", {
         "user": request.user.username,
         "id": request.user.id
-    })    
+    })
