@@ -1,126 +1,222 @@
 {% extends 'myapp/base.html' %}
+{% load static %}
 {% block content %}
 
 <style>
     :root{
-        --blue1:#00416A;
-        --blue2:#1CB5E0;
-        --orange1:#ff7a18;
-        --orange2:#ffb347;
-        --green1:#11998e;
-        --green2:#38ef7d;
-        --dark:#0f172a;
-        --text:#1f2937;
-        --muted:#64748b;
-        --card:#ffffff;
-        --line:#e8eef8;
+        --navy:#0f2747;
+        --navy-2:#173b68;
+        --blue:#245c97;
+        --sky:#dbeafe;
+        --gold:#f4b544;
+        --gold-soft:#fff5dd;
+        --text:#142133;
+        --muted:#667085;
+        --line:#e7eef7;
         --soft:#f8fbff;
+        --white:#ffffff;
+        --shadow:0 16px 40px rgba(15, 39, 71, 0.10);
+        --shadow-lg:0 24px 60px rgba(15, 39, 71, 0.16);
+        --radius-xl:28px;
+        --radius-lg:22px;
+        --radius-md:16px;
     }
 
     body{
-        background:#f4f8fb;
+        background: linear-gradient(180deg, #f6f9fe 0%, #eef4fb 45%, #f8fbff 100%);
+        color:var(--text);
     }
 
-    /* ================= HERO ================= */
-    .home-hero{
-        position:relative;
-        min-height: 92vh;
-        background:
-            url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1600&q=80');
-        background-size: cover;
-        background-position: center;
-        display:flex;
-        align-items:center;
-        padding: 50px 0 80px;
+    .tripx-home{
         overflow:hidden;
     }
 
-    /* IMPORTANT: no black shade */
-    .hero-glow-1,
-    .hero-glow-2{
+    /* ================= HERO ================= */
+    .hero-section{
+        position:relative;
+        padding: 26px 0 80px;
+    }
+
+    .hero-bg-wrap{
+        position:relative;
+        border-radius:38px;
+        overflow:hidden;
+        min-height:640px;
+        box-shadow: var(--shadow-lg);
+        background:
+            linear-gradient(135deg, rgba(8,24,48,.50), rgba(12,35,67,.32)),
+            url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+        border:1px solid rgba(255,255,255,.55);
+    }
+
+    .hero-bg-wrap::before{
+        content:"";
         position:absolute;
-        border-radius:50%;
+        inset:0;
+        background:
+            radial-gradient(circle at 14% 18%, rgba(255,255,255,.16), transparent 26%),
+            radial-gradient(circle at 88% 18%, rgba(255,255,255,.12), transparent 22%),
+            linear-gradient(180deg, rgba(10,28,52,.12), rgba(10,28,52,.22));
         pointer-events:none;
-        z-index:1;
     }
 
-    .hero-glow-1{
-        width:420px;
-        height:420px;
-        top:-120px;
-        right:-80px;
-        background: rgba(28,181,224,0.16);
-        filter: blur(10px);
-    }
-
-    .hero-glow-2{
-        width:300px;
-        height:300px;
-        bottom:-80px;
-        left:-60px;
-        background: rgba(255,122,24,0.14);
-        filter: blur(10px);
-    }
-
-    .hero-inner{
+    .hero-overlay-content{
         position:relative;
         z-index:2;
-        width:100%;
+        padding: 34px 34px 34px;
+        min-height:640px;
+        display:flex;
+        flex-direction:column;
     }
 
-    .hero-grid{
-        display:grid;
-        grid-template-columns: 1.15fr 0.95fr;
-        gap:34px;
+    /* top transparent strip */
+    .hero-top-strip{
+        display:flex;
         align-items:center;
+        justify-content:space-between;
+        gap:16px;
+        padding:16px 18px;
+        border-radius:24px;
+        background:rgba(255,255,255,.12);
+        border:1px solid rgba(255,255,255,.20);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        margin-bottom:30px;
+    }
+
+    .hero-strip-left{
+        display:flex;
+        align-items:center;
+        gap:14px;
+        min-width:0;
+    }
+
+    .hero-strip-logo{
+        width:62px;
+        height:62px;
+        border-radius:50%;
+        overflow:hidden;
+        flex-shrink:0;
+        background:rgba(255,255,255,.20);
+        border:2px solid rgba(255,255,255,.40);
+        box-shadow:0 10px 24px rgba(0,0,0,.14);
+    }
+
+    .hero-strip-logo img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        display:block;
+    }
+
+    .hero-strip-text h2{
+        margin:0;
+        color:#fff;
+        font-size:28px;
+        font-weight:900;
+        letter-spacing:.3px;
+    }
+
+    .hero-strip-text p{
+        margin:6px 0 0;
+        color:rgba(255,255,255,.92);
+        font-size:14px;
+        font-weight:500;
+    }
+
+    .hero-strip-right{
+        display:flex;
+        gap:12px;
+        flex-wrap:wrap;
+        justify-content:flex-end;
+    }
+
+    .hero-strip-btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        padding:12px 18px;
+        border-radius:14px;
+        text-decoration:none !important;
+        font-weight:800;
+        font-size:14px;
+        transition:.25s ease;
+        border:1px solid rgba(255,255,255,.20);
+        white-space:nowrap;
+    }
+
+    .hero-strip-btn.primary{
+        background:linear-gradient(135deg, #f5b63d, #ffcc69);
+        color:#142133;
+        box-shadow:0 12px 26px rgba(244,181,68,.28);
+    }
+
+    .hero-strip-btn.primary:hover{
+        transform:translateY(-2px);
+        color:#142133;
+    }
+
+    .hero-strip-btn.secondary{
+        background:rgba(255,255,255,.15);
+        color:#fff;
+        backdrop-filter: blur(8px);
+    }
+
+    .hero-strip-btn.secondary:hover{
+        transform:translateY(-2px);
+        color:#fff;
+        background:rgba(255,255,255,.20);
+    }
+
+    /* hero content */
+    .hero-main{
+        display:grid;
+        grid-template-columns: 1.08fr .92fr;
+        gap:28px;
+        align-items:center;
+        flex:1;
     }
 
     .hero-left{
-        background: rgba(255,255,255,0.88);
-        backdrop-filter: blur(8px);
-        border:1px solid rgba(255,255,255,0.65);
-        border-radius: 30px;
-        padding: 38px 34px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.14);
-        animation: fadeUp 0.9s ease;
+        padding: 8px 4px 0 4px;
+        color:#fff;
     }
 
     .hero-badge{
         display:inline-flex;
         align-items:center;
-        gap:8px;
-        padding:10px 16px;
+        gap:10px;
+        padding:10px 18px;
         border-radius:999px;
-        background: linear-gradient(135deg, rgba(0,65,106,0.10), rgba(28,181,224,0.12));
-        border:1px solid rgba(28,181,224,0.18);
-        color: var(--blue1);
-        font-weight:800;
+        background:rgba(255,255,255,.14);
+        border:1px solid rgba(255,255,255,.22);
+        backdrop-filter: blur(8px);
+        color:#fff;
         font-size:14px;
-        margin-bottom:18px;
+        font-weight:800;
+        margin-bottom:20px;
     }
 
     .hero-title{
-        font-size:54px;
-        line-height:1.08;
+        margin:0 0 18px;
+        font-size:58px;
+        line-height:1.05;
         font-weight:900;
-        color:#08243b;
-        margin:0 0 16px;
         letter-spacing:.2px;
+        max-width:760px;
+        text-shadow:0 8px 26px rgba(0,0,0,.18);
     }
 
     .hero-title .accent{
-        background: linear-gradient(135deg, var(--orange1), #ff9f43);
-        -webkit-background-clip:text;
-        -webkit-text-fill-color:transparent;
-        background-clip:text;
+        color:#ffd978;
     }
 
     .hero-sub{
+        max-width:690px;
+        margin:0 0 28px;
+        color:rgba(255,255,255,.92);
         font-size:18px;
-        color:#425466;
-        line-height:1.75;
-        margin-bottom:28px;
-        max-width: 90%;
+        line-height:1.8;
         font-weight:500;
     }
 
@@ -128,225 +224,193 @@
         display:flex;
         flex-wrap:wrap;
         gap:14px;
-        margin-bottom:26px;
+        margin-bottom:28px;
     }
 
     .hero-btn{
         display:inline-flex;
         align-items:center;
         justify-content:center;
-        padding:14px 24px;
+        min-width:190px;
+        padding:15px 22px;
         border-radius:16px;
-        text-decoration:none !important;
-        font-weight:800;
         font-size:15px;
-        transition:.28s ease;
-        border:none;
-    }
-
-    .hero-btn-primary{
-        color:#fff;
-        background: linear-gradient(135deg, var(--blue1), var(--blue2));
-        box-shadow:0 14px 28px rgba(0,65,106,0.22);
-    }
-
-    .hero-btn-primary:hover{
-        transform:translateY(-2px);
-        color:#fff;
-        box-shadow:0 18px 34px rgba(0,65,106,0.28);
-    }
-
-    .hero-btn-secondary{
-        color:#0f4c81;
-        background:#ffffff;
-        border:1px solid #dce9ff;
-        box-shadow:0 10px 22px rgba(0,0,0,0.06);
-    }
-
-    .hero-btn-secondary:hover{
-        transform:translateY(-2px);
-        color:#0f4c81;
-        background:#f8fbff;
-    }
-
-    .hero-points{
-        display:grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap:14px;
-        margin-top:8px;
-    }
-
-    .hero-point{
-        background:#fff;
-        border:1px solid #e8eef8;
-        border-radius:18px;
-        padding:16px;
-        box-shadow:0 10px 24px rgba(15,23,42,0.06);
-        text-align:center;
-    }
-
-    .hero-point h4{
-        margin:0 0 6px;
-        font-size:24px;
         font-weight:900;
-        color:#0f172a;
+        text-decoration:none !important;
+        transition:.25s ease;
+        border:none;
+        cursor:pointer;
     }
 
-    .hero-point p{
-        margin:0;
-        color:#64748b;
-        font-size:13px;
-        font-weight:700;
+    .hero-btn.primary{
+        background:linear-gradient(135deg, #f4b544, #ffd16d);
+        color:#162033;
+        box-shadow:0 14px 28px rgba(244,181,68,.30);
     }
 
-    /* ================= HERO RIGHT CARD ================= */
-    .hero-right{
-        position:relative;
-        animation: floatUp 1.1s ease;
+    .hero-btn.primary:hover{
+        transform:translateY(-2px);
+        color:#162033;
     }
 
-    .hero-card{
-        background: rgba(255,255,255,0.92);
+    .hero-btn.secondary{
+        background:rgba(255,255,255,.14);
+        color:#fff;
+        border:1px solid rgba(255,255,255,.24);
+        backdrop-filter: blur(8px);
+    }
+
+    .hero-btn.secondary:hover{
+        transform:translateY(-2px);
+        color:#fff;
+        background:rgba(255,255,255,.18);
+    }
+
+    /* FEATURE CARDS CLICKABLE */
+    .hero-feature-grid{
+        display:grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap:14px;
+        max-width:850px;
+    }
+
+    .hero-feature-card{
+        background:rgba(255,255,255,.14);
+        border:1px solid rgba(255,255,255,.18);
+        border-radius:20px;
+        padding:18px 16px;
         backdrop-filter: blur(10px);
-        border:1px solid rgba(255,255,255,0.75);
-        border-radius:30px;
-        box-shadow:0 24px 50px rgba(0,0,0,0.16);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow:0 10px 24px rgba(0,0,0,.10);
+        text-align:center;
+        cursor:pointer;
+        transition:.28s ease;
+        position:relative;
         overflow:hidden;
     }
 
-    .hero-card-head{
-        background: linear-gradient(135deg, var(--orange1), var(--orange2));
+    .hero-feature-card:hover{
+        transform:translateY(-4px);
+        background:rgba(255,255,255,.20);
+        box-shadow:0 16px 34px rgba(0,0,0,.18);
+    }
+
+    .hero-feature-card::after{
+        content:"View Details";
+        display:inline-block;
+        margin-top:10px;
+        font-size:12px;
+        font-weight:800;
+        color:#ffe39a;
+        letter-spacing:.3px;
+    }
+
+    .hero-feature-card h4{
+        margin:0 0 6px;
         color:#fff;
-        padding:24px 24px 20px;
-        position:relative;
-    }
-
-    .hero-card-head::after{
-        content:"";
-        position:absolute;
-        left:0;
-        right:0;
-        bottom:-1px;
-        height:18px;
-        background:
-            radial-gradient(circle at 9px 9px, transparent 9px, rgba(255,255,255,.92) 9px);
-        background-size:18px 18px;
-        background-repeat:repeat-x;
-        opacity:.28;
-    }
-
-    .hero-card-head h3{
-        margin:0;
-        font-size:28px;
+        font-size:18px;
         font-weight:900;
     }
 
-    .hero-card-head p{
-        margin:8px 0 0;
-        font-size:14px;
-        opacity:.96;
-    }
-
-    .hero-card-body{
-        padding:24px;
-    }
-
-    .mini-route{
-        background: linear-gradient(180deg, #fbfdff, #f5f9ff);
-        border:1px solid #dce9ff;
-        border-radius:22px;
-        padding:20px 16px;
-        display:grid;
-        grid-template-columns: 1fr auto 1fr;
-        gap:12px;
-        align-items:center;
-        margin-bottom:18px;
-    }
-
-    .mini-city{
-        text-align:center;
-    }
-
-    .mini-city h5{
+    .hero-feature-card p{
         margin:0;
-        color:#0f4c81;
-        font-size:22px;
-        font-weight:900;
-    }
-
-    .mini-city p{
-        margin:6px 0 0;
-        color:#64748b;
+        color:rgba(255,255,255,.88);
         font-size:13px;
-        font-weight:700;
+        line-height:1.55;
+        font-weight:600;
     }
 
-    .mini-center{
-        min-width:90px;
-        text-align:center;
-    }
-
-    .mini-line{
-        height:2px;
-        background: linear-gradient(90deg,#c7ddff,#7fb6ff);
+    /* hero right side */
+    .hero-right{
         position:relative;
-        margin-bottom:10px;
-    }
-
-    .mini-line::before{
-        content:"🚌";
-        position:absolute;
-        left:50%;
-        top:50%;
-        transform:translate(-50%, -58%);
-        width:40px;
-        height:40px;
-        border-radius:50%;
-        background:#fff;
-        border:2px solid #d9e8ff;
+        min-height:480px;
         display:flex;
         align-items:center;
         justify-content:center;
-        box-shadow:0 10px 20px rgba(28,181,224,.16);
     }
 
-    .mini-center span{
-        font-size:12px;
-        font-weight:900;
-        color:#ff7a18;
-        letter-spacing:.5px;
+    .logo-orbit{
+        position:relative;
+        width:440px;
+        height:440px;
+        max-width:100%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
     }
 
-    .hero-feature-list{
-        display:grid;
-        grid-template-columns: 1fr 1fr;
-        gap:12px;
+    .logo-orbit::before{
+        content:"";
+        position:absolute;
+        inset:18px;
+        border-radius:50%;
+        border:2px dashed rgba(255,255,255,.30);
+        animation: spinSlow 22s linear infinite;
     }
 
-    .hero-feature{
-        background:#fbfdff;
-        border:1px solid #e8eef8;
-        border-radius:16px;
-        padding:14px;
+    .logo-orbit::after{
+        content:"";
+        position:absolute;
+        inset:58px;
+        border-radius:50%;
+        border:2px solid rgba(255,255,255,.18);
+        box-shadow:0 0 0 12px rgba(255,255,255,.04);
+        animation: spinReverse 28s linear infinite;
     }
 
-    .hero-feature strong{
-        display:block;
-        color:#0f172a;
-        font-size:15px;
-        margin-bottom:4px;
-    }
-
-    .hero-feature span{
-        color:#64748b;
+    .orbit-badge{
+        position:absolute;
+        z-index:2;
+        background:rgba(255,255,255,.14);
+        border:1px solid rgba(255,255,255,.22);
+        color:#fff;
+        border-radius:999px;
+        padding:10px 14px;
         font-size:13px;
-        font-weight:600;
-        line-height:1.5;
+        font-weight:800;
+        backdrop-filter: blur(8px);
+        box-shadow:0 10px 22px rgba(0,0,0,.10);
+    }
+
+    .orbit-badge.one{ top:18px; left:50%; transform:translateX(-50%); }
+    .orbit-badge.two{ right:8px; top:50%; transform:translateY(-50%); }
+    .orbit-badge.three{ bottom:22px; left:50%; transform:translateX(-50%); }
+    .orbit-badge.four{ left:8px; top:50%; transform:translateY(-50%); }
+
+    .hero-logo-core{
+        position:relative;
+        z-index:3;
+        width:270px;
+        height:270px;
+        border-radius:50%;
+        overflow:hidden;
+        background:#fff;
+        border:10px solid rgba(255,255,255,.42);
+        box-shadow:
+            0 30px 60px rgba(0,0,0,.22),
+            0 0 0 18px rgba(255,255,255,.10);
+    }
+
+    .hero-logo-core img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        display:block;
+    }
+
+    @keyframes spinSlow{
+        from{ transform:rotate(0deg); }
+        to{ transform:rotate(360deg); }
+    }
+
+    @keyframes spinReverse{
+        from{ transform:rotate(360deg); }
+        to{ transform:rotate(0deg); }
     }
 
     /* ================= SECTION COMMON ================= */
     .section-wrap{
-        padding: 72px 0;
+        padding:78px 0;
     }
 
     .section-head{
@@ -354,123 +418,109 @@
         margin-bottom:34px;
     }
 
-    .section-head .tag{
+    .section-tag{
         display:inline-block;
-        background:#eef7ff;
-        color:#0f4c81;
-        font-weight:800;
-        padding:9px 16px;
+        padding:10px 16px;
         border-radius:999px;
-        border:1px solid #d7ebff;
+        background:#eef5ff;
+        border:1px solid #d8e7fb;
+        color:var(--blue);
         font-size:13px;
-        margin-bottom:12px;
+        font-weight:900;
+        margin-bottom:14px;
     }
 
     .section-head h2{
         margin:0;
         font-size:40px;
-        color:#0f172a;
+        color:var(--text);
         font-weight:900;
+        letter-spacing:.2px;
     }
 
     .section-head p{
+        max-width:820px;
         margin:12px auto 0;
-        max-width:760px;
-        color:#64748b;
+        color:var(--muted);
         font-size:16px;
-        line-height:1.7;
+        line-height:1.8;
         font-weight:500;
     }
 
-    /* ================= QUICK ACTIONS ================= */
-    .quick-grid{
+    /* ================= SERVICES ================= */
+    .services-grid{
         display:grid;
         grid-template-columns: repeat(3, 1fr);
-        gap:22px;
+        gap:24px;
     }
 
-    .quick-card{
-        background:#fff;
-        border-radius:24px;
-        border:1px solid #e8eef8;
-        box-shadow:0 16px 34px rgba(15,23,42,0.08);
-        padding:26px 22px;
-        transition:.28s ease;
+    .service-card{
         position:relative;
+        background:#fff;
+        border:1px solid var(--line);
+        border-radius:28px;
         overflow:hidden;
+        box-shadow:var(--shadow);
+        transition:.28s ease;
     }
 
-    .quick-card:hover{
+    .service-card:hover{
         transform:translateY(-5px);
-        box-shadow:0 24px 44px rgba(15,23,42,0.12);
+        box-shadow:var(--shadow-lg);
     }
 
-    .quick-card::before{
+    .service-image{
+        height:210px;
+        background-size:cover;
+        background-position:center;
+        position:relative;
+    }
+
+    .service-image::before{
         content:"";
         position:absolute;
-        right:-30px;
-        top:-30px;
-        width:120px;
-        height:120px;
-        border-radius:50%;
-        background:rgba(28,181,224,0.08);
+        inset:0;
+        background:linear-gradient(180deg, rgba(8,24,48,.12), rgba(8,24,48,.42));
     }
 
-    .quick-icon{
-        width:70px;
-        height:70px;
-        border-radius:20px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:32px;
-        margin-bottom:18px;
-        box-shadow:0 12px 25px rgba(0,0,0,0.08);
+    .service-badge{
+        position:absolute;
+        left:18px;
+        top:18px;
+        z-index:2;
+        background:rgba(255,255,255,.92);
+        color:var(--navy);
+        border-radius:999px;
+        padding:8px 14px;
+        font-size:12px;
+        font-weight:900;
+        box-shadow:0 8px 18px rgba(0,0,0,.08);
     }
 
-    .quick-icon.blue{
-        background:linear-gradient(135deg, #0f4c81, #1cb5e0);
-        color:#fff;
+    .service-content{
+        padding:22px;
     }
 
-    .quick-icon.orange{
-        background:linear-gradient(135deg, #ff7a18, #ffb347);
-        color:#fff;
-    }
-
-    .quick-icon.green{
-        background:linear-gradient(135deg, #11998e, #38ef7d);
-        color:#fff;
-    }
-
-    .quick-card h3{
+    .service-content h3{
+        margin:0 0 10px;
+        color:var(--text);
         font-size:24px;
         font-weight:900;
-        color:#0f172a;
-        margin-bottom:10px;
     }
 
-    .quick-card p{
-        color:#64748b;
+    .service-content p{
+        margin:0;
+        color:var(--muted);
         font-size:15px;
-        line-height:1.7;
-        margin-bottom:18px;
+        line-height:1.8;
         font-weight:500;
     }
 
-    .quick-card a{
-        display:inline-block;
-        text-decoration:none !important;
-        color:#0f4c81;
-        font-weight:800;
-        font-size:15px;
-    }
-
-    /* ================= BUS LIST ================= */
+    /* ================= AVAILABLE BUSES ================= */
     .bus-section{
-        background: linear-gradient(180deg, #f8fbff 0%, #f4f9ff 100%);
-        border-top:1px solid #edf2ff;
-        border-bottom:1px solid #edf2ff;
+        background:linear-gradient(180deg, #f8fbff 0%, #f2f7ff 100%);
+        border-top:1px solid #edf3ff;
+        border-bottom:1px solid #edf3ff;
     }
 
     .bus-grid{
@@ -481,140 +531,138 @@
 
     .bus-card{
         background:#fff;
-        border-radius:26px;
+        border:1px solid var(--line);
+        border-radius:28px;
         overflow:hidden;
-        border:1px solid #e8eef8;
-        box-shadow:0 18px 36px rgba(15,23,42,0.08);
+        box-shadow:var(--shadow);
         transition:.28s ease;
-        position:relative;
     }
 
     .bus-card:hover{
         transform:translateY(-5px);
-        box-shadow:0 26px 48px rgba(15,23,42,0.12);
+        box-shadow:var(--shadow-lg);
     }
 
-    .bus-top{
-        background: linear-gradient(135deg, var(--blue1), var(--blue2));
-        color:#fff;
-        padding:22px 22px 18px;
+    .bus-image{
+        height:220px;
+        background-size:cover;
+        background-position:center;
         position:relative;
-        overflow:hidden;
     }
 
-    .bus-top::before{
+    .bus-image::before{
         content:"";
         position:absolute;
-        right:-35px;
-        top:-35px;
-        width:120px;
-        height:120px;
-        border-radius:50%;
-        background:rgba(255,255,255,0.10);
+        inset:0;
+        background:linear-gradient(180deg, rgba(15,39,71,.12), rgba(15,39,71,.48));
     }
 
-    .bus-top h3{
-        margin:0 0 8px;
-        font-size:24px;
+    .bus-title-badge{
+        position:absolute;
+        left:18px;
+        bottom:18px;
+        z-index:2;
+        background:rgba(255,255,255,.95);
+        color:var(--navy);
+        padding:10px 16px;
+        border-radius:16px;
         font-weight:900;
-        word-break: break-word;
-    }
-
-    .bus-top p{
-        margin:0;
-        font-size:13px;
-        opacity:.95;
-        font-weight:700;
-        letter-spacing:.3px;
+        font-size:16px;
+        box-shadow:0 10px 22px rgba(0,0,0,.10);
+        max-width:calc(100% - 36px);
     }
 
     .bus-body{
         padding:22px;
     }
 
-    .route-pill{
-        display:grid;
-        grid-template-columns: 1fr auto 1fr;
-        gap:12px;
+    .bus-route{
+        display:flex;
         align-items:center;
-        background:#f8fbff;
+        justify-content:space-between;
+        gap:12px;
+        background:#f9fbff;
         border:1px solid #e3edff;
         border-radius:18px;
-        padding:16px 14px;
-        margin-bottom:18px;
+        padding:16px;
+        margin-bottom:16px;
     }
 
-    .route-pill .city{
+    .bus-route-point{
+        flex:1;
         text-align:center;
     }
 
-    .route-pill .city strong{
+    .bus-route-point strong{
         display:block;
-        color:#0f172a;
         font-size:18px;
+        color:var(--text);
         font-weight:900;
-        word-break: break-word;
+        word-break:break-word;
     }
 
-    .route-pill .city span{
-        color:#64748b;
+    .bus-route-point span{
+        display:block;
+        margin-top:4px;
+        color:var(--muted);
         font-size:12px;
-        font-weight:700;
+        font-weight:800;
         text-transform:uppercase;
         letter-spacing:.5px;
     }
 
-    .route-pill .arrow{
-        color:#ff7a18;
-        font-size:20px;
+    .bus-route-arrow{
+        color:#d79a22;
+        font-size:22px;
         font-weight:900;
+        flex-shrink:0;
     }
 
     .bus-info{
         display:grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:1fr 1fr;
         gap:12px;
         margin-bottom:18px;
     }
 
     .bus-info-item{
         background:#fbfdff;
-        border:1px solid #edf2ff;
+        border:1px solid #edf3ff;
         border-radius:16px;
         padding:13px 14px;
     }
 
     .bus-info-item small{
         display:block;
-        color:#64748b;
+        color:var(--muted);
         font-size:11px;
         font-weight:800;
-        text-transform:uppercase;
         letter-spacing:.6px;
+        text-transform:uppercase;
         margin-bottom:5px;
     }
 
     .bus-info-item div{
-        color:#0f172a;
+        color:var(--text);
         font-size:15px;
         font-weight:800;
+        word-break:break-word;
     }
 
     .bus-bottom{
         display:flex;
         align-items:center;
         justify-content:space-between;
-        gap:12px;
+        gap:14px;
         flex-wrap:wrap;
-        margin-top:4px;
     }
 
     .price-box{
-        background:linear-gradient(135deg, #fff4e6, #fff0da);
-        border:1px solid #ffd49f;
-        border-radius:16px;
+        background:linear-gradient(135deg, #fff5df, #fff0d1);
+        border:1px solid #ffdca2;
+        border-radius:18px;
         padding:12px 14px;
-        min-width: 145px;
+        min-width:150px;
     }
 
     .price-box small{
@@ -628,7 +676,7 @@
     }
 
     .price-box div{
-        color:#d35400;
+        color:#d07b00;
         font-size:24px;
         font-weight:900;
         line-height:1;
@@ -638,33 +686,30 @@
         display:inline-flex;
         align-items:center;
         justify-content:center;
-        min-width:160px;
-        text-decoration:none !important;
-        border:none;
-        border-radius:16px;
+        min-width:165px;
         padding:14px 18px;
-        color:#fff;
+        border-radius:16px;
+        background:linear-gradient(135deg, #f4b544, #ffd16d);
+        color:#162033;
+        text-decoration:none !important;
         font-weight:900;
-        font-size:15px;
-        background:linear-gradient(135deg, var(--orange1), #ff9f43);
-        box-shadow:0 14px 28px rgba(255,122,24,.25);
+        box-shadow:0 14px 28px rgba(244,181,68,.24);
         transition:.25s ease;
     }
 
     .book-btn:hover{
+        color:#162033;
         transform:translateY(-2px);
-        color:#fff;
-        box-shadow:0 18px 34px rgba(255,122,24,.32);
     }
 
     .no-bus{
         max-width:820px;
         margin:0 auto;
         background:#fff;
-        border:1px solid #e8eef8;
-        border-radius:28px;
-        box-shadow:0 20px 40px rgba(15,23,42,0.08);
-        padding:42px 26px;
+        border:1px solid var(--line);
+        border-radius:30px;
+        box-shadow:var(--shadow);
+        padding:44px 26px;
         text-align:center;
     }
 
@@ -677,96 +722,97 @@
         align-items:center;
         justify-content:center;
         font-size:44px;
-        background:linear-gradient(135deg, #eef7ff, #f8fbff);
+        background:linear-gradient(135deg, #eef6ff, #f8fbff);
         border:1px solid #dce9ff;
     }
 
     .no-bus h3{
         margin:0 0 10px;
-        color:#0f172a;
         font-size:30px;
         font-weight:900;
+        color:var(--text);
     }
 
     .no-bus p{
-        color:#64748b;
+        margin:0 0 22px;
+        color:var(--muted);
         font-size:16px;
-        margin:0 0 20px;
-        line-height:1.7;
+        line-height:1.8;
     }
 
-    /* ================= WHY US ================= */
+    /* ================= WHY CHOOSE ================= */
     .why-grid{
         display:grid;
         grid-template-columns: repeat(4, 1fr);
-        gap:20px;
+        gap:22px;
     }
 
     .why-card{
         background:#fff;
-        border-radius:22px;
-        border:1px solid #e8eef8;
-        box-shadow:0 16px 34px rgba(15,23,42,0.08);
+        border:1px solid var(--line);
+        border-radius:24px;
         padding:24px 20px;
         text-align:center;
+        box-shadow:var(--shadow);
         transition:.25s ease;
     }
 
     .why-card:hover{
         transform:translateY(-4px);
+        box-shadow:var(--shadow-lg);
     }
 
     .why-icon{
-        width:72px;
-        height:72px;
-        border-radius:22px;
+        width:74px;
+        height:74px;
         margin:0 auto 16px;
+        border-radius:22px;
         display:flex;
         align-items:center;
         justify-content:center;
         font-size:30px;
         color:#fff;
-        box-shadow:0 12px 24px rgba(0,0,0,0.10);
+        box-shadow:0 12px 24px rgba(0,0,0,.10);
     }
 
-    .why-icon.blue{ background:linear-gradient(135deg, #0f4c81, #1cb5e0); }
-    .why-icon.orange{ background:linear-gradient(135deg, #ff7a18, #ffb347); }
-    .why-icon.green{ background:linear-gradient(135deg, #11998e, #38ef7d); }
+    .why-icon.blue{ background:linear-gradient(135deg, #173b68, #2f6dac); }
+    .why-icon.gold{ background:linear-gradient(135deg, #e7a41d, #f6c456); }
+    .why-icon.green{ background:linear-gradient(135deg, #169c83, #42d3a0); }
     .why-icon.purple{ background:linear-gradient(135deg, #7c3aed, #a78bfa); }
 
     .why-card h4{
         margin:0 0 8px;
-        color:#0f172a;
+        color:var(--text);
         font-size:20px;
         font-weight:900;
     }
 
     .why-card p{
         margin:0;
-        color:#64748b;
+        color:var(--muted);
         font-size:14px;
-        line-height:1.7;
+        line-height:1.75;
         font-weight:500;
     }
 
     /* ================= CTA ================= */
     .cta-wrap{
-        padding: 30px 0 80px;
+        padding: 20px 0 84px;
     }
 
     .cta-card{
-        background: linear-gradient(135deg, #00416A, #1CB5E0);
-        color:#fff;
-        border-radius:30px;
-        padding:38px 34px;
-        box-shadow:0 24px 48px rgba(0,65,106,0.20);
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:24px;
-        flex-wrap:wrap;
         position:relative;
         overflow:hidden;
+        background:linear-gradient(135deg, #102a4d, #204e84);
+        color:#fff;
+        border-radius:32px;
+        padding:38px 34px;
+        box-shadow:0 24px 50px rgba(16,42,77,.20);
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:24px;
+        flex-wrap:wrap;
     }
 
     .cta-card::before{
@@ -777,24 +823,24 @@
         width:220px;
         height:220px;
         border-radius:50%;
-        background:rgba(255,255,255,0.08);
+        background:rgba(255,255,255,.06);
     }
 
     .cta-card::after{
         content:"";
         position:absolute;
-        left:-50px;
-        bottom:-50px;
-        width:160px;
-        height:160px;
+        left:-40px;
+        bottom:-40px;
+        width:150px;
+        height:150px;
         border-radius:50%;
-        background:rgba(255,255,255,0.08);
+        background:rgba(255,255,255,.06);
     }
 
     .cta-content{
         position:relative;
         z-index:2;
-        max-width:720px;
+        max-width:760px;
     }
 
     .cta-content h2{
@@ -806,7 +852,7 @@
     .cta-content p{
         margin:0;
         font-size:16px;
-        line-height:1.75;
+        line-height:1.8;
         opacity:.96;
     }
 
@@ -816,448 +862,737 @@
         display:inline-flex;
         align-items:center;
         justify-content:center;
-        text-decoration:none !important;
-        background:#fff;
-        color:#0f4c81;
-        font-weight:900;
+        min-width:220px;
         padding:15px 24px;
         border-radius:18px;
-        min-width:220px;
-        box-shadow:0 14px 28px rgba(0,0,0,0.10);
+        background:#fff;
+        color:#173b68;
+        text-decoration:none !important;
+        font-weight:900;
+        box-shadow:0 14px 28px rgba(0,0,0,.12);
         transition:.25s ease;
     }
 
     .cta-btn:hover{
-        color:#0f4c81;
+        color:#173b68;
         transform:translateY(-2px);
     }
 
-    /* ================= ANIMATION ================= */
-    @keyframes fadeUp{
-        from{
-            opacity:0;
-            transform:translateY(24px);
-        }
-        to{
-            opacity:1;
-            transform:translateY(0);
-        }
+    /* ================= RIGHT SIDE SERVICE PANEL ================= */
+    .service-panel-overlay{
+        position:fixed;
+        inset:0;
+        background:rgba(8,18,35,.55);
+        opacity:0;
+        visibility:hidden;
+        transition:.3s ease;
+        z-index:9998;
     }
 
-    @keyframes floatUp{
-        from{
-            opacity:0;
-            transform:translateY(35px);
-        }
-        to{
-            opacity:1;
-            transform:translateY(0);
-        }
+    .service-panel-overlay.active{
+        opacity:1;
+        visibility:visible;
+    }
+
+    .service-side-panel{
+        position:fixed;
+        top:0;
+        right:-470px;
+        width:430px;
+        max-width:100%;
+        height:100vh;
+        background:#fff;
+        z-index:9999;
+        box-shadow:-18px 0 50px rgba(15,39,71,.18);
+        transition:right .35s ease;
+        display:flex;
+        flex-direction:column;
+        overflow:hidden;
+    }
+
+    .service-side-panel.active{
+        right:0;
+    }
+
+    .panel-top{
+        position:relative;
+        min-height:240px;
+        background:#f4f8ff;
+        overflow:hidden;
+    }
+
+    .panel-top img{
+        width:100%;
+        height:240px;
+        object-fit:cover;
+        display:block;
+    }
+
+    .panel-top::after{
+        content:"";
+        position:absolute;
+        inset:0;
+        background:linear-gradient(180deg, rgba(10,28,52,.08), rgba(10,28,52,.35));
+    }
+
+    .panel-close{
+        position:absolute;
+        top:16px;
+        right:16px;
+        z-index:3;
+        width:42px;
+        height:42px;
+        border:none;
+        border-radius:50%;
+        background:rgba(255,255,255,.95);
+        color:#142133;
+        font-size:22px;
+        font-weight:900;
+        cursor:pointer;
+        box-shadow:0 8px 18px rgba(0,0,0,.15);
+    }
+
+    .panel-badge{
+        position:absolute;
+        left:18px;
+        bottom:18px;
+        z-index:3;
+        background:rgba(255,255,255,.96);
+        color:var(--navy);
+        padding:10px 16px;
+        border-radius:999px;
+        font-size:13px;
+        font-weight:900;
+        box-shadow:0 10px 22px rgba(0,0,0,.12);
+    }
+
+    .panel-body{
+        padding:24px 22px 26px;
+        overflow:auto;
+    }
+
+    .panel-body h3{
+        margin:0 0 10px;
+        color:var(--text);
+        font-size:30px;
+        font-weight:900;
+    }
+
+    .panel-body p{
+        margin:0 0 18px;
+        color:var(--muted);
+        font-size:15px;
+        line-height:1.8;
+        font-weight:500;
+    }
+
+    .panel-points{
+        display:grid;
+        gap:12px;
+        margin:0 0 22px;
+    }
+
+    .panel-point{
+        display:flex;
+        gap:12px;
+        align-items:flex-start;
+        background:#f8fbff;
+        border:1px solid #e7eef7;
+        border-radius:16px;
+        padding:14px 14px;
+    }
+
+    .panel-point-icon{
+        width:42px;
+        height:42px;
+        border-radius:14px;
+        flex-shrink:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:20px;
+        background:linear-gradient(135deg, #173b68, #2f6dac);
+        color:#fff;
+        box-shadow:0 10px 18px rgba(23,59,104,.16);
+    }
+
+    .panel-point h4{
+        margin:0 0 4px;
+        font-size:16px;
+        color:var(--text);
+        font-weight:900;
+    }
+
+    .panel-point p{
+        margin:0;
+        font-size:13px;
+        line-height:1.6;
+    }
+
+    .panel-actions{
+        display:flex;
+        gap:12px;
+        flex-wrap:wrap;
+        margin-top:10px;
+    }
+
+    .panel-btn{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        padding:13px 18px;
+        border-radius:14px;
+        text-decoration:none !important;
+        font-weight:900;
+        transition:.25s ease;
+    }
+
+    .panel-btn.primary{
+        background:linear-gradient(135deg, #f4b544, #ffd16d);
+        color:#162033;
+        box-shadow:0 12px 24px rgba(244,181,68,.24);
+    }
+
+    .panel-btn.secondary{
+        background:#eef5ff;
+        color:#173b68;
+        border:1px solid #d8e7fb;
+    }
+
+    .panel-btn:hover{
+        transform:translateY(-2px);
     }
 
     /* ================= RESPONSIVE ================= */
     @media (max-width: 1199px){
-        .hero-title{
-            font-size:46px;
-        }
-
-        .bus-grid{
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .why-grid{
-            grid-template-columns: repeat(2, 1fr);
-        }
+        .hero-title{ font-size:48px; }
+        .hero-feature-grid{ grid-template-columns:repeat(2, 1fr); }
+        .bus-grid{ grid-template-columns:repeat(2, 1fr); }
+        .why-grid{ grid-template-columns:repeat(2, 1fr); }
+        .logo-orbit{ width:390px; height:390px; }
+        .hero-logo-core{ width:235px; height:235px; }
     }
 
     @media (max-width: 991px){
-        .hero-grid{
-            grid-template-columns: 1fr;
-        }
-
-        .hero-sub{
-            max-width:100%;
-        }
-
-        .quick-grid{
-            grid-template-columns: 1fr;
-        }
-
-        .hero-points{
-            grid-template-columns: 1fr;
-        }
+        .hero-main{ grid-template-columns:1fr; }
+        .services-grid{ grid-template-columns:1fr; }
+        .hero-right{ min-height:auto; padding-top:10px; }
+        .hero-feature-grid{ max-width:100%; }
+        .hero-bg-wrap{ min-height:auto; }
+        .hero-overlay-content{ min-height:auto; }
     }
 
     @media (max-width: 767px){
-        .home-hero{
-            min-height:auto;
-            padding: 40px 0 60px;
+        .hero-section{ padding:18px 0 60px; }
+        .hero-overlay-content{ padding:18px; }
+        .hero-top-strip{
+            flex-direction:column;
+            align-items:flex-start;
         }
-
-        .hero-left,
-        .hero-card{
-            border-radius:24px;
+        .hero-strip-right{
+            width:100%;
+            justify-content:flex-start;
         }
-
-        .hero-left{
-            padding:28px 22px;
+        .hero-title{ font-size:34px; }
+        .hero-sub{ font-size:15px; }
+        .hero-feature-grid{ grid-template-columns:1fr; }
+        .section-head h2{ font-size:30px; }
+        .bus-grid{ grid-template-columns:1fr; }
+        .why-grid{ grid-template-columns:1fr; }
+        .bus-info{ grid-template-columns:1fr; }
+        .logo-orbit{ width:300px; height:300px; }
+        .hero-logo-core{ width:180px; height:180px; }
+        .orbit-badge{
+            font-size:11px;
+            padding:8px 12px;
         }
-
-        .hero-title{
-            font-size:36px;
-        }
-
-        .hero-sub{
-            font-size:16px;
-        }
-
-        .section-head h2{
-            font-size:30px;
-        }
-
-        .bus-grid{
-            grid-template-columns: 1fr;
-        }
-
-        .mini-route{
-            grid-template-columns: 1fr;
-        }
-
-        .hero-feature-list{
-            grid-template-columns: 1fr;
-        }
-
-        .why-grid{
-            grid-template-columns: 1fr;
-        }
-
-        .cta-content h2{
-            font-size:30px;
+        .service-side-panel{
+            width:100%;
+            right:-100%;
         }
     }
 
     @media (max-width: 575px){
-        .hero-title{
-            font-size:31px;
-        }
-
         .hero-actions{
             flex-direction:column;
         }
-
         .hero-btn{
             width:100%;
         }
-
-        .bus-info{
-            grid-template-columns: 1fr;
+        .hero-strip-btn{
+            width:100%;
         }
-
         .bus-bottom{
             flex-direction:column;
             align-items:stretch;
         }
-
-        .book-btn{
+        .book-btn,
+        .cta-btn{
             width:100%;
         }
-
-        .route-pill{
-            grid-template-columns: 1fr;
+        .bus-route{
+            flex-direction:column;
         }
     }
 </style>
 
-<!-- ================= HERO ================= -->
-<section class="home-hero">
-    <div class="hero-glow-1"></div>
-    <div class="hero-glow-2"></div>
+<div class="tripx-home">
 
-    <div class="container hero-inner">
-        <div class="hero-grid">
+    <!-- ================= HERO ================= -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-bg-wrap">
+                <div class="hero-overlay-content">
 
-            <!-- LEFT -->
-            <div class="hero-left">
-                <div class="hero-badge">✨ Smart Bus Ticket Booking Platform</div>
-
-                <h1 class="hero-title">
-                    Travel Smarter with
-                    <span class="accent">Vallacar Transit</span>
-                </h1>
-
-                <p class="hero-sub">
-                    Search buses, reserve seats, complete payment securely and manage your trips —
-                    all in one clean, modern and user-friendly bus reservation system.
-                </p>
-
-                <div class="hero-actions">
-                    <a href="{% url 'findbus' %}" class="hero-btn hero-btn-primary">
-                        🔍 Find Bus Now
-                    </a>
-                    <a href="{% url 'seebookings' %}" class="hero-btn hero-btn-secondary">
-                        🎫 My Bookings
-                    </a>
-                </div>
-
-                <div class="hero-points">
-                    <div class="hero-point">
-                        <h4>Fast</h4>
-                        <p>Quick search & booking flow</p>
-                    </div>
-                    <div class="hero-point">
-                        <h4>Secure</h4>
-                        <p>Safe payment proof process</p>
-                    </div>
-                    <div class="hero-point">
-                        <h4>Simple</h4>
-                        <p>Easy ticket management</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RIGHT -->
-            <div class="hero-right">
-                <div class="hero-card">
-                    <div class="hero-card-head">
-                        <h3>Live Booking Experience</h3>
-                        <p>Book your next journey in just a few simple steps</p>
-                    </div>
-
-                    <div class="hero-card-body">
-                        <div class="mini-route">
-                            <div class="mini-city">
-                                <h5>Ahmedabad</h5>
-                                <p>Source</p>
+                    <!-- top transparent header style strip -->
+                    <div class="hero-top-strip">
+                        <div class="hero-strip-left">
+                            <div class="hero-strip-logo">
+                                <img src="{% static 'mysite/images/logo.JPG' %}" alt="TripX Logo">
                             </div>
-
-                            <div class="mini-center">
-                                <div class="mini-line"></div>
-                                <span>BUS ROUTE</span>
-                            </div>
-
-                            <div class="mini-city">
-                                <h5>Surat</h5>
-                                <p>Destination</p>
+                            <div class="hero-strip-text">
+                                <h2>TripX</h2>
+                                <p>Luxury bus reservation with secure booking and cleaner travel experience</p>
                             </div>
                         </div>
 
-                        <div class="hero-feature-list">
-                            <div class="hero-feature">
-                                <strong>Search Route</strong>
-                                <span>Find available buses by source, destination and travel date.</span>
-                            </div>
+                        <div class="hero-strip-right">
+                            <a href="{% url 'findbus' %}" class="hero-strip-btn primary">Find Bus</a>
+                            <a href="{% url 'seebookings' %}" class="hero-strip-btn secondary">My Bookings</a>
+                        </div>
+                    </div>
 
-                            <div class="hero-feature">
-                                <strong>Reserve Seats</strong>
-                                <span>Select the number of seats and create a booking instantly.</span>
-                            </div>
+                    <div class="hero-main">
+                        <!-- LEFT CONTENT -->
+                        <div class="hero-left">
+                            <div class="hero-badge">🚌 Premium Bus Booking Platform</div>
 
-                            <div class="hero-feature">
-                                <strong>UPI Payment</strong>
-                                <span>Scan QR, pay securely and upload screenshot for verification.</span>
-                            </div>
+                            <h1 class="hero-title">
+                                Travel Smarter With
+                                <span class="accent">TripX</span>
+                                Luxury Bus Booking
+                            </h1>
 
-                            <div class="hero-feature">
-                                <strong>Manage Tickets</strong>
-                                <span>Track booking, payment and cancellation status easily.</span>
+                            <p class="hero-sub">
+                                Search routes, reserve seats, complete secure UPI payment and manage your bus bookings
+                                with a modern, clean and professional travel experience.
+                            </p>
+
+                            
+
+                            <!-- CLICKABLE FEATURE CARDS -->
+                            <div class="hero-feature-grid">
+                                <div class="hero-feature-card"
+                                     onclick="openServicePanel('fastSearch')">
+                                    <h4>Fast Search</h4>
+                                    <p>Find routes and buses quickly with a smooth booking flow.</p>
+                                </div>
+
+                                <div class="hero-feature-card"
+                                     onclick="openServicePanel('easyBooking')">
+                                    <h4>Easy Booking</h4>
+                                    <p>Reserve your trip in a simple and passenger-friendly interface.</p>
+                                </div>
+
+                                <div class="hero-feature-card"
+                                     onclick="openServicePanel('trackStatus')">
+                                    <h4>Track Status</h4>
+                                    <p>Check booking and payment updates anytime from My Bookings.</p>
+                                </div>
+
+                                <div class="hero-feature-card"
+                                     onclick="openServicePanel('secureUPI')">
+                                    <h4>Secure UPI</h4>
+                                    <p>Pay safely with QR based UPI payment and screenshot proof.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT CONTENT -->
+                        <div class="hero-right">
+                            <div class="logo-orbit">
+                                <div class="orbit-badge one">Luxury Buses</div>
+                                <div class="orbit-badge two">Safe Travel</div>
+                                <div class="orbit-badge three">UPI Payment</div>
+                                <div class="orbit-badge four">24×7 Booking</div>
+
+                                <div class="hero-logo-core">
+                                    <img src="{% static 'mysite/images/logo.JPG' %}" alt="TripX Bus Logo">
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
-
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- ================= QUICK ACTIONS ================= -->
-<section class="section-wrap">
-    <div class="container">
-        <div class="section-head">
-            <div class="tag">Quick Access</div>
-            <h2>Everything You Need for Bus Booking</h2>
-            <p>
-                Vallacar Transit gives you a clean booking experience — from finding the right route
-                to tracking your payment and booking status.
-            </p>
-        </div>
-
-        <div class="quick-grid">
-            <div class="quick-card">
-                <div class="quick-icon blue">🔎</div>
-                <h3>Find Buses</h3>
+    <!-- ================= SERVICES ================= -->
+    <section class="section-wrap">
+        <div class="container">
+            <div class="section-head">
+                <div class="section-tag">Our Services</div>
+                <h2>Everything You Need for a Smooth Bus Journey</h2>
                 <p>
-                    Search buses by source, destination and date to instantly check available trips.
+                    TripX gives passengers a clean and complete booking experience —
+                    from route discovery to secure payment and booking management.
                 </p>
-                <a href="{% url 'findbus' %}">Search Now →</a>
             </div>
 
-            <div class="quick-card">
-                <div class="quick-icon orange">🎫</div>
-                <h3>Manage Bookings</h3>
-                <p>
-                    View all your bookings, track payment status and cancel tickets when needed.
-                </p>
-                <a href="{% url 'seebookings' %}">Open Bookings →</a>
-            </div>
-
-            <div class="quick-card">
-                <div class="quick-icon green">💳</div>
-                <h3>Secure Payment</h3>
-                <p>
-                    Use UPI QR based payment flow with screenshot upload for admin verification.
-                </p>
-                <a href="{% url 'findbus' %}">Book & Pay →</a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ================= AVAILABLE BUSES ================= -->
-<section class="section-wrap bus-section">
-    <div class="container">
-        <div class="section-head">
-            <div class="tag">Available Routes</div>
-            <h2>Explore Buses Available on the Platform</h2>
-            <p>
-                Here are the buses currently available in your system. Users can browse these routes,
-                then use the Find Bus page to filter by route and date.
-            </p>
-        </div>
-
-        {% if bus_list %}
-            <div class="bus-grid">
-                {% for bus in bus_list %}
-                    <div class="bus-card">
-                        <div class="bus-top">
-                            <h3>{{ bus.bus_name }}</h3>
-                            <p>Comfortable journey • Trusted route • Easy booking</p>
-                        </div>
-
-                        <div class="bus-body">
-                            <div class="route-pill">
-                                <div class="city">
-                                    <strong>{{ bus.source }}</strong>
-                                    <span>Source</span>
-                                </div>
-
-                                <div class="arrow">➜</div>
-
-                                <div class="city">
-                                    <strong>{{ bus.dest }}</strong>
-                                    <span>Destination</span>
-                                </div>
-                            </div>
-
-                            <div class="bus-info">
-                                <div class="bus-info-item">
-                                    <small>Travel Date</small>
-                                    <div>{{ bus.date }}</div>
-                                </div>
-
-                                <div class="bus-info-item">
-                                    <small>Departure</small>
-                                    <div>{{ bus.time }}</div>
-                                </div>
-
-                                <div class="bus-info-item">
-                                    <small>Total Seats</small>
-                                    <div>{{ bus.nos }}</div>
-                                </div>
-
-                                <div class="bus-info-item">
-                                    <small>Seats Left</small>
-                                    <div>{{ bus.rem }}</div>
-                                </div>
-                            </div>
-
-                            <div class="bus-bottom">
-                                <div class="price-box">
-                                    <small>Price / Seat</small>
-                                    <div>₹ {{ bus.price }}</div>
-                                </div>
-
-                                <a href="{% url 'findbus' %}" class="book-btn">
-                                    Book This Route
-                                </a>
-                            </div>
-                        </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-image" style="background-image:url('https://images.unsplash.com/photo-1519003722824-194d4455a60c?auto=format&fit=crop&w=1200&q=80');">
+                        <div class="service-badge">Fast Search</div>
                     </div>
-                {% endfor %}
+                    <div class="service-content">
+                        <h3>Find Buses Easily</h3>
+                        <p>
+                            Search buses using source, destination and travel date to quickly check
+                            available routes and proceed with booking.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-image" style="background-image:url('https://images.unsplash.com/photo-1556122071-e404eaedb77f?auto=format&fit=crop&w=1200&q=80');">
+                        <div class="service-badge">Easy Booking</div>
+                    </div>
+                    <div class="service-content">
+                        <h3>Manage Bookings</h3>
+                        <p>
+                            View reserved tickets, booking details, payment updates and overall trip
+                            information in one place with a professional interface.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-image" style="background-image:url('https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80');">
+                        <div class="service-badge">Secure UPI</div>
+                    </div>
+                    <div class="service-content">
+                        <h3>UPI Payment Proof</h3>
+                        <p>
+                            Make payment through UPI, upload screenshot proof and keep track of
+                            verification status securely and easily.
+                        </p>
+                    </div>
+                </div>
             </div>
-        {% else %}
-            <div class="no-bus">
-                <div class="no-bus-icon">🚌</div>
-                <h3>No Buses Available Yet</h3>
+        </div>
+    </section>
+
+    <!-- ================= AVAILABLE BUSES ================= -->
+    <section class="section-wrap bus-section">
+        <div class="container">
+            <div class="section-head">
+                <div class="section-tag">Available Buses</div>
+                <h2>Browse Routes Available in Your System</h2>
                 <p>
-                    There are currently no buses added to the system. Once buses are available,
-                    they will appear here automatically.
+                    Check available buses, route details, departure schedule and seat information,
+                    then continue to booking from the Find Bus page.
                 </p>
-                <a href="{% url 'findbus' %}" class="hero-btn hero-btn-primary">
-                    Go to Find Bus
+            </div>
+
+            {% if bus_list %}
+                <div class="bus-grid">
+                    {% for bus in bus_list %}
+                        <div class="bus-card">
+                            <div class="bus-image" style="background-image:url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80');">
+                                <div class="bus-title-badge">{{ bus.bus_name }}</div>
+                            </div>
+
+                            <div class="bus-body">
+                                <div class="bus-route">
+                                    <div class="bus-route-point">
+                                        <strong>{{ bus.source }}</strong>
+                                        <span>Source</span>
+                                    </div>
+
+                                    <div class="bus-route-arrow">➜</div>
+
+                                    <div class="bus-route-point">
+                                        <strong>{{ bus.dest }}</strong>
+                                        <span>Destination</span>
+                                    </div>
+                                </div>
+
+                                <div class="bus-info">
+                                    <div class="bus-info-item">
+                                        <small>Travel Date</small>
+                                        <div>{{ bus.date }}</div>
+                                    </div>
+
+                                    <div class="bus-info-item">
+                                        <small>Departure Time</small>
+                                        <div>{{ bus.time }}</div>
+                                    </div>
+
+                                    <div class="bus-info-item">
+                                        <small>Total Seats</small>
+                                        <div>{{ bus.nos }}</div>
+                                    </div>
+
+                                    <div class="bus-info-item">
+                                        <small>Seats Left</small>
+                                        <div>{{ bus.rem }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="bus-bottom">
+                                    <div class="price-box">
+                                        <small>Price / Seat</small>
+                                        <div>₹ {{ bus.price }}</div>
+                                    </div>
+
+                                    <a href="{% url 'findbus' %}" class="book-btn">
+                                        Book This Route
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-bus">
+                    <div class="no-bus-icon">🚌</div>
+                    <h3>No Buses Available Yet</h3>
+                    <p>
+                        There are currently no buses added to the system. Once buses are available,
+                        they will automatically appear here.
+                    </p>
+                    <a href="{% url 'findbus' %}" class="hero-btn primary">Go to Find Bus</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- ================= WHY CHOOSE US ================= -->
+    <section class="section-wrap">
+        <div class="container">
+            <div class="section-head">
+                <div class="section-tag">Why Choose TripX</div>
+                <h2>Professional Experience for Every Passenger</h2>
+                <p>
+                    TripX is designed to keep bus reservation clean, fast and easy while giving your
+                    users a modern travel website feel.
+                </p>
+            </div>
+
+            <div class="why-grid">
+                <div class="why-card">
+                    <div class="why-icon blue">⚡</div>
+                    <h4>Fast Booking</h4>
+                    <p>Quick route search, smooth seat reservation and a cleaner booking process.</p>
+                </div>
+
+                <div class="why-card">
+                    <div class="why-icon gold">🔒</div>
+                    <h4>Secure Payment</h4>
+                    <p>UPI proof upload flow with easy verification tracking and better clarity.</p>
+                </div>
+
+                <div class="why-card">
+                    <div class="why-icon green">📋</div>
+                    <h4>Track Status</h4>
+                    <p>Passengers can check booking and payment status anytime from My Bookings.</p>
+                </div>
+
+                <div class="why-card">
+                    <div class="why-icon purple">🎯</div>
+                    <h4>Professional UI</h4>
+                    <p>Responsive premium cards, luxury hero section and polished modern layout.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CTA ================= -->
+    <section class="cta-wrap">
+        <div class="container">
+            <div class="cta-card">
+                <div class="cta-content">
+                    <h2></h2>
+                    <p>
+                        Search routes, reserve your seat and complete your travel booking with TripX —
+                        a modern bus reservation experience for your users.
+                    </p>
+                </div>
+
+                <a href="{% url 'findbus' %}" class="cta-btn">
+                    🚀 Start Booking
                 </a>
             </div>
-        {% endif %}
-    </div>
-</section>
+        </div>
+    </section>
 
-<!-- ================= WHY CHOOSE US ================= -->
-<section class="section-wrap">
-    <div class="container">
-        <div class="section-head">
-            <div class="tag">Why Vallacar Transit</div>
-            <h2>A Better Experience for Every Passenger</h2>
-            <p>
-                Your bus reservation system is not just functional — it should also feel premium,
-                smooth and trustworthy for every user.
-            </p>
+</div>
+
+<!-- ================= RIGHT SIDE SERVICE PANEL ================= -->
+<div class="service-panel-overlay" id="serviceOverlay" onclick="closeServicePanel()"></div>
+
+<div class="service-side-panel" id="servicePanel">
+    <div class="panel-top">
+        <button class="panel-close" onclick="closeServicePanel()">×</button>
+        <img id="panelImage" src="" alt="TripX Service">
+        <div class="panel-badge" id="panelBadge">Service</div>
+    </div>
+
+    <div class="panel-body">
+        <h3 id="panelTitle">Service Title</h3>
+        <p id="panelDesc">Service description</p>
+
+        <div class="panel-points" id="panelPoints">
+            <!-- JS points here -->
         </div>
 
-        <div class="why-grid">
-            <div class="why-card">
-                <div class="why-icon blue">⚡</div>
-                <h4>Fast Booking</h4>
-                <p>Quick bus search, simple seat selection and clean booking flow for users.</p>
-            </div>
-
-            <div class="why-card">
-                <div class="why-icon orange">🔒</div>
-                <h4>Secure Payment</h4>
-                <p>UPI QR payment proof submission with payment verification status tracking.</p>
-            </div>
-
-            <div class="why-card">
-                <div class="why-icon green">📋</div>
-                <h4>Easy Management</h4>
-                <p>Users can open My Bookings and view booking, payment and cancellation updates.</p>
-            </div>
-
-            <div class="why-card">
-                <div class="why-icon purple">🎯</div>
-                <h4>Modern UI</h4>
-                <p>Clean responsive design with cards, gradients, smooth layout and polished visuals.</p>
-            </div>
+        <div class="panel-actions">
+            <a href="{% url 'findbus' %}" class="panel-btn primary">Go to Find Bus</a>
+            <a href="{% url 'seebookings' %}" class="panel-btn secondary">Open My Bookings</a>
         </div>
     </div>
-</section>
+</div>
 
-<!-- ================= CTA ================= -->
-<section class="cta-wrap">
-    <div class="container">
-        <div class="cta-card">
-            <div class="cta-content">
-                <h2>Ready to Book Your Next Journey?</h2>
-                <p>
-                    Search routes, reserve your seat and complete payment with Vallacar Transit —
-                    your smart and modern bus reservation platform.
-                </p>
-            </div>
+<script>
+    const serviceData = {
+        fastSearch: {
+            badge: "Fast Search",
+            title: "Fast Search Experience",
+            image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
+            desc: "TripX Fast Search helps users quickly find buses by source, destination, date and time. The interface is designed for clean route discovery so passengers can move from search to booking without confusion.",
+            points: [
+                {
+                    icon: "🔎",
+                    title: "Quick Route Search",
+                    text: "Passengers can instantly search buses using source and destination with a simple travel flow."
+                },
+                {
+                    icon: "📅",
+                    title: "Date & Time Based Filtering",
+                    text: "Check available buses according to travel date and departure time in a cleaner layout."
+                },
+                {
+                    icon: "🚌",
+                    title: "Faster Bus Discovery",
+                    text: "Available routes, timings and buses are shown in an organized card view for quick booking."
+                }
+            ]
+        },
 
-            <a href="{% url 'findbus' %}" class="cta-btn">
-                🚀 Start Booking
-            </a>
-        </div>
-    </div>
-</section>
+        easyBooking: {
+            badge: "Easy Booking",
+            title: "Easy Booking Process",
+            image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=80",
+            desc: "TripX Easy Booking keeps the booking process simple for passengers. From route selection to seat reservation and payment flow, the interface is built for easy understanding and fewer steps.",
+            points: [
+                {
+                    icon: "📍",
+                    title: "From → To Booking Flow",
+                    text: "Users can select source and destination, view available routes and move to booking in a smooth way."
+                },
+                {
+                    icon: "🎫",
+                    title: "Simple Reservation Steps",
+                    text: "Bus selection, passenger details and payment submission are kept clean and easy to understand."
+                },
+                {
+                    icon: "💼",
+                    title: "Professional Experience",
+                    text: "The booking layout is responsive and professional so users can book comfortably on desktop and mobile."
+                }
+            ]
+        },
+
+        trackStatus: {
+            badge: "Track Status",
+            title: "Track Booking Status",
+            image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
+            desc: "TripX lets passengers track booking details and payment updates from the My Bookings section. This gives users a better post-booking experience and makes status checking much easier.",
+            points: [
+                {
+                    icon: "📋",
+                    title: "Booking Status View",
+                    text: "Users can check reserved bus details, route info and booking records in one place."
+                },
+                {
+                    icon: "🧾",
+                    title: "Payment Proof Tracking",
+                    text: "UPI screenshot verification and booking confirmation updates can be tracked easily."
+                },
+                {
+                    icon: "📲",
+                    title: "Simple Management",
+                    text: "Passengers can manage their journey information and view important booking details anytime."
+                }
+            ]
+        },
+
+        secureUPI: {
+            badge: "Secure UPI",
+            title: "Secure UPI Payment",
+            image: "https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1200&q=80",
+            desc: "TripX Secure UPI Payment makes online bus booking safer and easier. Users can complete payment through UPI, upload screenshot proof and keep track of the payment status from their booking panel.",
+            points: [
+                {
+                    icon: "💳",
+                    title: "UPI Payment Support",
+                    text: "Passengers can pay using UPI and submit payment proof directly in the TripX booking system."
+                },
+                {
+                    icon: "🖼️",
+                    title: "Screenshot Proof Upload",
+                    text: "Upload payment screenshot after transaction so booking verification becomes simple and clear."
+                },
+                {
+                    icon: "🔐",
+                    title: "Safer Booking Flow",
+                    text: "Payment information and booking updates are handled in a cleaner professional travel interface."
+                }
+            ]
+        }
+    };
+
+    function openServicePanel(serviceKey){
+        const data = serviceData[serviceKey];
+        if(!data) return;
+
+        document.getElementById('panelBadge').innerText = data.badge;
+        document.getElementById('panelTitle').innerText = data.title;
+        document.getElementById('panelDesc').innerText = data.desc;
+        document.getElementById('panelImage').src = data.image;
+
+        const pointsWrap = document.getElementById('panelPoints');
+        pointsWrap.innerHTML = '';
+
+        data.points.forEach(point => {
+            pointsWrap.innerHTML += `
+                <div class="panel-point">
+                    <div class="panel-point-icon">${point.icon}</div>
+                    <div>
+                        <h4>${point.title}</h4>
+                        <p>${point.text}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        document.getElementById('servicePanel').classList.add('active');
+        document.getElementById('serviceOverlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeServicePanel(){
+        document.getElementById('servicePanel').classList.remove('active');
+        document.getElementById('serviceOverlay').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape'){
+            closeServicePanel();
+        }
+    });
+</script>
 
 {% endblock %}
