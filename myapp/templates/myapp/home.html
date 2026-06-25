@@ -1,137 +1,282 @@
 {% extends 'myapp/base.html' %}
+{% load static %}
 {% block content %}
 
 <style>
-  .hero {
-    background: linear-gradient(to right, #00416A, #1CB5E0);
-    padding: 60px;
-    color: white;
-    text-align: center;
-    animation: fadeIn 2s;
-  }
-
-  .hero h1 {
-    font-size: 45px;
-  }
-
-  .hero p {
-    font-size: 18px;
-  }
-
-  .features {
-    display: flex;
-    justify-content: space-around;
-    margin: 40px 0;
-    text-align: center;
-  }
-
-  .card {
-    width: 30%;
-    padding: 20px;
-    border-radius: 12px;
-    background: #ffffff;
-    box-shadow: 0 0 12px rgba(0, 65, 106, 0.3);
-    transition: transform 0.3s;
-    animation: slideUp 1.5s;
-  }
-
-  .card h2 {
-    color: #00416A;
-  }
-
-  .card:hover {
-    transform: scale(1.05);
-  }
-
-  .card img {
-    width: 100%;
-    border-radius: 10px;
-    height: 200px;
-    object-fit: cover;
-  }
-
-  .about {
-    padding: 40px;
-    background: #eef7ff;
-    text-align: center;
-  }
-
-  .about h2 {
-    color: #00416A;
-  }
-
-  .btn-main {
-    padding: 12px 30px;
-    background: #1CB5E0;
-    color: white;
-    border-radius: 25px;
-    text-decoration: none;
-    font-size: 18px;
-    transition: 0.3s;
-  }
-
-  .btn-main:hover {
-    background: #00416A;
-    color: white;
-    text-decoration: none;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes slideUp {
-    from {
-      transform: translateY(50px);
-      opacity: 0;
+    .hero-section {
+        min-height: 88vh;
+        background:
+            linear-gradient(rgba(3, 24, 40, 0.58), rgba(3, 24, 40, 0.58)),
+            url("{% static 'images/bus-bg.jpg' %}") center center/cover no-repeat;
+        display: flex;
+        align-items: center;
+        color: white;
+        padding: 60px 0;
     }
-    to {
-      transform: translateY(0);
-      opacity: 1;
+
+    .hero-content h1 {
+        font-size: 58px;
+        font-weight: 800;
+        line-height: 1.15;
+        margin-bottom: 18px;
     }
-  }
+
+    .hero-content h1 span {
+        color: #ffd46b;
+    }
+
+    .hero-content p {
+        font-size: 20px;
+        color: #eaf3f7;
+        max-width: 650px;
+        margin-bottom: 30px;
+    }
+
+    .hero-btn {
+        background: #ffd46b;
+        color: #032b44;
+        padding: 14px 32px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        transition: 0.3s;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    .hero-btn:hover {
+        background: #ffc83d;
+        color: #032b44;
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .hero-mini-card {
+        background: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.18);
+        backdrop-filter: blur(6px);
+        border-radius: 18px;
+        padding: 22px;
+        margin-top: 28px;
+        max-width: 520px;
+    }
+
+    .hero-mini-card h5 {
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .services-section {
+        padding: 70px 0;
+        background: #f6fafc;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 45px;
+    }
+
+    .section-title h2 {
+        font-size: 40px;
+        font-weight: 800;
+        color: #032b44;
+        margin-bottom: 10px;
+    }
+
+    .section-title p {
+        color: #6a7b87;
+        font-size: 17px;
+    }
+
+    .service-card {
+        background: white;
+        border-radius: 18px;
+        padding: 28px 22px;
+        text-align: center;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        height: 100%;
+        transition: 0.3s;
+        border: 1px solid #edf3f7;
+    }
+
+    .service-card:hover {
+        transform: translateY(-8px);
+    }
+
+    .service-icon {
+        width: 75px;
+        height: 75px;
+        margin: 0 auto 18px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0d5b74, #14967f);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        box-shadow: 0 10px 25px rgba(13,91,116,0.25);
+    }
+
+    .service-card h4 {
+        color: #032b44;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .service-card p {
+        color: #667985;
+        margin-bottom: 0;
+    }
+
+    .cta-section {
+        padding: 60px 0;
+        background: linear-gradient(90deg, #032b44, #0d5b74);
+        color: white;
+        text-align: center;
+    }
+
+    .cta-section h2 {
+        font-size: 40px;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    .cta-section p {
+        font-size: 18px;
+        color: #dce8ee;
+        margin-bottom: 25px;
+    }
+
+    .cta-btn {
+        background: #ffd46b;
+        color: #032b44;
+        padding: 13px 30px;
+        border-radius: 28px;
+        font-size: 18px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.3s;
+        display: inline-block;
+    }
+
+    .cta-btn:hover {
+        background: #ffc83d;
+        color: #032b44;
+        text-decoration: none;
+    }
+
+    @media (max-width: 991px) {
+        .hero-content h1 {
+            font-size: 42px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .hero-section {
+            min-height: auto;
+            padding: 70px 0;
+        }
+
+        .hero-content h1 {
+            font-size: 34px;
+        }
+
+        .hero-content p {
+            font-size: 17px;
+        }
+
+        .section-title h2,
+        .cta-section h2 {
+            font-size: 30px;
+        }
+    }
 </style>
 
-<!-- HERO SECTION -->
-<div class="hero">
-  <h1>🚌 Welcome to Bus Reservation System</h1>
-  <p>Book your bus tickets easily, safely and quickly</p>
-  <br>
-  <a href="/findbus" class="btn-main">Book Now</a>
-</div>
+<!-- HERO -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1>Less Waiting. <br><span>More Traveling.</span></h1>
+            <p>
+                Book your bus tickets online with ease. Enjoy comfortable journeys,
+                secure payments, and smooth booking with Vallacar Transit.
+            </p>
 
-<!-- FEATURES -->
-<div class="features">
+            <a href="{% url 'findbus' %}" class="hero-btn">
+                <i class="fas fa-search mr-2"></i> Find Your Bus
+            </a>
 
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957">
-    <h2>Easy Booking</h2>
-    <p>Reserve seats online without standing in long queues.</p>
-  </div>
+            <div class="hero-mini-card">
+                <h5><i class="fas fa-star text-warning mr-2"></i>Premium Travel Experience</h5>
+                <p class="mb-0">
+                    Safe rides, easy booking, fast UPI payments, and smooth ticket management —
+                    all in one place.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
 
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1509749837427-ac94a2553d0e">
-    <h2>Live Bus Info</h2>
-    <p>Check bus timings, routes and seat availability.</p>
-  </div>
+<!-- 4 STAR SERVICES -->
+<section class="services-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Our 4-Star Bus Services</h2>
+            <p>Designed to make your journey safe, comfortable and hassle-free.</p>
+        </div>
 
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
-    <h2>Safe Travel</h2>
-    <p>We provide secure and reliable bus services.</p>
-  </div>
+        <div class="row">
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-couch"></i>
+                    </div>
+                    <h4>Comfort Seats</h4>
+                    <p>Relax in spacious and comfortable seating for a better travel experience.</p>
+                </div>
+            </div>
 
-</div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4>Safe Journey</h4>
+                    <p>We prioritize passenger safety with reliable routes and secure bookings.</p>
+                </div>
+            </div>
 
-<!-- ABOUT SECTION -->
-<div class="about">
-  <h2>About This Project</h2>
-  <p>
-    This Bus Reservation System is developed using Django Framework.
-    It allows users to register, login, search buses, book seats and manage bookings.
-    The system helps passengers save time and travel comfortably.
-  </p>
-</div>
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <h4>Easy Payments</h4>
+                    <p>Pay using UPI with QR, upload proof and get booking confirmation smoothly.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>Support 24/7</h4>
+                    <p>Need help with booking or payment? We’re here to support you anytime.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Book Your Next Journey Today</h2>
+        <p>Search routes, reserve seats, and travel smarter with Vallacar Transit.</p>
+        <a href="{% url 'findbus' %}" class="cta-btn">Book Now</a>
+    </div>
+</section>
 
 {% endblock %}

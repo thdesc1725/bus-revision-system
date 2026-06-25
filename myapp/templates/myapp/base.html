@@ -1,102 +1,163 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-    <!-- Required meta tags -->
+    {% load static %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>Vallacar Transit</title>
 
-    <title>Bus Reservation System</title>
-</head>
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          crossorigin="anonymous">
 
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark"
-        style="background: linear-gradient(to right, #00416A, #1CB5E0); animation: fadeDown 1s;">
-        <div class="container">
-
-            <a class="navbar-brand font-weight-bold" href="{% url 'home' %}">
-                🚌 Vallacar Transit
-            </a>
-
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav ml-auto">
-
-                    <a class="nav-item nav-link nav-anim" href="{% url 'home' %}">Home</a>
-                    <a class="nav-item nav-link nav-anim" href="{% url 'findbus' %}">Find Bus</a>
-                    <a class="nav-item nav-link nav-anim" href="{% url 'seebookings' %}">My Bookings</a>
-
-                    {% if request.user.is_active %}
-                    <a class="nav-item nav-link btn btn-warning text-dark ml-2" href="{% url 'signout' %}">
-                        Sign Out
-                    </a>
-                    {% else %}
-                    <a class="nav-item nav-link btn btn-light text-dark ml-2" href="{% url 'signup' %}">
-                        Sign Up
-                    </a>
-                    {% endif %}
-
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <style>
-        .nav-anim {
-            position: relative;
-            margin-right: 15px;
-            font-size: 17px;
+        body {
+            background: #f5f8fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .nav-anim::after {
-            content: "";
-            position: absolute;
-            width: 0%;
-            height: 2px;
-            background: white;
-            left: 0;
-            bottom: 0;
+        .main-navbar {
+            background: linear-gradient(90deg, #032b44, #0d5b74);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+            padding: 12px 0;
+        }
+
+        .navbar-brand {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff !important;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand span {
+            color: #f6c344;
+        }
+
+        .nav-link {
+            color: #ffffff !important;
+            font-weight: 600;
+            margin: 0 8px;
+            position: relative;
             transition: 0.3s;
         }
 
-        .nav-anim:hover::after {
+        .nav-link:hover {
+            color: #ffd46b !important;
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 0;
+            height: 2px;
+            background: #ffd46b;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover::after {
             width: 100%;
         }
 
-        @keyframes fadeDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
+        .auth-btn {
+            border-radius: 25px;
+            padding: 8px 18px !important;
+            font-weight: 700;
+            margin-left: 10px;
+        }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .btn-signup {
+            background: #ffd46b;
+            color: #032b44 !important;
+        }
+
+        .btn-signup:hover {
+            background: #ffc83d;
+            color: #032b44 !important;
+        }
+
+        .btn-signout {
+            background: #fff;
+            color: #032b44 !important;
+        }
+
+        .btn-signout:hover {
+            background: #f1f1f1;
+            color: #032b44 !important;
+        }
+
+        .alert-box {
+            max-width: 900px;
+            margin: 20px auto 0;
+        }
+
+        footer {
+            background: #032b44;
+            color: #dbe8ee;
+            padding: 18px 0;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 15px;
         }
     </style>
+</head>
 
-    {% block content %}
-    {% endblock %}
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-        crossorigin="anonymous"></script>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark main-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="fas fa-bus-alt"></i> Valla<span>car</span> Transit
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav ml-auto align-items-lg-center">
+                <a class="nav-item nav-link" href="{% url 'home' %}">Home</a>
+                <a class="nav-item nav-link" href="{% url 'findbus' %}">Find Bus</a>
+                <a class="nav-item nav-link" href="{% url 'seebookings' %}">My Bookings</a>
+
+                {% if request.user.is_authenticated %}
+                    <a class="nav-item nav-link auth-btn btn-signout" href="{% url 'signout' %}">Sign Out</a>
+                {% else %}
+                    <a class="nav-item nav-link auth-btn btn-signup" href="{% url 'signin' %}">Login / Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Django Messages -->
+<div class="container alert-box">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info mt-3">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+{% block content %}
+{% endblock %}
+
+<footer>
+    <div class="container">
+        © 2026 Vallacar Transit | Safe, Comfortable & Smart Bus Booking
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
 </body>
-
 </html>

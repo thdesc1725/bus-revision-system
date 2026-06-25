@@ -92,7 +92,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # INTERNATIONALIZATION
 # =========================
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'   # better for India
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -101,6 +101,9 @@ USE_TZ = True
 # STATIC FILES
 # =========================
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 # =========================
 # MEDIA FILES

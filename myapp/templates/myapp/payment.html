@@ -2,219 +2,614 @@
 {% block content %}
 
 <style>
-    .payment-wrapper{
-        max-width: 1200px;
-        margin: 30px auto;
+    body{
+        background: linear-gradient(135deg, #eef5ff 0%, #f8fbff 50%, #edf7ff 100%);
+    }
+
+    .payment-page{
+        max-width: 1250px;
+        margin: 30px auto 50px;
         padding: 0 15px;
     }
 
-    .payment-top{
-        background: linear-gradient(135deg, #0f4c81, #1cb5e0);
+    .payment-banner{
+        background: linear-gradient(135deg, #0b4d78, #1cb5e0);
         color: #fff;
-        border-radius: 18px;
-        padding: 28px;
+        border-radius: 22px;
+        padding: 28px 24px;
+        text-align: center;
+        box-shadow: 0 14px 35px rgba(10, 62, 109, 0.18);
+        margin-bottom: 25px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .payment-banner::before{
+        content: "";
+        position: absolute;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        top: -80px;
+        right: -60px;
+    }
+
+    .payment-banner::after{
+        content: "";
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        bottom: -60px;
+        left: -40px;
+    }
+
+    .payment-banner h2{
+        font-weight: 800;
+        margin-bottom: 6px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .payment-banner p{
+        margin: 0;
+        opacity: 0.95;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* loader */
+    .ticket-loader-wrap{
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.10);
+        padding: 40px 20px;
         text-align: center;
         margin-bottom: 25px;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        animation: fadeIn 0.6s ease;
+    }
+
+    .ticket-loader-circle{
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        margin: 0 auto 18px;
+        border: 8px solid #e8f3ff;
+        border-top: 8px solid #ff8a00;
+        animation: spin 1s linear infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        box-shadow: inset 0 0 0 8px #f8fbff;
+    }
+
+    .ticket-loader-bus{
+        font-size: 34px;
+    }
+
+    .ticket-loader-wrap h4{
+        color: #0b4d78;
+        font-weight: 800;
+        margin-bottom: 6px;
+    }
+
+    .ticket-loader-wrap p{
+        color: #6b7280;
+        margin: 0;
+    }
+
+    @keyframes spin{
+        100%{ transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn{
+        from{opacity:0; transform:translateY(15px);}
+        to{opacity:1; transform:translateY(0);}
+    }
+
+    .payment-content{
+        display: none;
+        animation: fadeIn 0.7s ease;
     }
 
     .payment-grid{
         display: grid;
-        grid-template-columns: 1.2fr 0.9fr;
+        grid-template-columns: 1.05fr 0.95fr;
         gap: 24px;
+        align-items: start;
     }
 
-    .ticket-card, .pay-card{
-        background: #fff;
-        border-radius: 22px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    /* ===== LEFT VERTICAL BOARDING PASS ===== */
+    .ticket-shell{
+        position: relative;
+        border-radius: 26px;
         overflow: hidden;
+        background: #fff;
+        box-shadow: 0 18px 45px rgba(13, 47, 89, 0.12);
     }
 
-    .ticket-head{
-        background: linear-gradient(135deg, #ff7b00, #ffb347);
+    .ticket-top{
+        background: linear-gradient(135deg, #ff7a00, #ffb347);
         color: #fff;
-        padding: 22px;
+        padding: 26px 24px;
+        position: relative;
     }
 
-    .ticket-body{
-        padding: 25px;
+    .ticket-top::after{
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at top right, rgba(255,255,255,0.18), transparent 35%),
+            radial-gradient(circle at bottom left, rgba(255,255,255,0.12), transparent 35%);
+        pointer-events: none;
     }
 
-    .ticket-route{
+    .ticket-brand{
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: #f8fbff;
-        border: 2px dashed #c9dfff;
-        border-radius: 16px;
-        padding: 18px;
-        margin-bottom: 20px;
+        position: relative;
+        z-index: 2;
     }
 
-    .city-box h4{
+    .ticket-brand h3{
         margin: 0;
-        color: #0f4c81;
-        font-weight: 700;
-    }
-
-    .city-box p{
-        margin: 4px 0 0;
-        color: #666;
-    }
-
-    .route-arrow{
-        font-size: 28px;
-        color: #ff7b00;
-        font-weight: bold;
-    }
-
-    .ticket-table{
-        width: 100%;
-    }
-
-    .ticket-table tr{
-        border-bottom: 1px solid #eee;
-    }
-
-    .ticket-table td{
-        padding: 12px 8px;
-        font-size: 15px;
-    }
-
-    .ticket-table td:first-child{
-        color: #666;
-        width: 45%;
-    }
-
-    .ticket-table td:last-child{
-        font-weight: 600;
-        color: #111;
-    }
-
-    .total-box{
-        margin-top: 20px;
-        background: linear-gradient(135deg, #fff5e8, #fff0da);
-        border: 1px solid #ffd29b;
-        border-radius: 16px;
-        padding: 18px;
-        text-align: center;
-    }
-
-    .total-box h3{
-        margin: 0;
-        color: #d35400;
+        font-size: 24px;
         font-weight: 800;
     }
 
-    .pay-head{
-        background: linear-gradient(135deg, #11998e, #38ef7d);
-        color: #fff;
-        padding: 22px;
-        text-align: center;
-    }
-
-    .pay-body{
-        padding: 25px;
-        text-align: center;
-    }
-
-    .qr-box{
-        background: #f8f9fa;
-        border-radius: 18px;
-        padding: 18px;
-        margin-bottom: 20px;
-        border: 1px solid #eee;
-    }
-
-    .qr-box img{
-        max-width: 240px;
-        width: 100%;
-        border-radius: 12px;
-        background: #fff;
-        padding: 10px;
-        border: 1px solid #ddd;
-    }
-
-    .upi-box{
-        background: #eef8ff;
-        border: 1px solid #cfe9ff;
-        border-radius: 14px;
-        padding: 12px;
-        margin-top: 15px;
-        font-size: 15px;
-        text-align: left;
-    }
-
-    .form-control{
-        border-radius: 12px;
-        padding: 12px;
-        width: 100%;
-        border: 1px solid #ddd;
-        margin-bottom: 10px;
-    }
-
-    .upload-label{
-        text-align: left;
-        font-weight: 600;
-        margin-bottom: 8px;
-        display: block;
-        color: #333;
-    }
-
-    .btn-pay{
-        background: linear-gradient(135deg, #ff7b00, #ff9f43);
-        color: #fff;
-        border: none;
-        padding: 12px 28px;
-        border-radius: 30px;
-        font-size: 17px;
+    .ticket-brand span{
+        font-size: 13px;
+        background: rgba(255,255,255,0.18);
+        padding: 7px 12px;
+        border-radius: 20px;
         font-weight: 700;
-        width: 100%;
-        margin-top: 10px;
-        cursor: pointer;
     }
 
-    .btn-pay:hover{
-        color: #fff;
-        opacity: 0.95;
+    .ticket-passenger{
+        margin-top: 18px;
+        position: relative;
+        z-index: 2;
     }
 
-    .btn-cancel{
-        display: inline-block;
-        margin-top: 14px;
-        color: #dc3545;
-        text-decoration: none;
+    .ticket-passenger .label{
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.9;
+    }
+
+    .ticket-passenger .value{
+        font-size: 28px;
+        font-weight: 800;
+        margin-top: 3px;
+    }
+
+    .ticket-middle{
+        padding: 24px;
+        position: relative;
+        background: #fff;
+    }
+
+    .route-panel{
+        border: 2px dashed #d8e9ff;
+        background: linear-gradient(180deg, #f8fbff, #f1f8ff);
+        border-radius: 22px;
+        padding: 22px 18px;
+        margin-bottom: 22px;
+        position: relative;
+    }
+
+    .route-cities{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .route-city h4{
+        margin: 0;
+        color: #0b4d78;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .route-city p{
+        margin: 4px 0 0;
+        color: #6b7280;
+        font-size: 13px;
         font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .6px;
     }
 
-    .note-box{
-        margin-top: 15px;
-        text-align: left;
-        background: #fffaf0;
-        border: 1px solid #ffe0a3;
-        padding: 12px;
-        border-radius: 12px;
+    .route-arrow{
+        flex: 0 0 auto;
+        text-align: center;
+        color: #ff7a00;
+        font-size: 28px;
+        font-weight: 900;
+    }
+
+    .bus-line{
+        margin-top: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        color: #0b4d78;
+        font-weight: 700;
         font-size: 14px;
     }
 
-    .alert{
-        padding: 12px;
-        border-radius: 10px;
-        margin-bottom: 15px;
+    .bus-line .line{
+        flex: 1;
+        height: 2px;
+        background: repeating-linear-gradient(
+            to right,
+            #a8d3ff 0 10px,
+            transparent 10px 18px
+        );
+    }
+
+    .ticket-grid{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .ticket-info{
+        background: #f9fbff;
+        border: 1px solid #e4eefb;
+        border-radius: 16px;
+        padding: 14px 15px;
+    }
+
+    .ticket-info .small{
+        display: block;
+        color: #7b8794;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+
+    .ticket-info .big{
+        color: #111827;
+        font-size: 16px;
+        font-weight: 800;
+        word-break: break-word;
+    }
+
+    .ticket-total{
+        margin-top: 18px;
+        border-radius: 18px;
+        padding: 18px;
+        background: linear-gradient(135deg, #fff6ea, #fff0dd);
+        border: 1px solid #ffd49c;
+        text-align: center;
+    }
+
+    .ticket-total .small{
+        color: #9a5b00;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+    }
+
+    .ticket-total .amount{
+        margin-top: 4px;
+        font-size: 34px;
+        font-weight: 900;
+        color: #d96c00;
+        line-height: 1;
+    }
+
+    .ticket-cut{
+        position: relative;
+        border-top: 2px dashed #dbe7f6;
+        margin-top: 22px;
+    }
+
+    .ticket-cut::before,
+    .ticket-cut::after{
+        content: "";
+        position: absolute;
+        top: -16px;
+        width: 30px;
+        height: 30px;
+        background: #eef5ff;
+        border-radius: 50%;
+    }
+
+    .ticket-cut::before{ left: -15px; }
+    .ticket-cut::after{ right: -15px; }
+
+    .ticket-footer{
+        padding: 18px 24px 24px;
+        background: #fff;
+    }
+
+    .ticket-footer-box{
+        background: #f8fbff;
+        border: 1px solid #e4eefb;
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .ticket-footer-box div{
+        min-width: 120px;
+    }
+
+    .ticket-footer-box .label{
+        display: block;
+        color: #7b8794;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .7px;
+        margin-bottom: 5px;
+    }
+
+    .ticket-footer-box .value{
+        color: #111827;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    /* ===== RIGHT PAYMENT CARD ===== */
+    .pay-card{
+        background: #fff;
+        border-radius: 26px;
+        box-shadow: 0 18px 45px rgba(13, 47, 89, 0.12);
+        overflow: hidden;
+    }
+
+    .pay-head{
+        background: linear-gradient(135deg, #0b4d78, #1cb5e0);
+        color: #fff;
+        padding: 24px;
+        position: relative;
+    }
+
+    .pay-head h3{
+        margin: 0;
+        font-weight: 800;
+        font-size: 26px;
+    }
+
+    .pay-head p{
+        margin: 5px 0 0;
+        opacity: 0.95;
+    }
+
+    .pay-body{
+        padding: 24px;
+    }
+
+    .pay-method-strip{
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .method-chip{
+        padding: 10px 14px;
+        border-radius: 14px;
+        background: #f6f9ff;
+        border: 1px solid #dce9ff;
+        color: #0b4d78;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .pay-box{
+        background: linear-gradient(180deg, #ffffff, #f9fbff);
+        border: 1px solid #e4eefb;
+        border-radius: 22px;
+        padding: 20px;
+    }
+
+    .pay-topline{
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .merchant-box h4{
+        margin: 0;
+        color: #0b4d78;
+        font-weight: 800;
+        font-size: 22px;
+    }
+
+    .merchant-box p{
+        margin: 4px 0 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .amount-box{
+        background: #f0fff5;
+        border: 1px solid #c8f0d6;
+        border-radius: 16px;
+        padding: 12px 16px;
+        text-align: center;
+    }
+
+    .amount-box .small{
+        display: block;
+        color: #138a43;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .amount-box .big{
+        color: #0d7a38;
+        font-size: 26px;
+        font-weight: 900;
+        line-height: 1.1;
+    }
+
+    .qr-wrap{
+        background: #fff;
+        border: 1px solid #ebeff5;
+        border-radius: 20px;
+        padding: 18px;
+        text-align: center;
+        margin-bottom: 16px;
+        box-shadow: inset 0 0 0 1px #f7f9fc;
+    }
+
+    .qr-wrap img{
+        max-width: 230px;
+        width: 100%;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #ececec;
+        padding: 10px;
+    }
+
+    .upi-details{
+        margin-top: 14px;
         text-align: left;
+        background: #f7fbff;
+        border: 1px solid #dbeafe;
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+    .upi-row{
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px dashed #d8e4f2;
+        font-size: 14px;
+    }
+
+    .upi-row:last-child{
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .upi-row b{
+        color: #0b4d78;
+    }
+
+    .form-title{
+        margin: 18px 0 12px;
+        color: #111827;
+        font-weight: 800;
+        font-size: 18px;
+    }
+
+    .form-label{
+        display: block;
+        margin-bottom: 8px;
+        color: #374151;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .form-control{
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid #d9e3ef;
+        padding: 12px 14px;
+        min-height: 48px;
+        box-shadow: none !important;
+        margin-bottom: 14px;
+    }
+
+    .form-control:focus{
+        border-color: #1cb5e0;
+    }
+
+    .pay-btn{
+        width: 100%;
+        border: none;
+        border-radius: 16px;
+        padding: 14px 18px;
+        background: linear-gradient(135deg, #ff7a00, #ff9f43);
+        color: #fff;
+        font-size: 17px;
+        font-weight: 800;
+        box-shadow: 0 12px 25px rgba(255, 122, 0, 0.24);
+        transition: 0.25s ease;
+        cursor: pointer;
+    }
+
+    .pay-btn:hover{
+        transform: translateY(-1px);
+        opacity: 0.97;
+    }
+
+    .cancel-link{
+        display: inline-block;
+        margin-top: 14px;
+        color: #dc3545;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .cancel-link:hover{
+        color: #c82333;
+        text-decoration: none;
+    }
+
+    .pay-note{
+        margin-top: 18px;
+        background: #fff8ed;
+        border: 1px solid #ffdca8;
+        border-radius: 16px;
+        padding: 14px 15px;
+        font-size: 14px;
+        color: #6b4a00;
+    }
+
+    .pay-note ul{
+        margin: 8px 0 0;
+        padding-left: 18px;
+    }
+
+    .pay-note li{
+        margin-bottom: 5px;
+    }
+
+    .alert{
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+        font-size: 14px;
+        font-weight: 600;
     }
 
     .alert-danger{
-        background: #ffe8e8;
-        color: #b30000;
-        border: 1px solid #ffb5b5;
+        background: #fff0f0;
+        border: 1px solid #ffcaca;
+        color: #c62828;
     }
 
     .alert-success{
-        background: #e9fff0;
-        color: #0f7a35;
-        border: 1px solid #9be2b1;
+        background: #ecfff2;
+        border: 1px solid #b8efc9;
+        color: #0c8a3c;
     }
 
     @media(max-width: 991px){
@@ -222,153 +617,268 @@
             grid-template-columns: 1fr;
         }
     }
+
+    @media(max-width: 575px){
+        .route-city h4{
+            font-size: 24px;
+        }
+        .ticket-grid{
+            grid-template-columns: 1fr;
+        }
+        .ticket-footer-box{
+            flex-direction: column;
+        }
+    }
 </style>
 
-<div class="payment-wrapper">
+<div class="payment-page">
 
-    <div class="payment-top">
-        <h2>Secure Bus Ticket Payment</h2>
-        <p class="mb-0">Review your ticket details and complete payment using UPI QR</p>
+    <div class="payment-banner">
+        <h2>Complete Your Ticket Payment</h2>
+        <p>Review your boarding pass details and finish the payment securely using UPI</p>
     </div>
 
-    <div class="payment-grid">
-
-        <!-- LEFT SIDE TICKET -->
-        <div class="ticket-card">
-            <div class="ticket-head">
-                <h3 class="mb-1">🎫 Ticket Summary</h3>
-                <p class="mb-0">Booking ID: {{ book.id }}</p>
-            </div>
-
-            <div class="ticket-body">
-                <div class="ticket-route">
-                    <div class="city-box">
-                        <h4>{{ book.source }}</h4>
-                        <p>Source</p>
-                    </div>
-
-                    <div class="route-arrow">→</div>
-
-                    <div class="city-box" style="text-align:right;">
-                        <h4>{{ book.dest }}</h4>
-                        <p>Destination</p>
-                    </div>
-                </div>
-
-                <table class="ticket-table">
-                    <tr>
-                        <td>Passenger Name</td>
-                        <td>{{ book.name }}</td>
-                    </tr>
-                    <tr>
-                        <td>Bus Name</td>
-                        <td>{{ book.bus_name }}</td>
-                    </tr>
-                    <tr>
-                        <td>Travel Date</td>
-                        <td>{{ book.date }}</td>
-                    </tr>
-                    <tr>
-                        <td>Departure Time</td>
-                        <td>{{ book.time }}</td>
-                    </tr>
-                    <tr>
-                        <td>Seats</td>
-                        <td>{{ book.nos }}</td>
-                    </tr>
-                    <tr>
-                        <td>Price / Seat</td>
-                        <td>₹ {{ book.price }}</td>
-                    </tr>
-                    <tr>
-                        <td>Payment Status</td>
-                        <td>{{ book.payment_status }}</td>
-                    </tr>
-                    <tr>
-                        <td>Booking Status</td>
-                        <td>{{ book.status }}</td>
-                    </tr>
-                </table>
-
-                <div class="total-box">
-                    <p class="mb-1">Total Payable Amount</p>
-                    <h3>₹ {{ book.total_price }}</h3>
-                </div>
-            </div>
+    <!-- 2 sec loading animation -->
+    <div class="ticket-loader-wrap" id="ticketLoader">
+        <div class="ticket-loader-circle">
+            <div class="ticket-loader-bus">🚌</div>
         </div>
+        <h4>Preparing your ticket & payment screen...</h4>
+        <p>Please wait a moment</p>
+    </div>
 
-        <!-- RIGHT SIDE PAYMENT -->
-        <div class="pay-card">
-            <div class="pay-head">
-                <h3 class="mb-1">📲 UPI Payment</h3>
-                <p class="mb-0">Scan QR and upload payment proof</p>
+    <!-- Actual payment content -->
+    <div class="payment-content" id="paymentContent">
+        <div class="payment-grid">
+
+            <!-- LEFT : VERTICAL BOARDING PASS -->
+            <div class="ticket-shell">
+                <div class="ticket-top">
+                    <div class="ticket-brand">
+                        <h3>🎫 Boarding Pass</h3>
+                        <span>Booking #{{ book.id }}</span>
+                    </div>
+
+                    <div class="ticket-passenger">
+                        <div class="label">Passenger</div>
+                        <div class="value">{{ book.name }}</div>
+                    </div>
+                </div>
+
+                <div class="ticket-middle">
+                    <div class="route-panel">
+                        <div class="route-cities">
+                            <div class="route-city">
+                                <h4>{{ book.source }}</h4>
+                                <p>Boarding</p>
+                            </div>
+
+                            <div class="route-arrow">➜</div>
+
+                            <div class="route-city" style="text-align:right;">
+                                <h4>{{ book.dest }}</h4>
+                                <p>Destination</p>
+                            </div>
+                        </div>
+
+                        <div class="bus-line">
+                            <div class="line"></div>
+                            <span>🚌 {{ book.bus_name }}</span>
+                            <div class="line"></div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-grid">
+                        <div class="ticket-info">
+                            <span class="small">Travel Date</span>
+                            <div class="big">{{ book.date }}</div>
+                        </div>
+
+                        <div class="ticket-info">
+                            <span class="small">Departure Time</span>
+                            <div class="big">{{ book.time }}</div>
+                        </div>
+
+                        <div class="ticket-info">
+                            <span class="small">Seats</span>
+                            <div class="big">{{ book.nos }}</div>
+                        </div>
+
+                        <div class="ticket-info">
+                            <span class="small">Price / Seat</span>
+                            <div class="big">₹ {{ book.price }}</div>
+                        </div>
+
+                        <div class="ticket-info">
+                            <span class="small">Booking Status</span>
+                            <div class="big">{{ book.status }}</div>
+                        </div>
+
+                        <div class="ticket-info">
+                            <span class="small">Payment Status</span>
+                            <div class="big">{{ book.payment_status }}</div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-total">
+                        <div class="small">Total Fare</div>
+                        <div class="amount">₹ {{ book.total_price }}</div>
+                    </div>
+
+                    <div class="ticket-cut"></div>
+                </div>
+
+                <div class="ticket-footer">
+                    <div class="ticket-footer-box">
+                        <div>
+                            <span class="label">Passenger Name</span>
+                            <span class="value">{{ book.name }}</span>
+                        </div>
+
+                        <div>
+                            <span class="label">Booking ID</span>
+                            <span class="value">#{{ book.id }}</span>
+                        </div>
+
+                        <div>
+                            <span class="label">Route</span>
+                            <span class="value">{{ book.source }} → {{ book.dest }}</span>
+                        </div>
+
+                        <div>
+                            <span class="label">Bus</span>
+                            <span class="value">{{ book.bus_name }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="pay-body">
+            <!-- RIGHT : PROFESSIONAL PAYMENT -->
+            <div class="pay-card">
+                <div class="pay-head">
+                    <h3>UPI Payment</h3>
+                    <p>Pay securely and upload proof for admin verification</p>
+                </div>
 
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
+                <div class="pay-body">
 
-                {% if error %}
-                    <div class="alert alert-danger">{{ error }}</div>
-                {% endif %}
-
-                <div class="qr-box">
-                    {% if qr_url %}
-                        <img src="{{ qr_url }}" alt="UPI QR Code">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                     {% endif %}
 
-                    <div class="upi-box">
-                        <div><b>UPI ID:</b> {{ upi_id }}</div>
-                        <div><b>Amount:</b> ₹ {{ book.total_price }}</div>
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error }}</div>
+                    {% endif %}
+
+                    <div class="pay-method-strip">
+                        <div class="method-chip">📱 PhonePe</div>
+                        <div class="method-chip">💙 Paytm</div>
+                        <div class="method-chip">🟣 Google Pay</div>
+                        <div class="method-chip">🏦 UPI QR</div>
+                    </div>
+
+                    <div class="pay-box">
+                        <div class="pay-topline">
+                            <div class="merchant-box">
+                                <h4>Vallacar Transit</h4>
+                                <p>Booking #{{ book.id }} • {{ book.bus_name }}</p>
+                            </div>
+
+                            <div class="amount-box">
+                                <span class="small">Amount to Pay</span>
+                                <div class="big">₹ {{ book.total_price }}</div>
+                            </div>
+                        </div>
+
+                        <div class="qr-wrap">
+                            {% if qr_url %}
+                                <img src="{{ qr_url }}" alt="UPI QR Code">
+                            {% endif %}
+
+                            <div class="upi-details">
+                                <div class="upi-row">
+                                    <span><b>UPI ID</b></span>
+                                    <span>{{ upi_id }}</span>
+                                </div>
+                                <div class="upi-row">
+                                    <span><b>Passenger</b></span>
+                                    <span>{{ book.name }}</span>
+                                </div>
+                                <div class="upi-row">
+                                    <span><b>Amount</b></span>
+                                    <span>₹ {{ book.total_price }}</span>
+                                </div>
+                                <div class="upi-row">
+                                    <span><b>Route</b></span>
+                                    <span>{{ book.source }} → {{ book.dest }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-title">Submit Payment Proof</div>
+
+                        <form method="post" action="{% url 'submit_payment' book.id %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <label class="form-label">UPI Transaction / UTR / Reference Number</label>
+                            <input
+                                type="text"
+                                name="upi_reference"
+                                class="form-control"
+                                placeholder="Enter UPI transaction reference number"
+                                required
+                            >
+
+                            <label class="form-label">Upload Payment Screenshot</label>
+                            <input
+                                type="file"
+                                name="payment_screenshot"
+                                class="form-control"
+                                accept="image/*"
+                                required
+                            >
+
+                            <button type="submit" class="pay-btn">
+                                Submit Payment Proof
+                            </button>
+                        </form>
+
+                        <a href="{% url 'payment_failed' book.id %}" class="cancel-link">
+                            Cancel Payment
+                        </a>
+
+                        <div class="pay-note">
+                            <b>Payment instructions</b>
+                            <ul>
+                                <li>Scan QR using any UPI app like PhonePe, Paytm or GPay.</li>
+                                <li>Pay exact amount: <b>₹ {{ book.total_price }}</b></li>
+                                <li>Enter the correct UTR / reference number.</li>
+                                <li>Upload screenshot after payment.</li>
+                                <li>Admin will verify payment and then ticket becomes <b>CONFIRMED</b>.</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-
-                <form method="post" action="{% url 'submit_payment' book.id %}" enctype="multipart/form-data">
-                    {% csrf_token %}
-
-                    <label class="upload-label">UPI Transaction / Reference Number</label>
-                    <input type="text"
-                           name="upi_reference"
-                           class="form-control"
-                           placeholder="Enter UPI Ref No / UTR Number"
-                           required>
-
-                    <label class="upload-label mt-3">Upload Payment Screenshot</label>
-                    <input type="file"
-                           name="payment_screenshot"
-                           class="form-control"
-                           accept="image/*"
-                           required>
-
-                    <button type="submit" class="btn-pay">
-                        Submit Payment Proof
-                    </button>
-                </form>
-
-                <a href="{% url 'payment_failed' book.id %}" class="btn-cancel">
-                    Cancel Payment
-                </a>
-
-                <div class="note-box">
-                    <b>Instructions:</b>
-                    <ul style="margin-bottom:0; padding-left:18px;">
-                        <li>Scan the QR using any UPI app.</li>
-                        <li>Pay exact amount: <b>₹ {{ book.total_price }}</b></li>
-                        <li>Enter transaction/reference/UTR number.</li>
-                        <li>Upload payment screenshot and submit.</li>
-                        <li>Admin will verify your payment and confirm booking.</li>
-                    </ul>
-                </div>
             </div>
-        </div>
 
+        </div>
     </div>
 </div>
+
+<script>
+    window.addEventListener("load", function () {
+        const loader = document.getElementById("ticketLoader");
+        const content = document.getElementById("paymentContent");
+
+        setTimeout(function () {
+            loader.style.display = "none";
+            content.style.display = "block";
+        }, 2000);
+    });
+</script>
 
 {% endblock %}

@@ -124,26 +124,22 @@ def payment_page(request, booking_id):
     """
     book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
 
-    # If already paid and confirmed
     if book.status == "CONFIRMED":
         messages.success(request, "This booking is already confirmed.")
         return redirect("seebookings")
 
-    # Your UPI details
-    upi_id = "yourupi@oksbi"   # <-- change this
-    payee_name = "Bus Ticket Booking"
+    # change to your real UPI
+    upi_id = "yourupi@oksbi"
+    payee_name = "Vallacar Transit"
 
-    # UPI payment link
     upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={book.total_price}&cu=INR&tn=Booking#{book.id}"
 
-    # Create QR folder if not exists
     qr_folder = os.path.join(settings.MEDIA_ROOT, "qr_codes")
     os.makedirs(qr_folder, exist_ok=True)
 
     qr_filename = f"booking_{book.id}.png"
     qr_path = os.path.join(qr_folder, qr_filename)
 
-    # Generate QR only if not exists
     if not os.path.exists(qr_path):
         qr_img = qrcode.make(upi_link)
         qr_img.save(qr_path)
@@ -174,9 +170,8 @@ def submit_payment(request, booking_id):
     upi_reference = request.POST.get("upi_reference")
     screenshot = request.FILES.get("payment_screenshot")
 
-    # Rebuild QR in case of error rendering again
-    upi_id = "yourupi@oksbi"   # <-- change this
-    payee_name = "Bus Ticket Booking"
+    upi_id = "yourupi@oksbi"
+    payee_name = "Vallacar Transit"
     upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={book.total_price}&cu=INR&tn=Booking#{book.id}"
 
     qr_folder = os.path.join(settings.MEDIA_ROOT, "qr_codes")
@@ -199,7 +194,6 @@ def submit_payment(request, booking_id):
             "error": "Please enter UPI reference number and upload screenshot."
         })
 
-    # Save payment proof
     book.upi_reference = upi_reference
     book.payment_screenshot = screenshot
     book.payment_status = "PENDING_VERIFICATION"
@@ -210,7 +204,7 @@ def submit_payment(request, booking_id):
 
 
 # =========================
-# CANCEL PAYMENT BEFORE ADMIN VERIFICATION
+# PAYMENT FAILED / CANCEL BEFORE APPROVAL
 # =========================
 @login_required(login_url="signin")
 def payment_failed(request, booking_id):
@@ -231,7 +225,7 @@ def payment_failed(request, booking_id):
 
 
 # =========================
-# CANCEL BOOKING AFTER CONFIRMATION
+# CANCEL BOOKING
 # =========================
 @login_required(login_url="signin")
 def cancellings(request):
@@ -247,13 +241,11 @@ def cancellings(request):
         try:
             book = Book.objects.get(id=int(booking_id), userid=request.user.id)
 
-            # already cancelled
             if book.status == "CANCELLED":
                 return render(request, "myapp/error.html", {
                     "error": "This booking is already cancelled."
                 })
 
-            # restore seats only if confirmed
             if book.status == "CONFIRMED":
                 bus = Bus.objects.get(id=book.busid)
                 bus.rem = int(bus.rem) + int(book.nos)
@@ -280,9 +272,7 @@ def cancellings(request):
 # =========================
 @login_required(login_url="signin")
 def seebookings(request):
-    id_r = request.user.id
-    book_list = Book.objects.filter(userid=id_r).order_by('-id')
-
+    book_list = Book.objects.filter(userid=request.user.id).order_by('-id')
     return render(request, "myapp/booklist.html", {"book_list": book_list})
 
 
@@ -358,5 +348,6 @@ def signout(request):
 @login_required(login_url="signin")
 def success(request):
     return render(request, "myapp/success.html", {
-        "user": request.user
+        "user": request.user.username,
+        "id": request.user.id
     })

@@ -2,70 +2,231 @@
 {% block content %}
 
 <style>
-.login-hero {
-  min-height: 70vh;
-  background: linear-gradient(to right, #00416A, #1CB5E0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 1.5s;
-}
+    body {
+        background: #f4f8fb;
+    }
 
-.login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 0 15px rgba(0,65,106,0.4);
-  text-align: center;
-  width: 100%;
-  max-width: 450px;
-}
+    .success-wrap {
+        min-height: calc(100vh - 76px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 15px;
+        background:
+            linear-gradient(135deg, rgba(0,65,106,0.88), rgba(28,181,224,0.88)),
+            url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1600&q=80');
+        background-size: cover;
+        background-position: center;
+    }
 
-.login-card h2 {
-  color: #00416A;
-  margin-bottom: 20px;
-}
+    .success-card {
+        width: 100%;
+        max-width: 560px;
+        background: rgba(255,255,255,0.96);
+        border-radius: 22px;
+        padding: 38px 32px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.20);
+        text-align: center;
+        animation: popUp 0.9s ease;
+    }
 
-.login-card p {
-  font-size: 18px;
-  color: #333;
-}
+    .success-icon {
+        width: 95px;
+        height: 95px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: linear-gradient(to right, #16c47f, #45e994);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 42px;
+        box-shadow: 0 12px 30px rgba(22,196,127,0.35);
+    }
 
-.btn-hero {
-  margin-top: 20px;
-  padding: 10px 30px;
-  background: #1CB5E0;
-  color: white;
-  border-radius: 25px;
-  border: none;
-  font-size: 16px;
-  transition: 0.3s;
-}
+    .success-card h2 {
+        color: #00416A;
+        font-size: 34px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
 
-.btn-hero:hover {
-  background: #00416A;
-  color: white;
-}
+    .success-card .welcome-text {
+        font-size: 17px;
+        color: #4f5d6b;
+        margin-bottom: 26px;
+    }
 
-@keyframes fadeIn {
-  from {opacity:0;}
-  to {opacity:1;}
-}
+    .user-box {
+        background: #f7fbff;
+        border: 1px solid #d7ecfb;
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 28px;
+        text-align: left;
+    }
+
+    .user-box h5 {
+        color: #00416A;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .user-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #edf3f8;
+        font-size: 15px;
+    }
+
+    .user-row:last-child {
+        border-bottom: none;
+    }
+
+    .user-row span:first-child {
+        color: #666;
+        font-weight: 600;
+    }
+
+    .user-row span:last-child {
+        color: #222;
+        font-weight: 700;
+    }
+
+    .btn-area {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .btn-main {
+        min-width: 160px;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-size: 15px;
+        font-weight: 700;
+        transition: 0.3s;
+        border: none;
+        text-decoration: none !important;
+    }
+
+    .btn-home {
+        background: linear-gradient(to right, #00416A, #1CB5E0);
+        color: white;
+        box-shadow: 0 8px 18px rgba(0,65,106,0.22);
+    }
+
+    .btn-home:hover {
+        transform: translateY(-2px);
+        color: white;
+        box-shadow: 0 12px 24px rgba(0,65,106,0.28);
+    }
+
+    .btn-booking {
+        background: linear-gradient(to right, #ff9800, #ffb547);
+        color: white;
+        box-shadow: 0 8px 18px rgba(255,152,0,0.25);
+    }
+
+    .btn-booking:hover {
+        transform: translateY(-2px);
+        color: white;
+        box-shadow: 0 12px 24px rgba(255,152,0,0.30);
+    }
+
+    .btn-signout {
+        background: #f8f9fa;
+        color: #333;
+        border: 1px solid #d9dee3;
+    }
+
+    .btn-signout:hover {
+        background: #eceff1;
+        color: #111;
+        transform: translateY(-2px);
+    }
+
+    .success-note {
+        margin-top: 22px;
+        color: #6c7a86;
+        font-size: 14px;
+    }
+
+    @keyframes popUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.97);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .success-card {
+            padding: 28px 20px;
+        }
+
+        .success-card h2 {
+            font-size: 28px;
+        }
+
+        .btn-main {
+            width: 100%;
+        }
+
+        .user-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+    }
 </style>
 
-<div class="login-hero">
-  <div class="login-card">
+<div class="success-wrap">
+    <div class="success-card">
 
-    <form action="{% url 'signout' %}" method="post">
-      {% csrf_token %}
+        <div class="success-icon">✓</div>
 
-      <h2>Welcome 🎉</h2>
-      <p><b>{{user}}</b> successfully logged in! (ID: {{id}})</p>
+        <h2>Login Successful</h2>
+        <p class="welcome-text">
+            Welcome to <b>Vallacar Transit</b>. You are now signed in successfully.
+        </p>
 
-      <button type="submit" class="btn-hero">Sign Out</button>
-    </form>
+        <div class="user-box">
+            <h5>Account Details</h5>
 
-  </div>
+            <div class="user-row">
+                <span>User Name</span>
+                <span>{{ user }}</span>
+            </div>
+
+            <div class="user-row">
+                <span>User ID</span>
+                <span>{{ id }}</span>
+            </div>
+
+            <div class="user-row">
+                <span>Status</span>
+                <span>Active</span>
+            </div>
+        </div>
+
+        <div class="btn-area">
+            <a href="{% url 'home' %}" class="btn btn-main btn-home">🏠 Go to Home</a>
+            <a href="{% url 'seebookings' %}" class="btn btn-main btn-booking">🎫 My Bookings</a>
+            <a href="{% url 'signout' %}" class="btn btn-main btn-signout">Sign Out</a>
+        </div>
+
+        <p class="success-note">
+            You can now search buses, book tickets and manage your bookings.
+        </p>
+
+    </div>
 </div>
 
 {% endblock %}

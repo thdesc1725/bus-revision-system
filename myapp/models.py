@@ -65,7 +65,6 @@ class Book(models.Model):
 
     payment_id = models.CharField(max_length=100, blank=True, null=True)
 
-    # Payment proof
     payment_screenshot = models.ImageField(upload_to='payments/', blank=True, null=True)
     upi_reference = models.CharField(max_length=100, blank=True, null=True)
 

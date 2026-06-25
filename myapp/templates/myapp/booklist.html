@@ -2,159 +2,380 @@
 {% block content %}
 
 <style>
-.page-header {
-    background: linear-gradient(to right, #00416A, #1CB5E0);
-    padding: 30px;
-    color: white;
-    text-align: center;
-    animation: fadeIn 1.5s;
-}
+    body {
+        background: #f4f8fb;
+    }
 
-.booking-card {
-    margin-top: -20px;
-    padding: 25px;
-    border-radius: 15px;
-    background: #ffffff;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    animation: slideUp 1.5s;
-}
+    .page-header {
+        background: linear-gradient(135deg, rgba(0, 65, 106, 0.92), rgba(28, 181, 224, 0.92)),
+                    url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=1400&q=80');
+        background-size: cover;
+        background-position: center;
+        padding: 55px 20px;
+        color: white;
+        text-align: center;
+        border-radius: 0 0 25px 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        animation: fadeIn 1.2s ease;
+    }
 
-.table thead {
-    background: #00416A;
-    color: white;
-}
+    .page-header h1 {
+        font-size: 40px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
 
-.table tbody tr:hover {
-    background-color: #eef7ff;
-}
+    .page-header p {
+        font-size: 17px;
+        margin-bottom: 0;
+        opacity: 0.95;
+    }
 
-.cancel-card {
-    margin-top: 30px;
-    padding: 20px;
-    border-radius: 15px;
-    background: #f8f9fa;
-    box-shadow: 0 0 10px rgba(0,0,0,0.15);
-}
+    .booking-wrapper {
+        margin-top: 35px;
+        margin-bottom: 50px;
+    }
 
-.btn-cancel {
-    background: #dc3545;
-    color: white;
-    padding: 10px 30px;
-    border-radius: 25px;
-    font-size: 18px;
-    border: none;
-}
+    .booking-card {
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+        padding: 28px;
+        animation: slideUp 1s ease;
+    }
 
-.btn-cancel:hover {
-    background: #c82333;
-    color: white;
-}
+    .booking-card h3 {
+        color: #00416A;
+        font-weight: 700;
+        margin-bottom: 22px;
+        text-align: center;
+    }
 
-.badge-confirmed {
-    background: #28a745;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 12px;
-}
+    .table-responsive {
+        border-radius: 14px;
+        overflow: hidden;
+    }
 
-.badge-pending {
-    background: #ffc107;
-    color: black;
-    padding: 6px 10px;
-    border-radius: 12px;
-}
+    .table {
+        margin-bottom: 0;
+        background: white;
+    }
 
-.badge-cancelled {
-    background: #dc3545;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 12px;
-}
+    .table thead th {
+        background: linear-gradient(to right, #00416A, #1CB5E0);
+        color: white;
+        border: none;
+        font-size: 14px;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
 
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
+    .table td {
+        vertical-align: middle;
+        font-size: 14px;
+        white-space: nowrap;
+    }
 
-@keyframes slideUp {
-    from {transform: translateY(40px); opacity:0;}
-    to {transform: translateY(0); opacity:1;}
-}
+    .table tbody tr:hover {
+        background: #eef8ff;
+        transition: 0.3s;
+    }
+
+    .cancel-card {
+        margin-top: 30px;
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+        padding: 28px;
+        animation: slideUp 1.2s ease;
+    }
+
+    .cancel-card h3 {
+        color: #dc3545;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .cancel-card label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .cancel-card .form-control {
+        height: 48px;
+        border-radius: 12px;
+        border: 1px solid #ced4da;
+        box-shadow: none;
+    }
+
+    .cancel-card .form-control:focus {
+        border-color: #1CB5E0;
+        box-shadow: 0 0 0 0.15rem rgba(28,181,224,0.2);
+    }
+
+    .btn-cancel {
+        background: linear-gradient(to right, #dc3545, #ff5f6d);
+        color: white;
+        padding: 12px 32px;
+        border-radius: 30px;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        transition: 0.3s;
+        box-shadow: 0 6px 16px rgba(220,53,69,0.25);
+    }
+
+    .btn-cancel:hover {
+        transform: translateY(-2px);
+        color: white;
+        box-shadow: 0 10px 20px rgba(220,53,69,0.30);
+    }
+
+    .empty-box {
+        text-align: center;
+        padding: 35px 20px;
+        border-radius: 16px;
+        background: #f8fbff;
+        border: 1px dashed #bcd7ea;
+        color: #00416A;
+    }
+
+    .empty-box h4 {
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .empty-box p {
+        margin-bottom: 18px;
+        color: #5f6b76;
+    }
+
+    .badge-pill-custom {
+        display: inline-block;
+        padding: 7px 14px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+    }
+
+    .badge-confirmed {
+        background: #d4f8e8;
+        color: #0d8a4f;
+    }
+
+    .badge-pending {
+        background: #fff4d6;
+        color: #b78103;
+    }
+
+    .badge-cancelled {
+        background: #ffe0e3;
+        color: #c62839;
+    }
+
+    .badge-paid {
+        background: #d4f8e8;
+        color: #0d8a4f;
+    }
+
+    .badge-payment-pending {
+        background: #fff4d6;
+        color: #b78103;
+    }
+
+    .badge-verification {
+        background: #dff3ff;
+        color: #0077b6;
+    }
+
+    .badge-failed {
+        background: #ffe0e3;
+        color: #c62839;
+    }
+
+    .badge-refunded {
+        background: #ece9ff;
+        color: #5e35b1;
+    }
+
+    .price-text {
+        font-weight: 700;
+        color: #00416A;
+    }
+
+    .route-text {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .action-note {
+        margin-top: 12px;
+        font-size: 13px;
+        color: #777;
+        text-align: center;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(35px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 991px) {
+        .page-header h1 {
+            font-size: 32px;
+        }
+
+        .booking-card,
+        .cancel-card {
+            padding: 20px;
+        }
+
+        .table td,
+        .table th {
+            font-size: 13px;
+        }
+    }
 </style>
 
+<!-- PAGE HEADER -->
 <div class="page-header">
     <h1>📋 My Bookings</h1>
-    <p>View your booking history and cancel tickets</p>
+    <p>Check your bus reservations, payment status and cancel tickets if needed.</p>
 </div>
 
-<div class="container">
+<div class="container booking-wrapper">
 
+    <!-- FLASH MESSAGES -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- BOOKING HISTORY -->
     <div class="booking-card">
-        <h3 class="text-center mb-4">Booking History</h3>
+        <h3>Booking History</h3>
 
-        <table class="table table-bordered table-hover text-center">
-            <thead>
-                <tr>
-                    <th>Booking ID</th>
-                    <th>User Name</th>
-                    <th>Bus</th>
-                    <th>Source</th>
-                    <th>Destination</th>
-                    <th>Seats</th>
-                    <th>Price / Seat</th>
-                    <th>Total Price</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Payment</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
+        {% if book_list %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>User</th>
+                            <th>Bus</th>
+                            <th>Route</th>
+                            <th>Seats</th>
+                            <th>Price / Seat</th>
+                            <th>Total Price</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Payment</th>
+                            <th>Booking Status</th>
+                        </tr>
+                    </thead>
 
-            <tbody>
-            {% for row in book_list %}
-                <tr>
-                    <td>{{ row.id }}</td>
-                    <td>{{ row.name }}</td>
-                    <td>{{ row.bus_name }}</td>
-                    <td>{{ row.source }}</td>
-                    <td>{{ row.dest }}</td>
-                    <td>{{ row.nos }}</td>
-                    <td>₹ {{ row.price }}</td>
-                    <td>₹ {{ row.total_price }}</td>
-                    <td>{{ row.date }}</td>
-                    <td>{{ row.time }}</td>
-                    <td>{{ row.payment_status }}</td>
-                    <td>
-                        {% if row.status == "CONFIRMED" %}
-                            <span class="badge-confirmed">Confirmed</span>
-                        {% elif row.status == "PENDING" %}
-                            <span class="badge-pending">Pending</span>
-                        {% else %}
-                            <span class="badge-cancelled">Cancelled</span>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                    <tbody>
+                    {% for row in book_list %}
+                        <tr>
+                            <td><b>#{{ row.id }}</b></td>
+                            <td>{{ row.name }}</td>
+                            <td>{{ row.bus_name }}</td>
+                            <td class="route-text">{{ row.source }} → {{ row.dest }}</td>
+                            <td>{{ row.nos }}</td>
+                            <td class="price-text">₹ {{ row.price }}</td>
+                            <td class="price-text">₹ {{ row.total_price }}</td>
+                            <td>{{ row.date }}</td>
+                            <td>{{ row.time }}</td>
+
+                            <!-- PAYMENT STATUS -->
+                            <td>
+                                {% if row.payment_status == "PAID" %}
+                                    <span class="badge-pill-custom badge-paid">Paid</span>
+                                {% elif row.payment_status == "PENDING" %}
+                                    <span class="badge-pill-custom badge-payment-pending">Pending</span>
+                                {% elif row.payment_status == "PENDING_VERIFICATION" %}
+                                    <span class="badge-pill-custom badge-verification">Verification</span>
+                                {% elif row.payment_status == "FAILED" %}
+                                    <span class="badge-pill-custom badge-failed">Failed</span>
+                                {% elif row.payment_status == "REFUNDED" %}
+                                    <span class="badge-pill-custom badge-refunded">Refunded</span>
+                                {% else %}
+                                    <span class="badge-pill-custom badge-payment-pending">{{ row.payment_status }}</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- BOOKING STATUS -->
+                            <td>
+                                {% if row.status == "CONFIRMED" %}
+                                    <span class="badge-pill-custom badge-confirmed">Confirmed</span>
+                                {% elif row.status == "PENDING" %}
+                                    <span class="badge-pill-custom badge-pending">Pending</span>
+                                {% elif row.status == "CANCELLED" %}
+                                    <span class="badge-pill-custom badge-cancelled">Cancelled</span>
+                                {% else %}
+                                    <span class="badge-pill-custom badge-pending">{{ row.status }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-box">
+                <h4>No bookings found</h4>
+                <p>You have not booked any bus tickets yet.</p>
+                <a href="{% url 'findbus' %}" class="btn btn-primary">Find a Bus</a>
+            </div>
+        {% endif %}
     </div>
 
+    <!-- CANCEL BOOKING -->
     <div class="cancel-card">
-        <h3 class="text-center mb-3">❌ Cancel Booking</h3>
+        <h3>❌ Cancel Booking</h3>
 
         <form action="{% url 'cancellings' %}" method="post">
             {% csrf_token %}
 
             <div class="form-group">
-                <label>Booking ID</label>
-                <input name="bus_id" class="form-control" type="number" placeholder="Enter Booking ID" required>
+                <label for="booking_id">Booking ID</label>
+                <input
+                    id="booking_id"
+                    name="booking_id"
+                    class="form-control"
+                    type="number"
+                    placeholder="Enter your Booking ID"
+                    required
+                >
             </div>
 
             <div class="text-center">
                 <button type="submit" class="btn btn-cancel">Cancel Booking</button>
             </div>
+
+            <p class="action-note">
+                Enter the booking ID shown in the table above to cancel your ticket.
+            </p>
         </form>
     </div>
+
 </div>
 
 {% endblock %}
