@@ -1,97 +1,610 @@
 {% extends 'myapp/base.html' %}
+{% load static %}
 {% block content %}
 
 <style>
-.search-hero {
-    background: linear-gradient(to right, #00416A, #1CB5E0);
-    padding: 40px;
-    color: white;
-    text-align: center;
-    animation: fadeIn 1.5s;
-}
+    :root{
+        --navy:#0f2747;
+        --navy-2:#173b68;
+        --blue:#245c97;
+        --sky:#dbeafe;
+        --gold:#f4b544;
+        --gold-soft:#fff5dd;
+        --text:#142133;
+        --muted:#667085;
+        --line:#e7eef7;
+        --soft:#f8fbff;
+        --white:#ffffff;
+        --shadow:0 16px 40px rgba(15, 39, 71, 0.10);
+        --shadow-lg:0 24px 60px rgba(15, 39, 71, 0.16);
+        --radius-xl:28px;
+        --radius-lg:22px;
+        --radius-md:16px;
+    }
 
-.search-card {
-    margin-top: -30px;
-    padding: 30px;
-    border-radius: 15px;
-    background: #ffffff;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    animation: slideUp 1.5s;
-}
+    body{
+        background: linear-gradient(180deg, #f6f9fe 0%, #eef4fb 45%, #f8fbff 100%);
+        color: var(--text);
+    }
 
-.form-group label {
-    font-weight: bold;
-}
+    .findbus-page{
+        overflow:hidden;
+        padding: 26px 0 80px;
+    }
 
-.btn-search {
-    background: orange;
-    color: white;
-    padding: 10px 30px;
-    border-radius: 25px;
-    font-size: 18px;
-}
+    /* ================= LOADER ================= */
+    #tripxLoader{
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+            linear-gradient(135deg, rgba(8,24,48,.88), rgba(12,35,67,.92)),
+            url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+        transition: opacity .6s ease, visibility .6s ease;
+    }
 
-.btn-search:hover {
-    background: darkorange;
-    color: white;
-}
+    #tripxLoader.hide{
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
 
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
+    .loader-box{
+        position: relative;
+        width: 220px;
+        height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
 
-@keyframes slideUp {
-    from {transform: translateY(50px); opacity:0;}
-    to {transform: translateY(0); opacity:1;}
-}
+    .loader-ring{
+        position:absolute;
+        inset:0;
+        border-radius:50%;
+        border: 6px solid rgba(255,255,255,.14);
+        border-top: 6px solid #f4b544;
+        border-right: 6px solid #ffd978;
+        animation: spinLoader 1.4s linear infinite;
+        box-shadow: 0 0 0 10px rgba(255,255,255,.04);
+    }
+
+    .loader-ring::before{
+        content:"";
+        position:absolute;
+        inset:18px;
+        border-radius:50%;
+        border: 4px dashed rgba(255,255,255,.28);
+        animation: spinReverse 2.2s linear infinite;
+    }
+
+    .loader-logo-wrap{
+        position:relative;
+        z-index:3;
+        width:120px;
+        height:120px;
+        border-radius:50%;
+        background:#fff;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        overflow:hidden;
+        border:6px solid rgba(255,255,255,.35);
+        box-shadow:
+            0 18px 40px rgba(0,0,0,.28),
+            0 0 0 10px rgba(255,255,255,.08);
+    }
+
+    .loader-logo-wrap img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        display:block;
+        border-radius:50%;
+    }
+
+    .loader-text{
+        position:absolute;
+        bottom:-38px;
+        left:50%;
+        transform:translateX(-50%);
+        width:max-content;
+        color:#fff;
+        font-size:18px;
+        font-weight:900;
+        letter-spacing:.4px;
+        text-align:center;
+    }
+
+    .loader-sub{
+        display:block;
+        margin-top:6px;
+        font-size:13px;
+        font-weight:600;
+        color:rgba(255,255,255,.82);
+        letter-spacing:.3px;
+    }
+
+    @keyframes spinLoader{
+        from{ transform:rotate(0deg); }
+        to{ transform:rotate(360deg); }
+    }
+
+    @keyframes spinReverse{
+        from{ transform:rotate(360deg); }
+        to{ transform:rotate(0deg); }
+    }
+
+    /* ================= HERO ================= */
+    .findbus-hero{
+        position:relative;
+        border-radius:38px;
+        overflow:hidden;
+        min-height:360px;
+        box-shadow: var(--shadow-lg);
+        background:
+            linear-gradient(135deg, rgba(8,24,48,.55), rgba(12,35,67,.35)),
+            url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+        border:1px solid rgba(255,255,255,.55);
+        margin-bottom: -70px;
+    }
+
+    .findbus-hero::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        background:
+            radial-gradient(circle at 14% 18%, rgba(255,255,255,.16), transparent 26%),
+            radial-gradient(circle at 88% 18%, rgba(255,255,255,.12), transparent 22%),
+            linear-gradient(180deg, rgba(10,28,52,.12), rgba(10,28,52,.22));
+        pointer-events:none;
+    }
+
+    .findbus-hero-content{
+        position:relative;
+        z-index:2;
+        min-height:360px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex-direction:column;
+        text-align:center;
+        padding:40px 20px;
+        color:#fff;
+    }
+
+    .findbus-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:10px;
+        padding:10px 18px;
+        border-radius:999px;
+        background:rgba(255,255,255,.14);
+        border:1px solid rgba(255,255,255,.22);
+        backdrop-filter: blur(8px);
+        color:#fff;
+        font-size:14px;
+        font-weight:800;
+        margin-bottom:20px;
+    }
+
+    .findbus-title{
+        margin:0 0 14px;
+        font-size:52px;
+        line-height:1.08;
+        font-weight:900;
+        letter-spacing:.2px;
+        text-shadow:0 8px 26px rgba(0,0,0,.18);
+    }
+
+    .findbus-title .accent{
+        color:#ffd978;
+    }
+
+    .findbus-sub{
+        max-width:760px;
+        margin:0;
+        color:rgba(255,255,255,.92);
+        font-size:17px;
+        line-height:1.8;
+        font-weight:500;
+    }
+
+    /* ================= SEARCH CARD ================= */
+    .search-wrap{
+        position:relative;
+        z-index:5;
+    }
+
+    .search-card{
+        max-width:760px;
+        margin:0 auto;
+        background:#fff;
+        border:1px solid var(--line);
+        border-radius:30px;
+        box-shadow: var(--shadow-lg);
+        padding:34px 30px;
+        animation: slideUp .7s ease;
+    }
+
+    .search-card-top{
+        text-align:center;
+        margin-bottom:28px;
+    }
+
+    .search-card-top h3{
+        margin:0 0 10px;
+        color:var(--text);
+        font-size:32px;
+        font-weight:900;
+    }
+
+    .search-card-top p{
+        margin:0;
+        color:var(--muted);
+        font-size:15px;
+        line-height:1.7;
+        font-weight:500;
+    }
+
+    .search-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:18px;
+    }
+
+    .form-group{
+        margin-bottom:0;
+    }
+
+    .form-group.full{
+        grid-column:1 / -1;
+    }
+
+    .field-label{
+        display:block;
+        margin-bottom:10px;
+        color:var(--text);
+        font-size:14px;
+        font-weight:900;
+        letter-spacing:.2px;
+    }
+
+    .input-wrap{
+        position:relative;
+    }
+
+    .input-icon{
+        position:absolute;
+        left:16px;
+        top:50%;
+        transform:translateY(-50%);
+        font-size:18px;
+        color:#7a8aa0;
+        pointer-events:none;
+    }
+
+    .search-input{
+        width:100%;
+        height:58px;
+        border-radius:18px;
+        border:1px solid #dce7f5;
+        background:#f9fbff;
+        padding:0 16px 0 50px;
+        color:var(--text);
+        font-size:15px;
+        font-weight:600;
+        outline:none;
+        transition:.25s ease;
+        box-shadow:none;
+    }
+
+    .search-input:focus{
+        border-color:#7db3ea;
+        background:#fff;
+        box-shadow:0 0 0 4px rgba(36,92,151,.10);
+    }
+
+    .search-input::placeholder{
+        color:#98a4b3;
+        font-weight:500;
+    }
+
+    .search-btn-wrap{
+        margin-top:26px;
+        text-align:center;
+    }
+
+    .btn-search{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        min-width:220px;
+        padding:15px 24px;
+        border:none;
+        border-radius:18px;
+        background:linear-gradient(135deg, #f4b544, #ffd16d);
+        color:#162033 !important;
+        font-size:16px;
+        font-weight:900;
+        box-shadow:0 14px 28px rgba(244,181,68,.24);
+        transition:.25s ease;
+        cursor:pointer;
+    }
+
+    .btn-search:hover{
+        transform:translateY(-2px);
+        color:#162033 !important;
+    }
+
+    .error-box{
+        margin-top:20px;
+        background:#fff4f4;
+        border:1px solid #ffd1d1;
+        color:#b42318;
+        border-radius:16px;
+        padding:14px 16px;
+        text-align:center;
+        font-size:14px;
+        font-weight:700;
+    }
+
+    /* ================= EXTRA INFO SECTION ================= */
+    .info-section{
+        padding:80px 0 0;
+    }
+
+    .info-grid{
+        display:grid;
+        grid-template-columns:repeat(3, 1fr);
+        gap:24px;
+    }
+
+    .info-card{
+        background:#fff;
+        border:1px solid var(--line);
+        border-radius:26px;
+        padding:26px 22px;
+        box-shadow:var(--shadow);
+        transition:.25s ease;
+        text-align:center;
+    }
+
+    .info-card:hover{
+        transform:translateY(-4px);
+        box-shadow:var(--shadow-lg);
+    }
+
+    .info-icon{
+        width:72px;
+        height:72px;
+        margin:0 auto 16px;
+        border-radius:22px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:30px;
+        color:#fff;
+        box-shadow:0 12px 24px rgba(0,0,0,.10);
+    }
+
+    .info-icon.blue{ background:linear-gradient(135deg, #173b68, #2f6dac); }
+    .info-icon.gold{ background:linear-gradient(135deg, #e7a41d, #f6c456); }
+    .info-icon.green{ background:linear-gradient(135deg, #169c83, #42d3a0); }
+
+    .info-card h4{
+        margin:0 0 8px;
+        color:var(--text);
+        font-size:22px;
+        font-weight:900;
+    }
+
+    .info-card p{
+        margin:0;
+        color:var(--muted);
+        font-size:14px;
+        line-height:1.75;
+        font-weight:500;
+    }
+
+    @keyframes slideUp{
+        from{
+            transform:translateY(40px);
+            opacity:0;
+        }
+        to{
+            transform:translateY(0);
+            opacity:1;
+        }
+    }
+
+    /* ================= RESPONSIVE ================= */
+    @media (max-width: 991px){
+        .findbus-title{
+            font-size:40px;
+        }
+
+        .search-grid{
+            grid-template-columns:1fr;
+        }
+
+        .info-grid{
+            grid-template-columns:1fr;
+        }
+
+        .findbus-hero{
+            min-height:320px;
+            margin-bottom:-55px;
+        }
+
+        .findbus-hero-content{
+            min-height:320px;
+        }
+    }
+
+    @media (max-width: 767px){
+        .findbus-page{
+            padding:18px 0 60px;
+        }
+
+        .findbus-title{
+            font-size:32px;
+        }
+
+        .findbus-sub{
+            font-size:15px;
+        }
+
+        .search-card{
+            padding:24px 18px;
+            border-radius:24px;
+        }
+
+        .search-card-top h3{
+            font-size:26px;
+        }
+
+        .btn-search{
+            width:100%;
+            min-width:100%;
+        }
+
+        .loader-box{
+            width:180px;
+            height:180px;
+        }
+
+        .loader-logo-wrap{
+            width:100px;
+            height:100px;
+        }
+
+        .loader-text{
+            font-size:16px;
+            bottom:-34px;
+        }
+    }
 </style>
 
-<!-- HERO HEADER -->
-<div class="search-hero">
-    <h1>🔍 Find Your Bus</h1>
-    <p>Search buses by route and date</p>
-</div>
+<!-- ================= LOADER ================= -->
+<div id="tripxLoader">
+    <div class="loader-box">
+        <div class="loader-ring"></div>
 
-<!-- SEARCH FORM -->
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="search-card">
+        <div class="loader-logo-wrap">
+            <img src="{% static 'mysite/images/logo.JPG' %}" alt="TripX Logo">
+        </div>
 
-                <h3 class="text-center mb-4">Bus Search</h3>
-
-                <form action="{% url 'findbus' %}" method="post">
-                    {% csrf_token %}
-
-                    <div class="form-group">
-                        <label>From</label>
-                        <input name="source" class="form-control" placeholder="Enter source city" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Destination</label>
-                        <input name="destination" class="form-control" placeholder="Enter destination city" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Date</label>
-                        <input name="date" class="form-control" type="date" required>
-                    </div>
-
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-search">Find Bus</button>
-                    </div>
-
-                    {% if error %}
-                        <p class="text-danger text-center mt-3">{{ error }}</p>
-                    {% endif %}
-
-                </form>
-
-            </div>
+        <div class="loader-text">
+            TripX
+            <span class="loader-sub">Loading your route search...</span>
         </div>
     </div>
 </div>
 
+<div class="findbus-page">
+    <div class="container">
+
+        <!-- HERO -->
+        <div class="findbus-hero">
+            <div class="findbus-hero-content">
+                <div class="findbus-badge">🚌 Smart Route Search</div>
+                <h1 class="findbus-title">
+                    Find Your Perfect <span class="accent">Bus Journey</span>
+                </h1>
+                <p class="findbus-sub">
+                    Search buses by source, destination and date with TripX’s clean premium booking experience.
+                    Discover available routes faster and continue to secure booking in just a few steps.
+                </p>
+            </div>
+        </div>
+
+        <!-- SEARCH CARD -->
+        <div class="search-wrap">
+            <div class="search-card">
+                <div class="search-card-top">
+                    <h3>Search Available Buses</h3>
+                    <p>Enter your route details below and find available buses for your travel date.</p>
+                </div>
+
+                <form action="{% url 'findbus' %}" method="post">
+                    {% csrf_token %}
+
+                    <div class="search-grid">
+                        <div class="form-group">
+                            <label class="field-label">From</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">📍</span>
+                                <input name="source" class="search-input" placeholder="Enter source city" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="field-label">Destination</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">🧭</span>
+                                <input name="destination" class="search-input" placeholder="Enter destination city" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group full">
+                            <label class="field-label">Travel Date</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">📅</span>
+                                <input name="date" class="search-input" type="date" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-btn-wrap">
+                        <button type="submit" class="btn-search">🔍 Find Bus</button>
+                    </div>
+
+                    {% if error %}
+                        <div class="error-box">{{ error }}</div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+        <!-- EXTRA INFO -->
+        <section class="info-section">
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon blue">⚡</div>
+                    <h4>Fast Search</h4>
+                    <p>Quickly search routes by source, destination and date with a clean booking flow.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon gold">🎫</div>
+                    <h4>Easy Booking</h4>
+                    <p>Select your route, choose seats and continue toward a simple TripX booking experience.</p>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon green">🔒</div>
+                    <h4>Secure Payment</h4>
+                    <p>Complete your booking using the TripX payment flow and manage everything in one place.</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<script>
+    window.addEventListener('load', function () {
+        const loader = document.getElementById('tripxLoader');
+
+        setTimeout(function () {
+            loader.classList.add('hide');
+        }, 2000); // 2 sec loader
+    });
+</script>
+s
 {% endblock %}
