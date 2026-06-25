@@ -2,160 +2,95 @@
 {% block content %}
 
 <style>
-.findbus-page{
-    min-height: 100vh;
-    padding: 40px 0;
-    background:
-        linear-gradient(rgba(245,249,255,0.88), rgba(245,249,255,0.92)),
-        url('https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?auto=format&fit=crop&w=1400&q=80');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}
-
 .search-hero {
-    max-width: 1000px;
-    margin: 0 auto 25px;
-    background: linear-gradient(135deg, #0f4c81, #1cb5e0);
-    padding: 35px;
+    background: linear-gradient(to right, #00416A, #1CB5E0);
+    padding: 40px;
     color: white;
     text-align: center;
-    border-radius: 20px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    animation: fadeIn 1.5s;
 }
 
 .search-card {
-    padding: 32px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.96);
-    box-shadow: 0 14px 35px rgba(0,0,0,0.12);
-    border: 1px solid #edf3fa;
+    margin-top: -30px;
+    padding: 30px;
+    border-radius: 15px;
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    animation: slideUp 1.5s;
 }
 
 .form-group label {
     font-weight: bold;
-    color: #0f4c81;
-}
-
-.form-control{
-    height: 48px;
-    border-radius: 12px;
-    border: 1px solid #d7e4f2;
-    box-shadow: none !important;
-}
-
-.form-control:focus{
-    border-color: #1cb5e0;
 }
 
 .btn-search {
-    background: linear-gradient(135deg, #ff7b00, #ffb347);
+    background: orange;
     color: white;
-    padding: 11px 32px;
-    border-radius: 28px;
+    padding: 10px 30px;
+    border-radius: 25px;
     font-size: 18px;
-    border: none;
-    font-weight: 700;
 }
 
 .btn-search:hover {
-    opacity: .95;
+    background: darkorange;
     color: white;
 }
 
-.info-strip{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-top: 25px;
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
 }
 
-.info-box{
-    background: rgba(255,255,255,0.96);
-    border-radius: 16px;
-    padding: 18px;
-    text-align: center;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-}
-
-.info-box h5{
-    color: #0f4c81;
-    font-weight: 800;
-    margin-bottom: 8px;
-}
-
-.info-box p{
-    margin: 0;
-    color: #666;
-    font-size: 14px;
-}
-
-@media(max-width: 767px){
-    .info-strip{
-        grid-template-columns: 1fr;
-    }
+@keyframes slideUp {
+    from {transform: translateY(50px); opacity:0;}
+    to {transform: translateY(0); opacity:1;}
 }
 </style>
 
-<div class="findbus-page">
-    <div class="container">
+<!-- HERO HEADER -->
+<div class="search-hero">
+    <h1>🔍 Find Your Bus</h1>
+    <p>Search buses by route and date</p>
+</div>
 
-        <div class="search-hero">
-            <h1>🔍 Find Your Bus</h1>
-            <p class="mb-0">Search buses by route and travel date</p>
-        </div>
+<!-- SEARCH FORM -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="search-card">
 
-        <div class="row justify-content-center">
-            <div class="col-lg-7 col-md-9">
-                <div class="search-card">
+                <h3 class="text-center mb-4">Bus Search</h3>
 
-                    <h3 class="text-center mb-4">Bus Search</h3>
+                <form action="{% url 'findbus' %}" method="post">
+                    {% csrf_token %}
 
-                    <form action="{% url 'findbus' %}" method="post">
-                        {% csrf_token %}
+                    <div class="form-group">
+                        <label>From</label>
+                        <input name="source" class="form-control" placeholder="Enter source city" required>
+                    </div>
 
-                        <div class="form-group">
-                            <label>From</label>
-                            <input name="source" class="form-control" placeholder="Enter source city" required>
-                        </div>
+                    <div class="form-group">
+                        <label>Destination</label>
+                        <input name="destination" class="form-control" placeholder="Enter destination city" required>
+                    </div>
 
-                        <div class="form-group">
-                            <label>Destination</label>
-                            <input name="destination" class="form-control" placeholder="Enter destination city" required>
-                        </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input name="date" class="form-control" type="date" required>
+                    </div>
 
-                        <div class="form-group">
-                            <label>Date</label>
-                            <input name="date" class="form-control" type="date" required>
-                        </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-search">Find Bus</button>
+                    </div>
 
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-search">Find Bus</button>
-                        </div>
+                    {% if error %}
+                        <p class="text-danger text-center mt-3">{{ error }}</p>
+                    {% endif %}
 
-                        {% if error %}
-                            <p class="text-danger text-center mt-3">{{ error }}</p>
-                        {% endif %}
-                    </form>
-                </div>
+                </form>
+
             </div>
         </div>
-
-        <div class="info-strip">
-            <div class="info-box">
-                <h5>Safe Travel</h5>
-                <p>Trusted routes with comfortable travel experience.</p>
-            </div>
-            <div class="info-box">
-                <h5>Quick Booking</h5>
-                <p>Search, book and pay in a few simple steps.</p>
-            </div>
-            <div class="info-box">
-                <h5>Verified Tickets</h5>
-                <p>Get booking confirmation after payment verification.</p>
-            </div>
-        </div>
-
     </div>
 </div>
 

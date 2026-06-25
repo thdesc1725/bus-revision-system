@@ -7,7 +7,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 'betsff(e3$v-n@gc53*afg^r36tiz$4#lujpjxub1!(@zkxfl9'
+SECRET_KEY = 'change-this-secret-key'
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -92,7 +92,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # INTERNATIONALIZATION
 # =========================
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Asia/Kolkata'   # better for India
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -119,3 +119,21 @@ LOGIN_REDIRECT_URL = 'success'
 LOGOUT_REDIRECT_URL = 'signin'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# =========================
+# EMAIL SETTINGS
+# IMPORTANT:
+# 1) Use your Gmail address below
+# 2) DO NOT use your normal Gmail password
+# 3) Use Google APP PASSWORD here
+# =========================
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+EMAIL_HOST_USER = 'thdesc1725@gmail.com'
+EMAIL_HOST_PASSWORD = 'atxzzwssfsqzlxrx'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER

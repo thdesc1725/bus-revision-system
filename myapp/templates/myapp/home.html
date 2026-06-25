@@ -1,282 +1,73 @@
-{% extends 'myapp/base.html' %}
-{% load static %}
-{% block content %}
+from django.db import models
 
-<style>
-    .hero-section {
-        min-height: 88vh;
-        background:
-            linear-gradient(rgba(3, 24, 40, 0.58), rgba(3, 24, 40, 0.58)),
-            url("{% static 'images/bus-bg.jpg' %}") center center/cover no-repeat;
-        display: flex;
-        align-items: center;
-        color: white;
-        padding: 60px 0;
-    }
 
-    .hero-content h1 {
-        font-size: 58px;
-        font-weight: 800;
-        line-height: 1.15;
-        margin-bottom: 18px;
-    }
+class Bus(models.Model):
+    bus_name = models.CharField(max_length=30)
+    source = models.CharField(max_length=30)
+    dest = models.CharField(max_length=30)
+    nos = models.DecimalField(decimal_places=0, max_digits=5)
+    rem = models.DecimalField(decimal_places=0, max_digits=5)
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    date = models.DateField()
+    time = models.TimeField()
 
-    .hero-content h1 span {
-        color: #ffd46b;
-    }
+    def __str__(self):
+        return self.bus_name
 
-    .hero-content p {
-        font-size: 20px;
-        color: #eaf3f7;
-        max-width: 650px;
-        margin-bottom: 30px;
-    }
 
-    .hero-btn {
-        background: #ffd46b;
-        color: #032b44;
-        padding: 14px 32px;
-        border-radius: 30px;
-        font-size: 18px;
-        font-weight: 700;
-        text-decoration: none;
-        display: inline-block;
-        transition: 0.3s;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-    }
+class Book(models.Model):
+    # Ticket status
+    PENDING = 'PENDING'
+    CONFIRMED = 'CONFIRMED'
+    CANCELLED = 'CANCELLED'
 
-    .hero-btn:hover {
-        background: #ffc83d;
-        color: #032b44;
-        text-decoration: none;
-        transform: translateY(-2px);
-    }
+    TICKET_STATUSES = (
+        (PENDING, 'Pending'),
+        (CONFIRMED, 'Confirmed'),
+        (CANCELLED, 'Cancelled'),
+    )
 
-    .hero-mini-card {
-        background: rgba(255,255,255,0.12);
-        border: 1px solid rgba(255,255,255,0.18);
-        backdrop-filter: blur(6px);
-        border-radius: 18px;
-        padding: 22px;
-        margin-top: 28px;
-        max-width: 520px;
-    }
+    # Payment status
+    PAYMENT_PENDING = 'PENDING'
+    PAYMENT_PENDING_VERIFICATION = 'PENDING_VERIFICATION'
+    PAYMENT_PAID = 'PAID'
+    PAYMENT_FAILED = 'FAILED'
+    PAYMENT_REFUNDED = 'REFUNDED'
 
-    .hero-mini-card h5 {
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
+    PAYMENT_STATUSES = (
+        (PAYMENT_PENDING, 'Pending'),
+        (PAYMENT_PENDING_VERIFICATION, 'Pending Verification'),
+        (PAYMENT_PAID, 'Paid'),
+        (PAYMENT_FAILED, 'Failed'),
+        (PAYMENT_REFUNDED, 'Refunded'),
+    )
 
-    .services-section {
-        padding: 70px 0;
-        background: #f6fafc;
-    }
+    email = models.EmailField()
+    name = models.CharField(max_length=30)
+    userid = models.IntegerField()
+    busid = models.IntegerField()
+    bus_name = models.CharField(max_length=30)
+    source = models.CharField(max_length=30)
+    dest = models.CharField(max_length=30)
+    nos = models.IntegerField()
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    total_price = models.DecimalField(decimal_places=2, max_digits=10, default=0)
+    date = models.DateField()
+    time = models.TimeField()
 
-    .section-title {
-        text-align: center;
-        margin-bottom: 45px;
-    }
+    status = models.CharField(max_length=20, choices=TICKET_STATUSES, default=PENDING)
 
-    .section-title h2 {
-        font-size: 40px;
-        font-weight: 800;
-        color: #032b44;
-        margin-bottom: 10px;
-    }
+    payment_status = models.CharField(
+        max_length=30,
+        choices=PAYMENT_STATUSES,
+        default=PAYMENT_PENDING
+    )
 
-    .section-title p {
-        color: #6a7b87;
-        font-size: 17px;
-    }
+    payment_id = models.CharField(max_length=100, blank=True, null=True)
 
-    .service-card {
-        background: white;
-        border-radius: 18px;
-        padding: 28px 22px;
-        text-align: center;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-        height: 100%;
-        transition: 0.3s;
-        border: 1px solid #edf3f7;
-    }
+    # Payment proof
+    payment_screenshot = models.ImageField(upload_to='payments/', blank=True, null=True)
+    upi_reference = models.CharField(max_length=100, blank=True, null=True)
 
-    .service-card:hover {
-        transform: translateY(-8px);
-    }
-
-    .service-icon {
-        width: 75px;
-        height: 75px;
-        margin: 0 auto 18px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #0d5b74, #14967f);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        box-shadow: 0 10px 25px rgba(13,91,116,0.25);
-    }
-
-    .service-card h4 {
-        color: #032b44;
-        font-weight: 800;
-        margin-bottom: 12px;
-    }
-
-    .service-card p {
-        color: #667985;
-        margin-bottom: 0;
-    }
-
-    .cta-section {
-        padding: 60px 0;
-        background: linear-gradient(90deg, #032b44, #0d5b74);
-        color: white;
-        text-align: center;
-    }
-
-    .cta-section h2 {
-        font-size: 40px;
-        font-weight: 800;
-        margin-bottom: 15px;
-    }
-
-    .cta-section p {
-        font-size: 18px;
-        color: #dce8ee;
-        margin-bottom: 25px;
-    }
-
-    .cta-btn {
-        background: #ffd46b;
-        color: #032b44;
-        padding: 13px 30px;
-        border-radius: 28px;
-        font-size: 18px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: 0.3s;
-        display: inline-block;
-    }
-
-    .cta-btn:hover {
-        background: #ffc83d;
-        color: #032b44;
-        text-decoration: none;
-    }
-
-    @media (max-width: 991px) {
-        .hero-content h1 {
-            font-size: 42px;
-        }
-    }
-
-    @media (max-width: 767px) {
-        .hero-section {
-            min-height: auto;
-            padding: 70px 0;
-        }
-
-        .hero-content h1 {
-            font-size: 34px;
-        }
-
-        .hero-content p {
-            font-size: 17px;
-        }
-
-        .section-title h2,
-        .cta-section h2 {
-            font-size: 30px;
-        }
-    }
-</style>
-
-<!-- HERO -->
-<section class="hero-section">
-    <div class="container">
-        <div class="hero-content">
-            <h1>Less Waiting. <br><span>More Traveling.</span></h1>
-            <p>
-                Book your bus tickets online with ease. Enjoy comfortable journeys,
-                secure payments, and smooth booking with Vallacar Transit.
-            </p>
-
-            <a href="{% url 'findbus' %}" class="hero-btn">
-                <i class="fas fa-search mr-2"></i> Find Your Bus
-            </a>
-
-            <div class="hero-mini-card">
-                <h5><i class="fas fa-star text-warning mr-2"></i>Premium Travel Experience</h5>
-                <p class="mb-0">
-                    Safe rides, easy booking, fast UPI payments, and smooth ticket management —
-                    all in one place.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- 4 STAR SERVICES -->
-<section class="services-section">
-    <div class="container">
-        <div class="section-title">
-            <h2>Our 4-Star Bus Services</h2>
-            <p>Designed to make your journey safe, comfortable and hassle-free.</p>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-couch"></i>
-                    </div>
-                    <h4>Comfort Seats</h4>
-                    <p>Relax in spacious and comfortable seating for a better travel experience.</p>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h4>Safe Journey</h4>
-                    <p>We prioritize passenger safety with reliable routes and secure bookings.</p>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                    <h4>Easy Payments</h4>
-                    <p>Pay using UPI with QR, upload proof and get booking confirmation smoothly.</p>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-3 mb-4">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                    <h4>Support 24/7</h4>
-                    <p>Need help with booking or payment? We’re here to support you anytime.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-    <div class="container">
-        <h2>Book Your Next Journey Today</h2>
-        <p>Search routes, reserve seats, and travel smarter with Vallacar Transit.</p>
-        <a href="{% url 'findbus' %}" class="cta-btn">Book Now</a>
-    </div>
-</section>
-
-{% endblock %}
+    def __str__(self):
+        return f"{self.name} - {self.bus_name} - {self.status}"

@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Bus, Book
@@ -36,7 +37,7 @@ def findbus(request):
 
         try:
             date_r = datetime.strptime(date_r, "%Y-%m-%d").date()
-        except:
+        except Exception:
             context["error"] = "Please select a valid date"
             return render(request, "myapp/findbus.html", context)
 
@@ -63,6 +64,7 @@ def bookings(request):
     """
     User selects bus and seats.
     Booking created with PENDING status.
+    Email sent immediately after booking creation.
     Then redirect to payment page.
     """
     context = {}
@@ -89,6 +91,11 @@ def bookings(request):
             context["error"] = "Sorry, not enough seats available"
             return render(request, "myapp/findbus.html", context)
 
+        # Make sure logged-in user has email
+        if not request.user.email:
+            context["error"] = "Your account does not have an email address. Please sign up with a valid email."
+            return render(request, "myapp/findbus.html", context)
+
         total_cost = Decimal(seats_r) * bus.price
 
         # Create booking in pending state
@@ -109,6 +116,46 @@ def bookings(request):
             payment_status="PENDING",
         )
 
+        # SEND EMAIL IMMEDIATELY AFTER BOOKING CREATION
+        subject = "Bus Booking Created Successfully"
+        message = f"""
+Hello {book.name},
+
+Your bus booking has been created successfully.
+
+Booking Details:
+Booking ID: {book.id}
+Bus Name: {book.bus_name}
+From: {book.source}
+To: {book.dest}
+Journey Date: {book.date}
+Journey Time: {book.time}
+Number of Seats: {book.nos}
+Price per Seat: ₹{book.price}
+Total Price: ₹{book.total_price}
+
+Booking Status: {book.status}
+Payment Status: {book.payment_status}
+
+Please complete your payment to confirm the booking.
+
+Thank you for booking with us.
+"""
+
+        try:
+            result = send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [book.email],
+                fail_silently=False,
+            )
+            print("MAIL RESULT =", result)
+            print("MAIL SENT TO =", book.email)
+        except Exception as e:
+            print("EMAIL ERROR =", str(e))
+
+        messages.success(request, "Booking created successfully. Confirmation email attempted.")
         return redirect("payment", booking_id=book.id)
 
     return redirect("findbus")

@@ -2,840 +2,121 @@
 {% block content %}
 
 <style>
-    body{
-        background: linear-gradient(180deg, #f4f8ff 0%, #eef5ff 100%);
-    }
-
-    .success-wrapper{
-        max-width: 1180px;
-        margin: 28px auto 40px;
-        padding: 0 15px;
-    }
-
-    .success-top{
-        background: linear-gradient(135deg, #0f4c81, #1cb5e0);
-        border-radius: 24px;
-        padding: 28px 24px;
-        color: #fff;
-        text-align: center;
-        box-shadow: 0 18px 45px rgba(15,76,129,0.18);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .success-top::before{
-        content: "";
-        position: absolute;
-        width: 220px;
-        height: 220px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.10);
-        top: -60px;
-        left: -60px;
-    }
-
-    .success-top::after{
-        content: "";
-        position: absolute;
-        width: 180px;
-        height: 180px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.08);
-        bottom: -50px;
-        right: -40px;
-    }
-
-    .success-badge{
-        width: 78px;
-        height: 78px;
-        margin: 0 auto 14px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.18);
-        border: 4px solid rgba(255,255,255,0.28);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 34px;
-        position: relative;
-        z-index: 2;
-        animation: popIn .6s ease;
-    }
-
-    .success-top h1{
-        font-size: 34px;
-        font-weight: 800;
-        margin-bottom: 8px;
-        position: relative;
-        z-index: 2;
-    }
-
-    .success-top p{
-        margin: 0;
-        font-size: 16px;
-        opacity: .96;
-        position: relative;
-        z-index: 2;
-    }
-
-    .success-grid{
-        margin-top: 26px;
-        display: grid;
-        grid-template-columns: 380px 1fr;
-        gap: 24px;
-        align-items: start;
-    }
-
-    /* LEFT TICKET */
-    .ticket-vertical{
-        background: #fff;
-        border-radius: 26px;
-        overflow: hidden;
-        box-shadow: 0 18px 40px rgba(18, 52, 86, 0.12);
-        position: relative;
-        border: 1px solid #e9eef7;
-    }
-
-    .ticket-strip{
-        background: linear-gradient(180deg, #ff7b00, #ffb347);
-        color: #fff;
-        padding: 22px 18px;
-        text-align: center;
-        position: relative;
-    }
-
-    .ticket-strip h3{
-        margin: 0;
-        font-size: 24px;
-        font-weight: 800;
-        letter-spacing: .4px;
-    }
-
-    .ticket-strip p{
-        margin: 8px 0 0;
-        font-size: 14px;
-        opacity: .96;
-    }
-
-    .ticket-body{
-        padding: 24px 20px 20px;
-        position: relative;
-    }
-
-    .ticket-hole-left,
-    .ticket-hole-right{
-        position: absolute;
-        width: 34px;
-        height: 34px;
-        background: #eef5ff;
-        border-radius: 50%;
-        top: 210px;
-        z-index: 3;
-        box-shadow: inset 0 0 0 1px #e2e8f3;
-    }
-
-    .ticket-hole-left{
-        left: -17px;
-    }
-
-    .ticket-hole-right{
-        right: -17px;
-    }
-
-    .brand-chip{
-        display: inline-block;
-        padding: 8px 14px;
-        border-radius: 999px;
-        background: #eef7ff;
-        color: #0f4c81;
-        font-size: 13px;
-        font-weight: 700;
-        margin-bottom: 16px;
-    }
-
-    .route-box{
-        background: linear-gradient(180deg, #f9fbff 0%, #f2f7ff 100%);
-        border: 1px solid #dfeaf8;
-        border-radius: 18px;
-        padding: 18px;
-        margin-bottom: 18px;
-    }
-
-    .route-city{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-    }
-
-    .city-block{
-        width: 42%;
-    }
-
-    .city-block small{
-        display: block;
-        color: #7a8aa0;
-        font-weight: 600;
-        margin-bottom: 4px;
-        text-transform: uppercase;
-        font-size: 11px;
-        letter-spacing: .8px;
-    }
-
-    .city-block h4{
-        margin: 0;
-        color: #0d2d50;
-        font-size: 24px;
-        font-weight: 800;
-        word-break: break-word;
-    }
-
-    .route-arrow{
-        width: 52px;
-        height: 52px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #ff7b00, #ffb347);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        font-weight: 700;
-        box-shadow: 0 8px 20px rgba(255,123,0,0.22);
-        flex-shrink: 0;
-    }
-
-    .ticket-meta{
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 18px;
-    }
-
-    .meta-card{
-        background: #f8fbff;
-        border: 1px solid #e5eef9;
-        border-radius: 14px;
-        padding: 12px 14px;
-    }
-
-    .meta-card small{
-        display: block;
-        color: #7a8aa0;
-        font-size: 12px;
-        margin-bottom: 4px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-    }
-
-    .meta-card div{
-        color: #16324f;
-        font-weight: 700;
-        font-size: 15px;
-        word-break: break-word;
-    }
-
-    .ticket-passenger{
-        background: #fffdf7;
-        border: 1px dashed #f2c27b;
-        border-radius: 16px;
-        padding: 16px;
-        margin-bottom: 18px;
-    }
-
-    .ticket-passenger h5{
-        margin: 0 0 10px;
-        color: #d86d00;
-        font-weight: 800;
-        font-size: 15px;
-    }
-
-    .ticket-passenger .row-line{
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 8px;
-        font-size: 14px;
-    }
-
-    .ticket-passenger .row-line:last-child{
-        margin-bottom: 0;
-    }
-
-    .ticket-passenger .label{
-        color: #7a8aa0;
-        font-weight: 600;
-    }
-
-    .ticket-passenger .value{
-        color: #1a2f45;
-        font-weight: 700;
-        text-align: right;
-    }
-
-    .fare-box{
-        background: linear-gradient(135deg, #eafff0, #f4fff7);
-        border: 1px solid #cfeeda;
-        border-radius: 16px;
-        padding: 16px;
-        text-align: center;
-    }
-
-    .fare-box p{
-        margin: 0 0 6px;
-        color: #4c6c5b;
-        font-weight: 700;
-    }
-
-    .fare-box h2{
-        margin: 0;
-        color: #0f7a35;
-        font-weight: 900;
-        font-size: 32px;
-    }
-
-    .ticket-footer{
-        margin-top: 18px;
-        text-align: center;
-        font-size: 13px;
-        color: #6f8094;
-        font-weight: 600;
-    }
-
-    /* RIGHT DETAILS CARD */
-    .success-card{
-        background: #fff;
-        border-radius: 26px;
-        box-shadow: 0 18px 40px rgba(18, 52, 86, 0.12);
-        border: 1px solid #e9eef7;
-        overflow: hidden;
-    }
-
-    .success-card-head{
-        background: linear-gradient(135deg, #11998e, #38ef7d);
-        color: #fff;
-        padding: 24px 26px;
-    }
-
-    .success-card-head h3{
-        margin: 0;
-        font-size: 28px;
-        font-weight: 800;
-    }
-
-    .success-card-head p{
-        margin: 8px 0 0;
-        opacity: .96;
-        font-size: 15px;
-    }
-
-    .success-card-body{
-        padding: 24px;
-    }
-
-    .status-row{
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px;
-        margin-bottom: 22px;
-    }
-
-    .status-box{
-        background: #f8fbff;
-        border: 1px solid #e5eef9;
-        border-radius: 16px;
-        padding: 16px;
-        text-align: center;
-    }
-
-    .status-box small{
-        display: block;
-        color: #7a8aa0;
-        font-size: 12px;
-        font-weight: 700;
-        margin-bottom: 5px;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-    }
-
-    .status-box div{
-        font-size: 16px;
-        font-weight: 800;
-        color: #123456;
-        word-break: break-word;
-    }
-
-    .status-paid{
-        color: #0f7a35 !important;
-    }
-
-    .status-confirmed{
-        color: #0f7a35 !important;
-    }
-
-    .detail-box{
-        background: linear-gradient(180deg, #fbfdff 0%, #f5f9ff 100%);
-        border: 1px solid #e7effa;
-        border-radius: 18px;
-        padding: 18px;
-        margin-bottom: 20px;
-    }
-
-    .detail-box h4{
-        margin: 0 0 14px;
-        color: #0f4c81;
-        font-weight: 800;
-        font-size: 20px;
-    }
-
-    .detail-table{
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .detail-table tr{
-        border-bottom: 1px solid #edf2f9;
-    }
-
-    .detail-table tr:last-child{
-        border-bottom: none;
-    }
-
-    .detail-table td{
-        padding: 12px 8px;
-        vertical-align: top;
-        font-size: 15px;
-    }
-
-    .detail-table td:first-child{
-        color: #6f8094;
-        width: 42%;
-        font-weight: 700;
-    }
-
-    .detail-table td:last-child{
-        color: #17314f;
-        font-weight: 700;
-        word-break: break-word;
-    }
-
-    .bill-actions{
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 18px;
-    }
-
-    .btn-main-action,
-    .btn-second-action,
-    .btn-bill{
-        border: none;
-        border-radius: 999px;
-        padding: 12px 24px;
-        font-weight: 800;
-        font-size: 15px;
-        text-decoration: none !important;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: .25s ease;
-        cursor: pointer;
-    }
-
-    .btn-main-action{
-        background: linear-gradient(135deg, #0f4c81, #1cb5e0);
-        color: #fff;
-        box-shadow: 0 12px 22px rgba(15,76,129,0.16);
-    }
-
-    .btn-main-action:hover{
-        color: #fff;
-        transform: translateY(-1px);
-    }
-
-    .btn-second-action{
-        background: #eef6ff;
-        color: #0f4c81;
-        border: 1px solid #d7e7fa;
-    }
-
-    .btn-second-action:hover{
-        color: #0f4c81;
-        background: #e4f1ff;
-    }
-
-    .btn-bill{
-        background: linear-gradient(135deg, #ff7b00, #ffb347);
-        color: #fff;
-        box-shadow: 0 12px 22px rgba(255,123,0,0.18);
-    }
-
-    .btn-bill:hover{
-        color: #fff;
-        transform: translateY(-1px);
-    }
-
-    .ticket-note{
-        margin-top: 18px;
-        background: #fffaf0;
-        border: 1px solid #ffe0a3;
-        color: #8a5b00;
-        border-radius: 14px;
-        padding: 14px 16px;
-        font-size: 14px;
-        line-height: 1.6;
-    }
-
-    /* MODAL */
-    .modal-content{
-        border-radius: 22px;
-        overflow: hidden;
-        border: none;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.18);
-    }
-
-    .modal-header{
-        background: linear-gradient(135deg, #0f4c81, #1cb5e0);
-        color: #fff;
-        border-bottom: none;
-    }
-
-    .modal-title{
-        font-weight: 800;
-    }
-
-    .modal-header .close{
-        color: #fff;
-        opacity: 1;
-        text-shadow: none;
-    }
-
-    .bill-list .list-group-item{
-        border-left: 0;
-        border-right: 0;
-        padding: 14px 10px;
-        font-size: 15px;
-    }
-
-    .bill-list .list-group-item b{
-        color: #0f4c81;
-    }
-
-    @keyframes popIn{
-        from{
-            transform: scale(.7);
-            opacity: 0;
-        }
-        to{
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
-
-    @media(max-width: 991px){
-        .success-grid{
-            grid-template-columns: 1fr;
-        }
-    }
-
-    @media(max-width: 575px){
-        .status-row{
-            grid-template-columns: 1fr;
-        }
-
-        .ticket-meta{
-            grid-template-columns: 1fr;
-        }
-
-        .route-city{
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .city-block{
-            width: 100%;
-        }
-
-        .bill-actions{
-            flex-direction: column;
-        }
-
-        .btn-main-action,
-        .btn-second-action,
-        .btn-bill{
-            width: 100%;
-        }
-    }
+.confirm-hero {
+    background: linear-gradient(to right, #11998e, #38ef7d);
+    padding: 40px;
+    color: white;
+    text-align: center;
+    animation: fadeIn 1.5s;
+}
+
+.confirm-card {
+    margin-top: -20px;
+    padding: 30px;
+    border-radius: 15px;
+    background: #ffffff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    animation: slideUp 1.5s;
+    text-align: center;
+}
+
+.success-icon {
+    font-size: 60px;
+    color: green;
+}
+
+.bill-btn {
+    background: orange;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-size: 18px;
+    border: none;
+}
+
+.bill-btn:hover {
+    background: darkorange;
+    color: white;
+}
+
+.modal-header {
+    background: #11998e;
+    color: white;
+}
+
+.list-group-item b {
+    color: #00416A;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes slideUp {
+    from {transform: translateY(40px); opacity:0;}
+    to {transform: translateY(0); opacity:1;}
+}
 </style>
 
-<div class="success-wrapper">
-
-    <div class="success-top">
-        <div class="success-badge">✓</div>
-        <h1>Booking Confirmed Successfully</h1>
-        <p>Your bus ticket has been generated successfully. Payment verified and seat reserved.</p>
-    </div>
-
-    <div class="success-grid">
-
-        <!-- LEFT SIDE: VERTICAL TICKET -->
-        <div class="ticket-vertical">
-            <div class="ticket-strip">
-                <h3>BOARDING PASS</h3>
-                <p>{{ book.bus_name }}</p>
-            </div>
-
-            <div class="ticket-hole-left"></div>
-            <div class="ticket-hole-right"></div>
-
-            <div class="ticket-body">
-                <span class="brand-chip">🚌 Vallacar Transit</span>
-
-                <div class="route-box">
-                    <div class="route-city">
-                        <div class="city-block">
-                            <small>From</small>
-                            <h4>{{ book.source }}</h4>
-                        </div>
-
-                        <div class="route-arrow">→</div>
-
-                        <div class="city-block text-right">
-                            <small>To</small>
-                            <h4>{{ book.dest }}</h4>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="ticket-meta">
-                    <div class="meta-card">
-                        <small>Date</small>
-                        <div>{{ book.date }}</div>
-                    </div>
-
-                    <div class="meta-card">
-                        <small>Departure</small>
-                        <div>{{ book.time }}</div>
-                    </div>
-
-                    <div class="meta-card">
-                        <small>Seats</small>
-                        <div>{{ book.nos }}</div>
-                    </div>
-
-                    <div class="meta-card">
-                        <small>Booking ID</small>
-                        <div>#{{ book.id }}</div>
-                    </div>
-                </div>
-
-                <div class="ticket-passenger">
-                    <h5>Passenger / Payment</h5>
-
-                    <div class="row-line">
-                        <span class="label">Passenger</span>
-                        <span class="value">{{ book.name }}</span>
-                    </div>
-
-                    <div class="row-line">
-                        <span class="label">Payment ID</span>
-                        <span class="value">
-                            {% if book.payment_id %}
-                                {{ book.payment_id }}
-                            {% else %}
-                                Pending
-                            {% endif %}
-                        </span>
-                    </div>
-
-                    <div class="row-line">
-                        <span class="label">UPI Ref</span>
-                        <span class="value">
-                            {% if book.upi_reference %}
-                                {{ book.upi_reference }}
-                            {% else %}
-                                --
-                            {% endif %}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="fare-box">
-                    <p>Total Fare</p>
-                    <h2>₹ {{ book.total_price }}</h2>
-                </div>
-
-                <div class="ticket-footer">
-                    Please carry a valid ID proof during boarding.
-                </div>
-            </div>
-        </div>
-
-        <!-- RIGHT SIDE: SUCCESS DETAILS -->
-        <div class="success-card">
-            <div class="success-card-head">
-                <h3>🎉 Ticket Generated</h3>
-                <p>Your booking is now confirmed. You can view the bill and check booking history anytime.</p>
-            </div>
-
-            <div class="success-card-body">
-
-                <div class="status-row">
-                    <div class="status-box">
-                        <small>Booking ID</small>
-                        <div>#{{ book.id }}</div>
-                    </div>
-
-                    <div class="status-box">
-                        <small>Payment</small>
-                        <div class="status-paid">{{ book.payment_status }}</div>
-                    </div>
-
-                    <div class="status-box">
-                        <small>Ticket Status</small>
-                        <div class="status-confirmed">{{ book.status }}</div>
-                    </div>
-                </div>
-
-                <div class="detail-box">
-                    <h4>Booking Details</h4>
-
-                    <table class="detail-table">
-                        <tr>
-                            <td>Passenger Name</td>
-                            <td>{{ book.name }}</td>
-                        </tr>
-                        <tr>
-                            <td>Email</td>
-                            <td>{{ book.email }}</td>
-                        </tr>
-                        <tr>
-                            <td>Bus Name</td>
-                            <td>{{ book.bus_name }}</td>
-                        </tr>
-                        <tr>
-                            <td>From</td>
-                            <td>{{ book.source }}</td>
-                        </tr>
-                        <tr>
-                            <td>Destination</td>
-                            <td>{{ book.dest }}</td>
-                        </tr>
-                        <tr>
-                            <td>Travel Date</td>
-                            <td>{{ book.date }}</td>
-                        </tr>
-                        <tr>
-                            <td>Departure Time</td>
-                            <td>{{ book.time }}</td>
-                        </tr>
-                        <tr>
-                            <td>No. of Seats</td>
-                            <td>{{ book.nos }}</td>
-                        </tr>
-                        <tr>
-                            <td>Price / Seat</td>
-                            <td>₹ {{ book.price }}</td>
-                        </tr>
-                        <tr>
-                            <td>Total Amount</td>
-                            <td>₹ {{ book.total_price }}</td>
-                        </tr>
-                        <tr>
-                            <td>Payment ID</td>
-                            <td>
-                                {% if book.payment_id %}
-                                    {{ book.payment_id }}
-                                {% else %}
-                                    Pending
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>UPI Reference</td>
-                            <td>
-                                {% if book.upi_reference %}
-                                    {{ book.upi_reference }}
-                                {% else %}
-                                    --
-                                {% endif %}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-
-                <div class="bill-actions">
-                    <button type="button" class="btn-bill" data-toggle="modal" data-target="#billModal">
-                        View Bill
-                    </button>
-
-                    <a href="{% url 'home' %}" class="btn-main-action">
-                        Go to Home
-                    </a>
-
-                    <a href="{% url 'seebookings' %}" class="btn-second-action">
-                        My Bookings
-                    </a>
-                </div>
-
-                <div class="ticket-note">
-                    <b>Important:</b> Please reach the boarding point at least 15–20 minutes before departure time.
-                    Keep your booking ID and payment details ready while travelling.
-                </div>
-
-            </div>
-        </div>
-
-    </div>
+<div class="confirm-hero">
+    <h1>✅ Booking Confirmed</h1>
+    <p>Your payment was successful and your ticket is confirmed</p>
 </div>
 
-<!-- BILL MODAL -->
-<div class="modal fade" id="billModal" tabindex="-1" role="dialog" aria-labelledby="billModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+<div class="container">
+    <div class="confirm-card">
 
-            <div class="modal-header">
-                <h5 class="modal-title" id="billModalTitle">🧾 Ticket Bill</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <div class="success-icon">🎉</div>
+
+        <h2 class="mt-3">Thank You!</h2>
+        <p>Your booking has been confirmed successfully.</p>
+
+        <h4 class="mt-4">Bill Details</h4>
+
+        <button type="button" class="btn bill-btn" data-toggle="modal" data-target="#myModal">
+            View Bill
+        </button>
+
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 class="modal-title">🧾 Ticket Bill</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <ul class="list-group list-group-flush text-left">
+                            <li class="list-group-item"><b>Booking ID:</b> {{ book.id }}</li>
+                            <li class="list-group-item"><b>Bus Name:</b> {{ book.bus_name }}</li>
+                            <li class="list-group-item"><b>From:</b> {{ book.source }}</li>
+                            <li class="list-group-item"><b>To:</b> {{ book.dest }}</li>
+                            <li class="list-group-item"><b>Seats:</b> {{ book.nos }}</li>
+                            <li class="list-group-item"><b>Price per seat:</b> ₹{{ book.price }}</li>
+                            <li class="list-group-item"><b>Total Cost:</b> ₹{{ cost }}</li>
+                            <li class="list-group-item"><b>Date:</b> {{ book.date }}</li>
+                            <li class="list-group-item"><b>Time:</b> {{ book.time }}</li>
+                            <li class="list-group-item"><b>Payment Status:</b> {{ book.payment_status }}</li>
+                            <li class="list-group-item"><b>Payment ID:</b> {{ book.payment_id }}</li>
+                            <li class="list-group-item"><b>Booking Status:</b> {{ book.status }}</li>
+                        </ul>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
             </div>
-
-            <div class="modal-body">
-                <ul class="list-group list-group-flush bill-list">
-                    <li class="list-group-item"><b>Booking ID:</b> {{ book.id }}</li>
-                    <li class="list-group-item"><b>Passenger:</b> {{ book.name }}</li>
-                    <li class="list-group-item"><b>Email:</b> {{ book.email }}</li>
-                    <li class="list-group-item"><b>Bus Name:</b> {{ book.bus_name }}</li>
-                    <li class="list-group-item"><b>From:</b> {{ book.source }}</li>
-                    <li class="list-group-item"><b>To:</b> {{ book.dest }}</li>
-                    <li class="list-group-item"><b>Travel Date:</b> {{ book.date }}</li>
-                    <li class="list-group-item"><b>Departure Time:</b> {{ book.time }}</li>
-                    <li class="list-group-item"><b>Seats:</b> {{ book.nos }}</li>
-                    <li class="list-group-item"><b>Price / Seat:</b> ₹ {{ book.price }}</li>
-                    <li class="list-group-item"><b>Total Fare:</b> ₹ {{ book.total_price }}</li>
-                    <li class="list-group-item"><b>Payment Status:</b> {{ book.payment_status }}</li>
-                    <li class="list-group-item"><b>Payment ID:</b>
-                        {% if book.payment_id %}
-                            {{ book.payment_id }}
-                        {% else %}
-                            Pending
-                        {% endif %}
-                    </li>
-                    <li class="list-group-item"><b>UPI Reference:</b>
-                        {% if book.upi_reference %}
-                            {{ book.upi_reference }}
-                        {% else %}
-                            --
-                        {% endif %}
-                    </li>
-                    <li class="list-group-item"><b>Booking Status:</b> {{ book.status }}</li>
-                </ul>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success px-4" data-dismiss="modal">Close</button>
-            </div>
-
         </div>
+
+        <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn btn-primary">Go to Home</a>
+            <a href="{% url 'seebookings' %}" class="btn btn-info">My Bookings</a>
+        </div>
+
     </div>
 </div>
 
