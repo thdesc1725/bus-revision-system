@@ -1,6 +1,8 @@
-    {% extends 'myapp/base.html' %}
+{% extends 'myapp/base.html' %}
 {% load static %}
 {% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
 <style>
     :root {
@@ -9,16 +11,12 @@
         --emerald: #10b981;
         --emerald-hover: #059669;
         --emerald-soft: #ecfdf5;
-        --sky: #f0fdfa;
-        --gold: #f59e0b;
-        --gold-soft: #fef3c7;
         --text: #334155;
         --muted: #64748b;
         --line: #e2e8f0;
         --soft: #f8fafc;
         --white: #ffffff;
-        --shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
-        --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.12);
+        --shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.15);
         --radius-xl: 24px;
         --radius-lg: 18px;
         --radius-md: 12px;
@@ -49,7 +47,6 @@
 
     .page-header p {
         font-size: 16px;
-        margin-bottom: 0;
         opacity: 0.8;
     }
 
@@ -60,7 +57,7 @@
     .booking-card {
         background: var(--white);
         border-radius: var(--radius-lg);
-        box-shadow: var(--shadow);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
         padding: 35px;
         border: 1px solid var(--line);
         margin-bottom: 35px;
@@ -71,7 +68,6 @@
         font-weight: 700;
         margin-bottom: 25px;
         font-size: 24px;
-        position: relative;
     }
 
     .table-responsive {
@@ -80,15 +76,9 @@
         border: 1px solid var(--line);
     }
 
-    .table {
-        margin-bottom: 0;
-        background: var(--white);
-    }
-
     .table thead th {
         background: var(--slate-navy);
         color: var(--white);
-        border: none;
         font-size: 14px;
         font-weight: 600;
         padding: 16px;
@@ -110,7 +100,6 @@
     .cancel-card {
         background: var(--white);
         border-radius: var(--radius-lg);
-        box-shadow: var(--shadow);
         padding: 30px;
         border: 1px solid var(--line);
     }
@@ -122,25 +111,11 @@
         margin-bottom: 20px;
     }
 
-    .cancel-card label {
-        font-weight: 600;
-        color: var(--slate-navy);
-        margin-bottom: 8px;
-    }
-
     .cancel-card .form-control {
         height: 50px;
         border-radius: var(--radius-md);
         border: 1px solid var(--line);
         background: var(--soft);
-        color: var(--text);
-        box-shadow: none;
-    }
-
-    .cancel-card .form-control:focus {
-        border-color: var(--emerald);
-        background: var(--white);
-        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
     }
 
     .btn-cancel {
@@ -149,28 +124,11 @@
         padding: 12px 35px;
         border-radius: 50px;
         border: none;
-        font-size: 15px;
         font-weight: 600;
         transition: 0.2s ease;
     }
 
-    .btn-cancel:hover {
-        background: #dc2626;
-        color: white;
-        transform: translateY(-1px);
-    }
-
-    .empty-box {
-        text-align: center;
-        padding: 50px 20px;
-        color: var(--muted);
-    }
-
-    .empty-box h4 {
-        font-weight: 700;
-        color: var(--slate-dark);
-        margin-bottom: 10px;
-    }
+    .btn-cancel:hover { background: #dc2626; transform: translateY(-1px); }
 
     .badge-pill-custom {
         display: inline-block;
@@ -181,13 +139,9 @@
     }
 
     .badge-confirmed { background: #dcfce7; color: #16a34a; }
-    .badge-pending { background: var(--gold-soft); color: #d97706; }
+    .badge-pending { background: #fef3c7; color: #d97706; }
     .badge-cancelled { background: #fee2e2; color: #dc2626; }
     .badge-paid { background: #dcfce7; color: #16a34a; }
-    .badge-payment-pending { background: var(--gold-soft); color: #d97706; }
-    .badge-verification { background: #e0f2fe; color: #0284c7; }
-    .badge-failed { background: #fee2e2; color: #dc2626; }
-    .badge-refunded { background: #f3e8ff; color: #7c3aed; }
 
     .btn-ticket {
         background: var(--emerald);
@@ -196,72 +150,102 @@
         border-radius: 50px;
         font-size: 13px;
         font-weight: 600;
-        text-decoration: none;
-        display: inline-block;
         border: none;
         transition: 0.2s ease;
         cursor: pointer;
     }
 
-    .btn-ticket:hover {
-        background: var(--emerald-hover);
-        transform: translateY(-1px);
-    }
+    .btn-ticket:hover { background: var(--emerald-hover); transform: translateY(-1px); }
 
-    .action-note {
-        margin-top: 15px;
-        font-size: 13px;
-        color: var(--muted);
-    }
-
-    /* Modal Ticket Styling */
+    /* ================= PROFESSIONAL TICKET UI STRUCTURE ================= */
     .ticket-modal-content {
         border-radius: var(--radius-lg);
         border: none;
+        overflow: visible;
+        background: transparent;
+    }
+
+    .ticket-container {
+        background: var(--white);
+        border-radius: var(--radius-lg);
         overflow: hidden;
         box-shadow: var(--shadow-lg);
     }
+
     .ticket-header {
         background: linear-gradient(135deg, var(--slate-dark), var(--slate-navy));
         color: white;
-        padding: 25px;
+        padding: 22px 28px;
         border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
+
     .ticket-body {
         padding: 30px;
-        background: #fff;
+        background: #ffffff;
     }
-    .ticket-stub {
-        border-top: 2px dashed #cbd5e1;
-        position: relative;
-        margin-top: 20px;
-        padding-top: 20px;
+
+    .ticket-data-group {
+        margin-bottom: 18px;
     }
-    .ticket-stub::before, .ticket-stub::after {
-        content: '';
-        position: absolute;
-        top: -10px;
-        width: 20px;
-        height: 20px;
-        background: #7f8c8d; /* matches background overlay mask tint */
-        border-radius: 50%;
-    }
-    .ticket-stub::before { left: -40px; background-color: rgba(0,0,0,0.5); }
-    .ticket-stub::after { right: -40px; background-color: rgba(0,0,0,0.5); }
-    
+
     .ticket-data-label {
         font-size: 11px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
         color: var(--muted);
         margin-bottom: 2px;
         font-weight: 600;
     }
+
     .ticket-data-value {
         font-size: 15px;
         font-weight: 700;
         color: var(--slate-dark);
-        margin-bottom: 15px;
+    }
+
+    /* Decorative Boarding Pass Notches */
+    .ticket-divider-line {
+        border-top: 2px dashed #cbd5e1;
+        position: relative;
+        margin: 20px 0;
+    }
+
+    .ticket-notch-left, .ticket-notch-right {
+        position: absolute;
+        top: -12px;
+        width: 24px;
+        height: 24px;
+        background: rgba(15, 23, 42, 0.4); 
+        border-radius: 50%;
+        z-index: 10;
+    }
+    .ticket-notch-left { left: -42px; }
+    .ticket-notch-right { right: -42px; }
+
+    /* Barcode & Price Combined Section */
+    .ticket-secure-section {
+        background: #f8fafc;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
+        padding: 20px;
+    }
+
+    .barcode-display {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: white;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+    }
+
+    #barcode-canvas {
+        max-width: 100%;
+        height: auto;
     }
 </style>
 
@@ -297,10 +281,10 @@
                             <th>Travel Date</th>
                             <th>Departure</th>
                             <th>Payment Status</th>
-                            <th>Ticket</th> <th>Booking Status</th>
+                            <th>Ticket Pass</th>
+                            <th>Booking Status</th>
                         </tr>
                     </thead>
-
                     <tbody>
                     {% for row in book_list %}
                         <tr>
@@ -315,16 +299,8 @@
                             <td>
                                 {% if row.payment_status == "PAID" %}
                                     <span class="badge-pill-custom badge-paid">Paid</span>
-                                {% elif row.payment_status == "PENDING" %}
-                                    <span class="badge-pill-custom badge-payment-pending">Pending</span>
-                                {% elif row.payment_status == "PENDING_VERIFICATION" %}
-                                    <span class="badge-pill-custom badge-verification">Verifying</span>
-                                {% elif row.payment_status == "FAILED" %}
-                                    <span class="badge-pill-custom badge-failed">Failed</span>
-                                {% elif row.payment_status == "REFUNDED" %}
-                                    <span class="badge-pill-custom badge-refunded">Refunded</span>
                                 {% else %}
-                                    <span class="badge-pill-custom badge-payment-pending">{{ row.payment_status }}</span>
+                                    <span class="badge-pill-custom badge-pending">{{ row.payment_status }}</span>
                                 {% endif %}
                             </td>
 
@@ -340,7 +316,9 @@
                                             data-seats="{{ row.nos }}"
                                             data-price="₹ {{ row.total_price }}"
                                             data-date="{{ row.date }}"
-                                            data-time="{{ row.time }}">
+                                            data-time="{{ row.time }}"
+                                            data-email="{{ request.user.email|default:'passenger.transit@gmail.com' }}"
+                                            data-username="{% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ request.user.username|default:'Guest Passenger' }}{% endif %}">
                                         View Ticket
                                     </button>
                                 {% else %}
@@ -351,12 +329,8 @@
                             <td>
                                 {% if row.status == "CONFIRMED" %}
                                     <span class="badge-pill-custom badge-confirmed">Confirmed</span>
-                                {% elif row.status == "PENDING" %}
-                                    <span class="badge-pill-custom badge-pending">Pending</span>
-                                {% elif row.status == "CANCELLED" %}
-                                    <span class="badge-pill-custom badge-cancelled">Cancelled</span>
                                 {% else %}
-                                    <span class="badge-pill-custom badge-pending">{{ row.status }}</span>
+                                    <span class="badge-pill-custom badge-cancelled">{{ row.status }}</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -365,81 +339,81 @@
                 </table>
             </div>
         {% else %}
-            <div class="empty-box">
+            <div class="empty-box text-center">
                 <h4>No bookings found</h4>
-                <p>You have not booked any bus tickets yet.</p>
-                <div class="mt-3">
-                    <a href="{% url 'findbus' %}" class="btn btn-primary" style="background: var(--emerald); border: none; border-radius: 50px; padding: 8px 24px;">Find a Bus</a>
-                </div>
+                <a href="{% url 'findbus' %}" class="btn btn-primary mt-3">Find a Bus</a>
             </div>
         {% endif %}
     </div>
-
-    <div class="cancel-card">
-        <h3>❌ Cancel Reservation</h3>
-        <form action="{% url 'cancellings' %}" method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="booking_id">Booking Reference ID</label>
-                <input id="booking_id" name="booking_id" class="form-control" type="number" placeholder="e.g. 1024" required>
-            </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-cancel">Process Cancellation</button>
-            </div>
-            <p class="action-note text-center">
-                Please note: confirmed tickets can only be canceled prior to the bus departure window.
-            </p>
-        </form>
-    </div>
 </div>
 
-<div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="ticketModalLabel" aria-hidden="true">
+<div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content ticket-modal-content">
-            <div class="modal-header ticket-header">
-                <h5 class="modal-title" id="ticketModalLabel" style="font-weight: 700; letter-spacing: 0.5px;">BOARDING PASS</h5>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="ticket-body">
-                <div class="row">
-                    <div class="col-6">
-                        <div class="ticket-data-label">Booking ID</div>
-                        <div class="ticket-data-value" id="modal-booking-id">#0000</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="ticket-data-label">Bus Operator</div>
-                        <div class="ticket-data-value" id="modal-bus-name">-</div>
-                    </div>
-                    <div class="col-12">
-                        <div class="ticket-data-label">Journey Route</div>
-                        <div class="ticket-data-value text-primary" id="modal-route" style="color: var(--emerald) !important;">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="ticket-data-label">Date of Travel</div>
-                        <div class="ticket-data-value" id="modal-date">-</div>
-                    </div>
-                    <div class="col-6">
-                        <div class="ticket-data-label">Departure Time</div>
-                        <div class="ticket-data-value" id="modal-time">-</div>
-                    </div>
+            <div class="ticket-container">
+                
+                <div class="ticket-header">
+                    <h5 style="margin:0; font-weight:800; letter-spacing:1.5px; font-size:15px;">TRANSIT BOARDING PASS</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" style="outline:none; opacity:0.85; border:none; background:none; font-size:24px;">&times;</button>
                 </div>
                 
-                <div class="ticket-stub">
+                <div class="ticket-body">
                     <div class="row">
-                        <div class="col-6">
-                            <div class="ticket-data-label">No. of Seats</div>
-                            <div class="ticket-data-value" id="modal-seats">-</div>
+                        <div class="col-6 ticket-data-group">
+                            <div class="ticket-data-label">Passenger Name</div>
+                            <div class="ticket-data-value" id="pass-name" style="color: var(--emerald);">Loading...</div>
                         </div>
-                        <div class="col-6">
-                            <div class="ticket-data-label">Amount Paid</div>
-                            <div class="ticket-data-value" id="modal-price" style="font-size: 18px; color: var(--slate-dark);">-</div>
+                        <div class="col-6 ticket-data-group">
+                            <div class="ticket-data-label">Gmail / Email Address</div>
+                            <div class="ticket-data-value" id="pass-email" style="font-size:13px; font-weight:500; word-break:break-all;">-</div>
                         </div>
                     </div>
-                    <div class="text-center mt-2">
-                        <small class="text-muted" style="font-size: 11px; letter-spacing: 1px;">⚡ Thank you for traveling with us!</small>
+
+                    <div class="row">
+                        <div class="col-12 ticket-data-group">
+                            <div class="ticket-data-label">Journey Route</div>
+                            <div class="ticket-data-value" id="pass-route" style="font-size:16px;">-</div>
+                        </div>
+                        <div class="col-6 ticket-data-group">
+                            <div class="ticket-data-label">Bus Operator</div>
+                            <div class="ticket-data-value" id="pass-bus">-</div>
+                        </div>
+                        <div class="col-6 ticket-data-group">
+                            <div class="ticket-data-label">Booking Reference ID</div>
+                            <div class="ticket-data-value" id="pass-id">-</div>
+                        </div>
+                        <div class="col-6 ticket-data-group" style="margin-bottom:0;">
+                            <div class="ticket-data-label">Date of Departure</div>
+                            <div class="ticket-data-value" id="pass-date">-</div>
+                        </div>
+                        <div class="col-6 ticket-data-group" style="margin-bottom:0;">
+                            <div class="ticket-data-label">Scheduled Time</div>
+                            <div class="ticket-data-value" id="pass-time">-</div>
+                        </div>
                     </div>
+                    
+                    <div class="ticket-divider-line">
+                        <div class="ticket-notch-left"></div>
+                        <div class="ticket-notch-right"></div>
+                    </div>
+                    
+                    <div class="ticket-secure-section">
+                        <div class="row align-items-center mb-3">
+                            <div class="col-6">
+                                <div class="ticket-data-label">Total Reserved Seats</div>
+                                <div class="ticket-data-value" id="pass-seats" style="font-size: 18px;">-</div>
+                            </div>
+                            <div class="col-6 text-right" style="text-align: right;">
+                                <div class="ticket-data-label">Amount Paid</div>
+                                <div class="ticket-data-value" id="pass-price" style="font-size: 24px; color: #16a34a; font-weight: 800;">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="barcode-display">
+                            <svg id="barcode-canvas"></svg>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -452,14 +426,32 @@
         
         ticketButtons.forEach(button => {
             button.addEventListener('click', function() {
-                // Fetch fields out of data attributes
-                document.getElementById('modal-booking-id').innerText = '#' + this.getAttribute('data-id');
-                document.getElementById('modal-bus-name').innerText = this.getAttribute('data-bus');
-                document.getElementById('modal-route').innerText = this.getAttribute('data-route');
-                document.getElementById('modal-seats').innerText = this.getAttribute('data-seats');
-                document.getElementById('modal-price').innerText = this.getAttribute('data-price');
-                document.getElementById('modal-date').innerText = this.getAttribute('data-date');
-                document.getElementById('modal-time').innerText = this.getAttribute('data-time');
+                const bookingId = this.getAttribute('data-id');
+                
+                // Map text layers values inside the ticket interface wrapper 
+                document.getElementById('pass-id').innerText = '#' + bookingId;
+                document.getElementById('pass-bus').innerText = this.getAttribute('data-bus');
+                document.getElementById('pass-route').innerText = this.getAttribute('data-route');
+                document.getElementById('pass-seats').innerText = this.getAttribute('data-seats') + " Seat(s)";
+                document.getElementById('pass-price').innerText = this.getAttribute('data-price');
+                document.getElementById('pass-date').innerText = this.getAttribute('data-date');
+                document.getElementById('pass-time').innerText = this.getAttribute('data-time');
+                
+                // Injecting logged user account parameters securely
+                document.getElementById('pass-name').innerText = this.getAttribute('data-username');
+                document.getElementById('pass-email').innerText = this.getAttribute('data-email');
+                
+                // Generate a fully standardized scannable CODE-128 linear validation barcode 
+                JsBarcode("#barcode-canvas", "TRANSIT-BK" + bookingId.padStart(5, '0'), {
+                    format: "CODE128",
+                    width: 2,
+                    height: 50,
+                    displayValue: true,
+                    fontSize: 11,
+                    fontOptions: "bold",
+                    lineColor: "#0f172a",
+                    background: "transparent"
+                });
             });
         });
     });

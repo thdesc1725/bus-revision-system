@@ -2,329 +2,439 @@
 {% load static %}
 {% block content %}
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <style>
     :root {
-        --navy: #0f2747;
-        --navy-2: #173b68;
-        --blue: #245c97;
-        --sky: #dbeafe;
-        --gold: #f4b544;
-        --gold-soft: #fff5dd;
-        --text: #142133;
-        --muted: #667085;
-        --line: #e7eef7;
-        --soft: #f8fbff;
+        --slate-dark: #0f172a;
+        --slate-navy: #1e293b;
+        --emerald: #10b981;
+        --emerald-hover: #059669;
+        --text: #334155;
+        --muted: #64748b;
+        --line: #e2e8f0;
+        --soft: #f8fafc;
         --white: #ffffff;
-        --shadow: 0 16px 40px rgba(15, 39, 71, 0.10);
-        --shadow-lg: 0 24px 60px rgba(15, 39, 71, 0.16);
-        --radius-xl: 28px;
-        --radius-lg: 22px;
-        --radius-md: 16px;
+        --shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.15);
+        --radius-xl: 24px;
+        --radius-lg: 18px;
+        --radius-md: 12px;
     }
 
     body {
-        background: linear-gradient(180deg, #f6f9fe 0%, #eef4fb 45%, #f8fbff 100%);
+        background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
         color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    .tripx-confirm {
-        padding: 40px 0 80px;
-    }
-
-    /* ================= CONFIRMATION HEADER ================= */
-    .confirm-hero {
-        background: var(--navy);
-        border-radius: var(--radius-xl);
-        padding: 50px 34px;
-        color: var(--white);
+    .page-header {
+        background: linear-gradient(135deg, var(--slate-dark), var(--slate-navy));
+        padding: 60px 20px;
+        color: white;
         text-align: center;
+        border-radius: 0 0 var(--radius-xl) var(--radius-xl);
         box-shadow: var(--shadow-lg);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        margin-bottom: 30px;
-        position: relative;
-        overflow: hidden;
+        margin-bottom: 40px;
     }
 
-    .confirm-hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.08), transparent 30%);
-        pointer-events: none;
-    }
-
-    .confirm-hero h1 {
-        font-size: 42px;
-        font-weight: 900;
-        letter-spacing: .2px;
-        margin-bottom: 12px;
-    }
-
-    .confirm-hero p {
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 16px;
-        font-weight: 500;
-        margin: 0;
-    }
-
-    /* ================= DETAILS CARD ================= */
-    .confirm-card {
-        background: var(--white);
-        border: 1px solid var(--line);
-        border-radius: var(--radius-xl);
-        padding: 40px 34px;
-        box-shadow: var(--shadow);
-        text-align: center;
-    }
-
-    .success-icon {
-        font-size: 64px;
-        margin-bottom: 16px;
-    }
-
-    .confirm-card h2 {
-        font-size: 32px;
-        font-weight: 900;
-        color: var(--text);
-        margin: 0 0 8px;
-    }
-
-    .confirm-card p.subtitle {
-        color: var(--muted);
-        font-size: 16px;
-        font-weight: 500;
-        margin-bottom: 24px;
-    }
-
-    /* ================= BUTTONS & ACTIONS ================= */
-    .bill-btn {
-        background: linear-gradient(135deg, var(--gold), #ffcc69);
-        color: var(--text);
-        padding: 14px 28px;
-        border-radius: 14px;
-        font-size: 15px;
+    .page-header h1 {
+        font-size: 38px;
         font-weight: 800;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 12px 26px rgba(244, 181, 68, 0.25);
-        transition: .25s ease;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
     }
 
-    .bill-btn:hover {
-        transform: translateY(-2px);
-        color: var(--text);
-        box-shadow: 0 16px 30px rgba(244, 181, 68, 0.35);
-    }
-
-    .action-group {
-        display: flex;
-        gap: 14px;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 30px;
-        border-top: 1px solid var(--line);
-        padding-top: 30px;
-    }
-
-    .action-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 13px 22px;
-        border-radius: 14px;
-        text-decoration: none !important;
-        font-weight: 800;
-        font-size: 14px;
-        transition: .25s ease;
-    }
-
-    .action-btn.primary {
-        background: var(--navy-2);
-        color: var(--white);
-        border: 1px solid transparent;
-    }
-
-    .action-btn.primary:hover {
-        background: var(--navy);
-        color: var(--white);
-        transform: translateY(-2px);
-    }
-
-    .action-btn.secondary {
-        background: #eef5ff;
-        color: var(--blue);
-        border: 1px solid #d8e7fb;
-    }
-
-    .action-btn.secondary:hover {
-        background: var(--sky);
-        transform: translateY(-2px);
-    }
-
-    /* ================= MODAL CUSTOMIZATION ================= */
-    .modal-content {
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--line);
-        box-shadow: var(--shadow-lg);
-        overflow: hidden;
-    }
-
-    .modal-header {
-        background: var(--navy);
-        color: var(--white);
-        border-bottom: none;
-        padding: 20px 24px;
-    }
-
-    .modal-title {
-        font-weight: 900;
-        font-size: 20px;
-    }
-
-    .modal-header .close {
-        color: var(--white);
+    .page-header p {
+        font-size: 16px;
         opacity: 0.8;
-        text-shadow: none;
     }
 
-    .modal-body {
-        padding: 24px;
-        background: var(--soft);
-    }
-
-    .list-group-item {
+    .booking-card {
         background: var(--white);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+        padding: 35px;
         border: 1px solid var(--line);
-        border-radius: 12px !important;
-        margin-bottom: 8px;
-        padding: 14px 18px;
+        margin-bottom: 35px;
+    }
+
+    .booking-card h3 {
+        color: var(--slate-dark);
+        font-weight: 700;
+        margin-bottom: 25px;
+        font-size: 24px;
+    }
+
+    .table-responsive {
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 1px solid var(--line);
+    }
+
+    .table thead th {
+        background: var(--slate-navy);
+        color: var(--white);
+        font-size: 14px;
+        font-weight: 600;
+        padding: 16px;
+        vertical-align: middle;
+    }
+
+    .table td {
+        vertical-align: middle;
+        font-size: 14px;
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .badge-pill-custom {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-confirmed { background: #dcfce7; color: #16a34a; }
+    .badge-paid { background: #dcfce7; color: #16a34a; }
+    .badge-pending { background: #fef3c7; color: #d97706; }
+
+    .btn-ticket {
+        background: var(--emerald);
+        color: white !important;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        transition: 0.2s ease;
+        cursor: pointer;
+    }
+
+    .btn-ticket:hover { background: var(--emerald-hover); transform: translateY(-1px); }
+
+    /* ================= TICKET PASS STRUCTURAL LAYOUT ================= */
+    .ticket-modal-content {
+        border-radius: var(--radius-lg);
+        border: none;
+        background: transparent;
+    }
+
+    .ticket-container {
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .ticket-header {
+        background: linear-gradient(135deg, var(--slate-dark), var(--slate-navy));
+        color: white;
+        padding: 22px 28px;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
-    .list-group-item b {
+    .ticket-body {
+        padding: 30px;
+        background: #ffffff;
+    }
+
+    .ticket-data-group {
+        margin-bottom: 18px;
+    }
+
+    .ticket-data-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
         color: var(--muted);
-        font-weight: 700;
-        font-size: 14px;
+        margin-bottom: 2px;
+        font-weight: 600;
     }
 
-    .list-group-item .val-text {
-        color: var(--text);
-        font-weight: 800;
+    .ticket-data-value {
         font-size: 15px;
-        text-align: right;
+        font-weight: 700;
+        color: var(--slate-dark);
     }
 
-    .modal-footer {
-        border-top: 1px solid var(--line);
-        padding: 16px 24px;
-        background: var(--white);
-    }
-
-    .modal-footer .btn-close-modal {
-        background: #f0f4f8;
-        color: var(--text);
-        font-weight: 800;
+    .uid-badge {
+        display: block;
+        font-family: monospace;
+        font-size: 12px;
+        background: var(--soft);
+        padding: 4px 8px;
+        border-radius: 6px;
         border: 1px solid var(--line);
-        padding: 10px 20px;
-        border-radius: 12px;
+        margin-top: 4px;
+        color: var(--slate-navy);
+    }
+
+    .ticket-divider-line {
+        border-top: 2px dashed #cbd5e1;
+        position: relative;
+        margin: 20px 0;
+    }
+
+    .ticket-notch-left, .ticket-notch-right {
+        position: absolute;
+        top: -12px;
+        width: 24px;
+        height: 24px;
+        background: rgba(15, 23, 42, 0.4); 
+        border-radius: 50%;
+        z-index: 10;
+    }
+    .ticket-notch-left { left: -42px; }
+    .ticket-notch-right { right: -42px; }
+
+    .ticket-secure-section {
+        background: #f8fafc;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
+        padding: 20px;
+    }
+
+    .matrix-display-target {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        margin: 15px auto 0 auto;
+        width: 144px;
+        height: 144px;
     }
 </style>
 
-<div class="container tripx-confirm">
-    
-    <div class="confirm-hero">
-        <h1>✅ Booking Confirmed</h1>
-        <p>Your payment was verified successfully and your travel space is locked in.</p>
+<div class="page-header">
+    <h1>📋 Bookings History</h1>
+    <p>Check your bus reservations, view allocated seat UIDs, and access boarding passes.</p>
+</div>
+
+<div class="container booking-wrapper">
+    <div class="booking-card">
+        <h3>My Reservations</h3>
+
+        {% if book_list %}
+            <div class="table-responsive">
+                <table class="table text-center">
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Bus Name</th>
+                            <th>Route</th>
+                            <th>Seats Count</th>
+                            <th>Total Price</th>
+                            <th>Travel Date</th>
+                            <th>Departure</th>
+                            <th>Payment Status</th>
+                            <th>Ticket Pass</th>
+                            <th>Booking Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in book_list %}
+                        <tr>
+                            <td><b>#{{ row.id }}</b></td>
+                            <td>{{ row.bus_name }}</td>
+                            <td style="font-weight: 500;">{{ row.source }} → {{ row.dest }}</td>
+                            <td>{{ row.nos }}</td>
+                            <td style="font-weight: 700; color: var(--slate-dark);">₹ {{ row.total_price }}</td>
+                            <td>{{ row.date }}</td>
+                            <td>{{ row.time }}</td>
+                            <td>
+                                {% if row.payment_status == "PAID" %}
+                                    <span class="badge-pill-custom badge-paid">Paid</span>
+                                {% else %}
+                                    <span class="badge-pill-custom badge-pending">{{ row.payment_status }}</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if row.status == "CONFIRMED" %}
+                                    <button type="button" 
+                                            class="btn-ticket view-ticket-btn"
+                                            data-toggle="modal" 
+                                            data-target="#ticketModal"
+                                            data-id="{{ row.id }}"
+                                            data-bus="{{ row.bus_name }}"
+                                            data-route="{{ row.source }} → {{ row.dest }}"
+                                            data-seats="{{ row.nos }}"
+                                            data-price="₹ {{ row.total_price }}"
+                                            data-date="{{ row.date }}"
+                                            data-time="{{ row.time }}"
+                                            data-email="{{ request.user.email|default:'passenger.transit@gmail.com' }}"
+                                            data-username="{% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ request.user.username|default:'Guest Passenger' }}{% endif %}"
+                                            data-uids="{{ row.allocated_uids|default:'UID-PENDING' }}">
+                                        View Ticket
+                                    </button>
+                                {% else %}
+                                    <span style="color: var(--muted); font-style: italic;">—</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if row.status == "CONFIRMED" %}
+                                    <span class="badge-pill-custom badge-confirmed">Confirmed</span>
+                                {% else %}
+                                    <span class="badge-pill-custom badge-pending">{{ row.status }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-box text-center">
+                <h4>No bookings found</h4>
+            </div>
+        {% endif %}
     </div>
+</div>
 
-    <div class="confirm-card">
-        <div class="success-icon">🎉</div>
-        <h2>Thank You!</h2>
-        <p class="subtitle">Your booking layout has been registered accurately into our transit system.</p>
-
-        <button type="button" class="btn bill-btn" data-toggle="modal" data-target="#myModal">
-            🧾 View Detailed Bill
-        </button>
-
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <h5 class="modal-title">Receipt Breakdown</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="list-group list-group-flush text-left">
-                            <div class="list-group-item">
-                                <b>Booking ID</b>
-                                <span class="val-text">{{ book.id }}</span>
-                            </div>
-                            <div class="list-group-item">
-                                <b>Bus Name</b>
-                                <span class="val-text">{{ book.bus_name }}</span>
-                            </div>
-                            <div class="list-group-item">
-                                <b>From</b>
-                                <span class="val-text">{{ book.source }}</span>
-                            </div>
-                            <div class="list-group-item">
-                                <b>To</b>
-                                <span class="val-text">{{ book.dest }}</span>
-                            </div>
-                            <div class="list-group-item">
-                                <b>Seats Reserved</b>
-                                <span class="val-text">{{ book.nos }}</span>
-                            </div>
-                            <div class="list-group-item">
-                                <b>Base Price</b>
-                                <span class="val-text">₹{{ book.price }}</span>
-                            </div>
-                            <div class="list-group-item" style="background: var(--gold-soft); border-color: #ffdca2;">
-                                <b style="color: #8a5717;">Total Cost</b>
-                                <span class="val-text" style="color: #d07b00; font-size: 18px;">₹{{ cost }}</span>
-                            </div>
-                            <div class="list-group-item">
-                                <b>Departure Date</b>
-                                <span class="val-text">{{ book.date }}</span>
-                            </div>
-                            <div class="list-group-item">
-                                <b>Time Schedule</b>
-                                <span class="val-text">{{ book.time }}</span>
-                            </div>
-                            <div class="list-group-item">
-                                <b>Payment Info</b>
-                                <span class="val-text">{{ book.payment_status }}</span>
-                            </div>
-                            <div class="list-group-item">
-                                <b>Transaction Reference</b>
-                                <span class="val-text">{{ book.payment_id }}</span>
-                            </div>
-                            <div class="list-group-item">
-                                <b>System Status</b>
-                                <span class="val-text" style="color: #169c83;">{{ book.status }}</span>
-                            </div>
+<div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content ticket-modal-content">
+            <div class="ticket-container">
+                
+                <div class="ticket-header">
+                    <h5 style="margin:0; font-weight:800; letter-spacing:1.5px; font-size:15px;">TRANSIT BOARDING PASS</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" style="outline:none; opacity:0.85; border:none; background:none; font-size:24px;">&times;</button>
+                </div>
+                
+                <div class="ticket-body">
+                    <div class="row">
+                        <div class="col-6 ticket-data-group">
+                            <div class="ticket-data-label">Passenger Name</div>
+                            <div class="ticket-data-value" id="pass-name" style="color: var(--emerald);">Loading...</div>
+                        </div>
+                        <div class="col-6 ticket-data-group">
+                            <div class="ticket-data-label">Gmail Address</div>
+                            <div class="ticket-data-value" id="pass-email" style="font-size:13px; font-weight:500; word-break:break-all;">-</div>
                         </div>
                     </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-close-modal" data-dismiss="modal">Dismiss</button>
+                    <div class="row">
+                        <div class="col-12 ticket-data-group">
+                            <div class="ticket-data-label">Journey Route</div>
+                            <div class="ticket-data-value" id="pass-route" style="font-size:16px;">-</div>
+                        </div>
+                        <div class="col-6 ticket-data-group">
+                            <div class="ticket-data-label">Bus Operator</div>
+                            <div class="ticket-data-value" id="pass-bus">-</div>
+                        </div>
+                        <div class="col-6 ticket-data-group">
+                            <div class="ticket-data-label">Booking Reference ID</div>
+                            <div class="ticket-data-value" id="pass-id">-</div>
+                        </div>
+                        <div class="col-6 ticket-data-group">
+                            <div class="ticket-data-label">Travel Date</div>
+                            <div class="ticket-data-value" id="pass-date">-</div>
+                        </div>
+                        <div class="col-6 ticket-data-group">
+                            <div class="ticket-data-label">Departure Time</div>
+                            <div class="ticket-data-value" id="pass-time">-</div>
+                        </div>
+                        
+                        <div class="col-12 ticket-data-group" style="margin-bottom:0;">
+                            <div class="ticket-data-label">Allocated Seat Unique Keys (UID)</div>
+                            <div id="pass-uids-container">
+                                </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ticket-divider-line">
+                        <div class="ticket-notch-left"></div>
+                        <div class="ticket-notch-right"></div>
+                    </div>
+                    
+                    <div class="ticket-secure-section">
+                        <div class="row align-items-center">
+                            <div class="col-6">
+                                <div class="ticket-data-label">Seats Reserved</div>
+                                <div class="ticket-data-value" id="pass-seats" style="font-size: 18px;">-</div>
+                            </div>
+                            <div class="col-6 text-right" style="text-align: right;">
+                                <div class="ticket-data-label">Amount Paid</div>
+                                <div class="ticket-data-value" id="pass-price" style="font-size: 24px; color: #16a34a; font-weight: 800;">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="matrix-display-target">
+                            <div id="qrcode-canvas"></div>
+                        </div>
                     </div>
 
                 </div>
             </div>
         </div>
-
-        <div class="action-group">
-            <a href="{% url 'home' %}" class="action-btn primary">Return Home</a>
-            <a href="{% url 'seebookings' %}" class="action-btn secondary">View My Bookings</a>
-        </div>
-
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ticketButtons = document.querySelectorAll('.view-ticket-btn');
+        let qrCodeInstance = null;
+        
+        ticketButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const bookingId = this.getAttribute('data-id');
+                const busName = this.getAttribute('data-bus');
+                const route = this.getAttribute('data-route');
+                const seats = this.getAttribute('data-seats');
+                const price = this.getAttribute('data-price');
+                const date = this.getAttribute('data-date');
+                const time = this.getAttribute('data-time');
+                const email = this.getAttribute('data-email');
+                const username = this.getAttribute('data-username');
+                const rawUids = this.getAttribute('data-uids'); // Expected comma separated list string from view
+                
+                // 1. Inject plaintext values to Modal DOM
+                document.getElementById('pass-id').innerText = '#' + bookingId;
+                document.getElementById('pass-bus').innerText = busName;
+                document.getElementById('pass-route').innerText = route;
+                document.getElementById('pass-seats').innerText = seats + " Seat(s)";
+                document.getElementById('pass-price').innerText = price;
+                document.getElementById('pass-date').innerText = date;
+                document.getElementById('pass-time').innerText = time;
+                document.getElementById('pass-name').innerText = username;
+                document.getElementById('pass-email').innerText = email;
+                
+                // 2. Parse and display unique seat allocation cards separately
+                const uidsContainer = document.getElementById('pass-uids-container');
+                uidsContainer.innerHTML = "";
+                const uidList = rawUids.split(',');
+                uidList.forEach((uid, index) => {
+                    const span = document.createElement('span');
+                    span.className = 'uid-badge';
+                    span.innerText = `Seat ${index + 1}: ${uid.trim()}`;
+                    uidsContainer.appendChild(span);
+                });
+                
+                // 3. Clear old validation instances
+                document.getElementById('qrcode-canvas').innerHTML = "";
+                
+                // 4. Bundle secure string data matrix layout (including names, emails, and allocated item UIDs)
+                const securePayload = `[VALID DIGITAL BOARDING PASS]\nID: #${bookingId}\nUSER: ${username}\nGMAIL: ${email}\nROUTE: ${route}\nSEATS count: ${seats}\nUID ALLOCATIONS:\n${rawUids.split(',').map((u, i) => ` S${i+1}: ${u.trim()}`).join('\n')}\nPAID AMOUNT: ${price}`;
+                
+                // 5. Build scannable graphic pass matrix
+                qrCodeInstance = new QRCode(document.getElementById("qrcode-canvas"), {
+                    text: securePayload,
+                    width: 120,
+                    height: 120,
+                    colorDark : "#0f172a",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.M
+                });
+            });
+        });
+    });
+</script>
 
 {% endblock %}
