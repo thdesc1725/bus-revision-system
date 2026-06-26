@@ -1,7 +1,9 @@
+import os
 from django.contrib import admin, messages
 from django.utils.html import format_html
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db import transaction
 
 from .models import Bus, Book
 
@@ -118,62 +120,58 @@ class BookAdmin(admin.ModelAdmin):
     def approve_payment(self, request, queryset):
         approved_count = 0
 
-        for book in queryset:
-            # already confirmed -> skip
-            if book.status == 'CONFIRMED':
-                continue
+        # Run inside an atomic block to prevent seat calculation discrepancies
+        with transaction.atomic():
+            for book in queryset:
+                if book.status == 'CONFIRMED':
+                    continue
 
-            # optional strict check:
-            # only approve when payment proof submitted
-            if book.payment_status != 'PENDING_VERIFICATION':
-                self.message_user(
-                    request,
-                    f"Booking #{book.id} cannot be approved because payment proof is not submitted.",
-                    level=messages.WARNING
-                )
-                continue
+                if book.payment_status != 'PENDING_VERIFICATION':
+                    self.message_user(
+                        request,
+                        f"Booking #{book.id} cannot be approved because payment proof is not submitted.",
+                        level=messages.WARNING
+                    )
+                    return
 
-            try:
-                bus = Bus.objects.get(id=book.busid)
-            except Bus.DoesNotExist:
-                self.message_user(
-                    request,
-                    f"Bus not found for booking #{book.id}",
-                    level=messages.ERROR
-                )
-                continue
+                try:
+                    # Target single bus inventory line row using select_for_update to handle race conditions
+                    bus = Bus.objects.select_for_update().get(id=book.busid)
+                except Bus.DoesNotExist:
+                    self.message_user(
+                        request,
+                        f"Bus not found for booking #{book.id}",
+                        level=messages.ERROR
+                    )
+                    return
 
-            # seat availability check
-            if int(bus.rem) < int(book.nos):
-                book.status = 'CANCELLED'
-                book.payment_status = 'FAILED'
+                if int(bus.rem) < int(book.nos):
+                    book.status = 'CANCELLED'
+                    book.payment_status = 'FAILED'
+                    book.save()
+
+                    self.message_user(
+                        request,
+                        f"Booking #{book.id} automatically cancelled: Insufficient remaining seats available.",
+                        level=messages.WARNING
+                    )
+                    return
+
+                # Safely deduct ticket count from active tracking total
+                bus.rem = int(bus.rem) - int(book.nos)
+                bus.save()
+
+                book.status = 'CONFIRMED'
+                book.payment_status = 'PAID'
+
+                if not book.payment_id:
+                    book.payment_id = f"PAY{book.id}{book.userid}"
+
                 book.save()
 
-                self.message_user(
-                    request,
-                    f"Booking #{book.id} cancelled because seats are not available.",
-                    level=messages.WARNING
-                )
-                continue
-
-            # reduce seats only at approval time
-            bus.rem = int(bus.rem) - int(book.nos)
-            bus.save()
-
-            # confirm booking
-            book.status = 'CONFIRMED'
-            book.payment_status = 'PAID'
-
-            if not book.payment_id:
-                book.payment_id = f"PAY{book.id}{book.userid}"
-
-            book.save()
-
-            # =========================
-            # SEND CONFIRMATION EMAIL
-            # =========================
-            subject = "Bus Ticket Confirmed"
-            message = f"""
+                # Dispatch asynchronous email payloads
+                subject = "Bus Ticket Confirmed"
+                message = f"""
 Hello {book.name},
 
 Your bus ticket has been CONFIRMED successfully.
@@ -195,52 +193,50 @@ Payment ID: {book.payment_id}
 
 Thank you for booking with us.
 """
+                try:
+                    send_mail(
+                        subject,
+                        message,
+                        settings.DEFAULT_FROM_EMAIL,
+                        [book.email],
+                        fail_silently=False,
+                    )
+                except Exception as e:
+                    self.message_user(
+                        request,
+                        f"Booking #{book.id} approved, but confirmation email failed to transmit: {str(e)}",
+                        level=messages.WARNING
+                    )
 
-            try:
-                result = send_mail(
-                    subject,
-                    message,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [book.email],
-                    fail_silently=False,
-                )
-                print("ADMIN APPROVAL MAIL RESULT =", result)
-                print("MAIL SENT TO =", book.email)
+                approved_count += 1
 
-            except Exception as e:
-                print("ADMIN APPROVAL EMAIL ERROR =", str(e))
-                self.message_user(
-                    request,
-                    f"Booking #{book.id} approved but email failed: {str(e)}",
-                    level=messages.WARNING
-                )
-
-            approved_count += 1
-
-        self.message_user(
-            request,
-            f"{approved_count} booking(s) approved successfully.",
-            level=messages.SUCCESS
-        )
+        if approved_count > 0:
+            self.message_user(
+                request,
+                f"{approved_count} booking(s) approved successfully and seats assigned.",
+                level=messages.SUCCESS
+            )
 
     approve_payment.short_description = "Approve selected payment(s)"
 
     def reject_payment(self, request, queryset):
         updated = 0
 
-        for book in queryset:
-            if book.status == 'CONFIRMED':
-                continue
+        with transaction.atomic():
+            for book in queryset:
+                if book.status == 'CONFIRMED':
+                    continue
 
-            book.payment_status = 'FAILED'
-            book.status = 'CANCELLED'
-            book.save()
-            updated += 1
+                book.payment_status = 'FAILED'
+                book.status = 'CANCELLED'
+                book.save()
+                updated += 1
 
-        self.message_user(
-            request,
-            f"{updated} booking(s) rejected/cancelled successfully.",
-            level=messages.SUCCESS
-        )
+        if updated > 0:
+            self.message_user(
+                request,
+                f"{updated} booking(s) rejected/cancelled successfully.",
+                level=messages.SUCCESS
+            )
 
     reject_payment.short_description = "Reject selected payment(s)"

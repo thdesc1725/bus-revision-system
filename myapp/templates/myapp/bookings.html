@@ -1,120 +1,327 @@
 {% extends 'myapp/base.html' %}
+{% load static %}
 {% block content %}
 
 <style>
-.confirm-hero {
-    background: linear-gradient(to right, #11998e, #38ef7d);
-    padding: 40px;
-    color: white;
-    text-align: center;
-    animation: fadeIn 1.5s;
-}
+    :root {
+        --navy: #0f2747;
+        --navy-2: #173b68;
+        --blue: #245c97;
+        --sky: #dbeafe;
+        --gold: #f4b544;
+        --gold-soft: #fff5dd;
+        --text: #142133;
+        --muted: #667085;
+        --line: #e7eef7;
+        --soft: #f8fbff;
+        --white: #ffffff;
+        --shadow: 0 16px 40px rgba(15, 39, 71, 0.10);
+        --shadow-lg: 0 24px 60px rgba(15, 39, 71, 0.16);
+        --radius-xl: 28px;
+        --radius-lg: 22px;
+        --radius-md: 16px;
+    }
 
-.confirm-card {
-    margin-top: -20px;
-    padding: 30px;
-    border-radius: 15px;
-    background: #ffffff;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    animation: slideUp 1.5s;
-    text-align: center;
-}
+    body {
+        background: linear-gradient(180deg, #f6f9fe 0%, #eef4fb 45%, #f8fbff 100%);
+        color: var(--text);
+    }
 
-.success-icon {
-    font-size: 60px;
-    color: green;
-}
+    .tripx-confirm {
+        padding: 40px 0 80px;
+    }
 
-.bill-btn {
-    background: orange;
-    color: white;
-    padding: 10px 25px;
-    border-radius: 25px;
-    font-size: 18px;
-    border: none;
-}
+    /* ================= CONFIRMATION HEADER ================= */
+    .confirm-hero {
+        background: var(--navy);
+        border-radius: var(--radius-xl);
+        padding: 50px 34px;
+        color: var(--white);
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
 
-.bill-btn:hover {
-    background: darkorange;
-    color: white;
-}
+    .confirm-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.08), transparent 30%);
+        pointer-events: none;
+    }
 
-.modal-header {
-    background: #11998e;
-    color: white;
-}
+    .confirm-hero h1 {
+        font-size: 42px;
+        font-weight: 900;
+        letter-spacing: .2px;
+        margin-bottom: 12px;
+    }
 
-.list-group-item b {
-    color: #00416A;
-}
+    .confirm-hero p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+    }
 
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
+    /* ================= DETAILS CARD ================= */
+    .confirm-card {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-xl);
+        padding: 40px 34px;
+        box-shadow: var(--shadow);
+        text-align: center;
+    }
 
-@keyframes slideUp {
-    from {transform: translateY(40px); opacity:0;}
-    to {transform: translateY(0); opacity:1;}
-}
+    .success-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+    }
+
+    .confirm-card h2 {
+        font-size: 32px;
+        font-weight: 900;
+        color: var(--text);
+        margin: 0 0 8px;
+    }
+
+    .confirm-card p.subtitle {
+        color: var(--muted);
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 24px;
+    }
+
+    /* ================= BUTTONS & ACTIONS ================= */
+    .bill-btn {
+        background: linear-gradient(135deg, var(--gold), #ffcc69);
+        color: var(--text);
+        padding: 14px 28px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 800;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 12px 26px rgba(244, 181, 68, 0.25);
+        transition: .25s ease;
+    }
+
+    .bill-btn:hover {
+        transform: translateY(-2px);
+        color: var(--text);
+        box-shadow: 0 16px 30px rgba(244, 181, 68, 0.35);
+    }
+
+    .action-group {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        border-top: 1px solid var(--line);
+        padding-top: 30px;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 13px 22px;
+        border-radius: 14px;
+        text-decoration: none !important;
+        font-weight: 800;
+        font-size: 14px;
+        transition: .25s ease;
+    }
+
+    .action-btn.primary {
+        background: var(--navy-2);
+        color: var(--white);
+        border: 1px solid transparent;
+    }
+
+    .action-btn.primary:hover {
+        background: var(--navy);
+        color: var(--white);
+        transform: translateY(-2px);
+    }
+
+    .action-btn.secondary {
+        background: #eef5ff;
+        color: var(--blue);
+        border: 1px solid #d8e7fb;
+    }
+
+    .action-btn.secondary:hover {
+        background: var(--sky);
+        transform: translateY(-2px);
+    }
+
+    /* ================= MODAL CUSTOMIZATION ================= */
+    .modal-content {
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: var(--navy);
+        color: var(--white);
+        border-bottom: none;
+        padding: 20px 24px;
+    }
+
+    .modal-title {
+        font-weight: 900;
+        font-size: 20px;
+    }
+
+    .modal-header .close {
+        color: var(--white);
+        opacity: 0.8;
+        text-shadow: none;
+    }
+
+    .modal-body {
+        padding: 24px;
+        background: var(--soft);
+    }
+
+    .list-group-item {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 12px !important;
+        margin-bottom: 8px;
+        padding: 14px 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .list-group-item b {
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .list-group-item .val-text {
+        color: var(--text);
+        font-weight: 800;
+        font-size: 15px;
+        text-align: right;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--line);
+        padding: 16px 24px;
+        background: var(--white);
+    }
+
+    .modal-footer .btn-close-modal {
+        background: #f0f4f8;
+        color: var(--text);
+        font-weight: 800;
+        border: 1px solid var(--line);
+        padding: 10px 20px;
+        border-radius: 12px;
+    }
 </style>
 
-<div class="confirm-hero">
-    <h1>✅ Booking Confirmed</h1>
-    <p>Your payment was successful and your ticket is confirmed</p>
-</div>
+<div class="container tripx-confirm">
+    
+    <div class="confirm-hero">
+        <h1>✅ Booking Confirmed</h1>
+        <p>Your payment was verified successfully and your travel space is locked in.</p>
+    </div>
 
-<div class="container">
     <div class="confirm-card">
-
         <div class="success-icon">🎉</div>
-
-        <h2 class="mt-3">Thank You!</h2>
-        <p>Your booking has been confirmed successfully.</p>
-
-        <h4 class="mt-4">Bill Details</h4>
+        <h2>Thank You!</h2>
+        <p class="subtitle">Your booking layout has been registered accurately into our transit system.</p>
 
         <button type="button" class="btn bill-btn" data-toggle="modal" data-target="#myModal">
-            View Bill
+            🧾 View Detailed Bill
         </button>
 
-        <div class="modal fade" id="myModal">
-            <div class="modal-dialog">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
 
                     <div class="modal-header">
-                        <h4 class="modal-title">🧾 Ticket Bill</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h5 class="modal-title">Receipt Breakdown</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
 
                     <div class="modal-body">
-                        <ul class="list-group list-group-flush text-left">
-                            <li class="list-group-item"><b>Booking ID:</b> {{ book.id }}</li>
-                            <li class="list-group-item"><b>Bus Name:</b> {{ book.bus_name }}</li>
-                            <li class="list-group-item"><b>From:</b> {{ book.source }}</li>
-                            <li class="list-group-item"><b>To:</b> {{ book.dest }}</li>
-                            <li class="list-group-item"><b>Seats:</b> {{ book.nos }}</li>
-                            <li class="list-group-item"><b>Price per seat:</b> ₹{{ book.price }}</li>
-                            <li class="list-group-item"><b>Total Cost:</b> ₹{{ cost }}</li>
-                            <li class="list-group-item"><b>Date:</b> {{ book.date }}</li>
-                            <li class="list-group-item"><b>Time:</b> {{ book.time }}</li>
-                            <li class="list-group-item"><b>Payment Status:</b> {{ book.payment_status }}</li>
-                            <li class="list-group-item"><b>Payment ID:</b> {{ book.payment_id }}</li>
-                            <li class="list-group-item"><b>Booking Status:</b> {{ book.status }}</li>
-                        </ul>
+                        <div class="list-group list-group-flush text-left">
+                            <div class="list-group-item">
+                                <b>Booking ID</b>
+                                <span class="val-text">{{ book.id }}</span>
+                            </div>
+                            <div class="list-group-item">
+                                <b>Bus Name</b>
+                                <span class="val-text">{{ book.bus_name }}</span>
+                            </div>
+                            <div class="list-group-item">
+                                <b>From</b>
+                                <span class="val-text">{{ book.source }}</span>
+                            </div>
+                            <div class="list-group-item">
+                                <b>To</b>
+                                <span class="val-text">{{ book.dest }}</span>
+                            </div>
+                            <div class="list-group-item">
+                                <b>Seats Reserved</b>
+                                <span class="val-text">{{ book.nos }}</span>
+                            </div>
+                            <div class="list-group-item">
+                                <b>Base Price</b>
+                                <span class="val-text">₹{{ book.price }}</span>
+                            </div>
+                            <div class="list-group-item" style="background: var(--gold-soft); border-color: #ffdca2;">
+                                <b style="color: #8a5717;">Total Cost</b>
+                                <span class="val-text" style="color: #d07b00; font-size: 18px;">₹{{ cost }}</span>
+                            </div>
+                            <div class="list-group-item">
+                                <b>Departure Date</b>
+                                <span class="val-text">{{ book.date }}</span>
+                            </div>
+                            <div class="list-group-item">
+                                <b>Time Schedule</b>
+                                <span class="val-text">{{ book.time }}</span>
+                            </div>
+                            <div class="list-group-item">
+                                <b>Payment Info</b>
+                                <span class="val-text">{{ book.payment_status }}</span>
+                            </div>
+                            <div class="list-group-item">
+                                <b>Transaction Reference</b>
+                                <span class="val-text">{{ book.payment_id }}</span>
+                            </div>
+                            <div class="list-group-item">
+                                <b>System Status</b>
+                                <span class="val-text" style="color: #169c83;">{{ book.status }}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-close-modal" data-dismiss="modal">Dismiss</button>
                     </div>
 
                 </div>
             </div>
         </div>
 
-        <div class="mt-4">
-            <a href="{% url 'home' %}" class="btn btn-primary">Go to Home</a>
-            <a href="{% url 'seebookings' %}" class="btn btn-info"></a>
+        <div class="action-group">
+            <a href="{% url 'home' %}" class="action-btn primary">Return Home</a>
+            <a href="{% url 'seebookings' %}" class="action-btn secondary">View My Bookings</a>
         </div>
 
     </div>

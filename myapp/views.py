@@ -9,13 +9,37 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db import transaction
 
 from .models import Bus, Book
 
+# ==========================================
+# PRIVATE HELPER UTILITIES
+# ==========================================
+def _generate_upi_qr(book):
+    """
+    Generates and saves a static UPI payment QR code if it doesn't already exist.
+    """
+    upi_id = "yourupi@oksbi"  # Replace with real UPI merchant ID
+    payee_name = "TravelMate"
+    upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={book.total_price}&cu=INR&tn=Booking#{book.id}"
 
-# =========================
-# HOME
-# =========================
+    qr_folder = os.path.join(settings.MEDIA_ROOT, "qr_codes")
+    os.makedirs(qr_folder, exist_ok=True)
+
+    qr_filename = f"booking_{book.id}.png"
+    qr_path = os.path.join(qr_folder, qr_filename)
+
+    if not os.path.exists(qr_path):
+        qr_img = qrcode.make(upi_link)
+        qr_img.save(qr_path)
+
+    qr_url = f"{settings.MEDIA_URL}qr_codes/{qr_filename}"
+    return qr_url, upi_id
+
+# ==========================================
+# CORE VIEW CONTROLLERS
+# ==========================================
 def home(request):
     if request.user.is_authenticated:
         bus_list = Bus.objects.all().order_by("date", "time")
@@ -23,13 +47,9 @@ def home(request):
     return render(request, "myapp/signin.html")
 
 
-# =========================
-# FIND BUS
-# =========================
 @login_required(login_url="signin")
 def findbus(request):
     context = {}
-
     if request.method == "POST":
         source_r = request.POST.get("source")
         dest_r = request.POST.get("destination")
@@ -56,24 +76,16 @@ def findbus(request):
     return render(request, "myapp/findbus.html")
 
 
-# =========================
-# DIRECT RESERVE PAGE FROM HOME
-# =========================
 @login_required(login_url="signin")
 def reserve_bus(request, bus_id):
     bus = get_object_or_404(Bus, id=bus_id)
-    return render(request, "myapp/list.html", {
-        "bus_list": [bus]
-    })
+    return render(request, "myapp/list.html", {"bus_list": [bus]})
 
 
-# =========================
-# CREATE BOOKING -> PAYMENT PAGE
-# =========================
 @login_required(login_url="signin")
+@transaction.atomic
 def bookings(request):
     context = {}
-
     if request.method == "POST":
         try:
             bus_id = int(request.POST.get("bus_id"))
@@ -87,7 +99,8 @@ def bookings(request):
             return render(request, "myapp/error.html", context)
 
         try:
-            bus = Bus.objects.get(id=bus_id)
+            # Prevent race conditions by locking the target bus row during validation
+            bus = Bus.objects.select_for_update().get(id=bus_id)
         except Bus.DoesNotExist:
             context["error"] = "Bus not found"
             return render(request, "myapp/error.html", context)
@@ -102,7 +115,6 @@ def bookings(request):
 
         total_cost = Decimal(seats_r) * bus.price
 
-        # Create booking in pending state
         book = Book.objects.create(
             email=request.user.email,
             name=request.user.username,
@@ -126,9 +138,6 @@ def bookings(request):
     return redirect("home")
 
 
-# =========================
-# PAYMENT PAGE WITH UPI QR
-# =========================
 @login_required(login_url="signin")
 def payment_page(request, booking_id):
     book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
@@ -137,22 +146,7 @@ def payment_page(request, booking_id):
         messages.success(request, "This booking is already confirmed.")
         return redirect("seebookings")
 
-    upi_id = "yourupi@oksbi"   # Replace with your real UPI ID
-    payee_name = "TravelMate"
-
-    upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={book.total_price}&cu=INR&tn=Booking#{book.id}"
-
-    qr_folder = os.path.join(settings.MEDIA_ROOT, "qr_codes")
-    os.makedirs(qr_folder, exist_ok=True)
-
-    qr_filename = f"booking_{book.id}.png"
-    qr_path = os.path.join(qr_folder, qr_filename)
-
-    if not os.path.exists(qr_path):
-        qr_img = qrcode.make(upi_link)
-        qr_img.save(qr_path)
-
-    qr_url = settings.MEDIA_URL + "qr_codes/" + qr_filename
+    qr_url, upi_id = _generate_upi_qr(book)
 
     return render(request, "myapp/payment.html", {
         "book": book,
@@ -161,9 +155,6 @@ def payment_page(request, booking_id):
     })
 
 
-# =========================
-# SUBMIT PAYMENT PROOF
-# =========================
 @login_required(login_url="signin")
 def submit_payment(request, booking_id):
     book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
@@ -174,23 +165,8 @@ def submit_payment(request, booking_id):
     upi_reference = request.POST.get("upi_reference")
     screenshot = request.FILES.get("payment_screenshot")
 
-    upi_id = "yourupi@oksbi"
-    payee_name = "TravelMate"
-    upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={book.total_price}&cu=INR&tn=Booking#{book.id}"
-
-    qr_folder = os.path.join(settings.MEDIA_ROOT, "qr_codes")
-    os.makedirs(qr_folder, exist_ok=True)
-
-    qr_filename = f"booking_{book.id}.png"
-    qr_path = os.path.join(qr_folder, qr_filename)
-
-    if not os.path.exists(qr_path):
-        qr_img = qrcode.make(upi_link)
-        qr_img.save(qr_path)
-
-    qr_url = settings.MEDIA_URL + "qr_codes/" + qr_filename
-
     if not upi_reference or not screenshot:
+        qr_url, upi_id = _generate_upi_qr(book)
         return render(request, "myapp/payment.html", {
             "book": book,
             "qr_url": qr_url,
@@ -207,9 +183,6 @@ def submit_payment(request, booking_id):
     return redirect("seebookings")
 
 
-# =========================
-# PAYMENT FAILED / CANCEL BEFORE APPROVAL
-# =========================
 @login_required(login_url="signin")
 def payment_failed(request, booking_id):
     book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
@@ -223,40 +196,37 @@ def payment_failed(request, booking_id):
     book.status = Book.CANCELLED
     book.save()
 
-    return render(request, "myapp/error.html", {
-        "error": "Payment cancelled."
-    })
+    return render(request, "myapp/error.html", {"error": "Payment cancelled."})
 
 
-# =========================
-# CANCEL BOOKING
-# =========================
 @login_required(login_url="signin")
+@transaction.atomic
 def cancellings(request):
     context = {}
-
     if request.method == "POST":
         booking_id = request.POST.get("booking_id")
 
-        if not booking_id:
+        if not booking_id or not str(booking_id).isdigit():
             context["error"] = "Invalid booking ID"
             return render(request, "myapp/error.html", context)
 
         try:
-            book = Book.objects.get(id=int(booking_id), userid=request.user.id)
+            # Enforce request ownership boundary & lock row
+            book = Book.objects.select_for_update().get(id=int(booking_id), userid=request.user.id)
 
             if book.status == Book.CANCELLED:
-                return render(request, "myapp/error.html", {
-                    "error": "This booking is already cancelled."
-                })
+                return render(request, "myapp/error.html", {"error": "This booking is already cancelled."})
 
+            # Hand back seats securely if booking was previously finalized
             if book.status == Book.CONFIRMED:
-                bus = Bus.objects.get(id=book.busid)
-                bus.rem = int(bus.rem) + int(book.nos)
-                bus.save()
+                try:
+                    bus = Bus.objects.select_for_update().get(id=book.busid)
+                    bus.rem = int(bus.rem) + int(book.nos)
+                    bus.save()
+                except Bus.DoesNotExist:
+                    pass
 
             book.status = Book.CANCELLED
-
             if book.payment_status == Book.PAYMENT_PAID:
                 book.payment_status = Book.PAYMENT_REFUNDED
 
@@ -271,25 +241,20 @@ def cancellings(request):
     return redirect("seebookings")
 
 
-# =========================
-# VIEW USER BOOKINGS
-# =========================
 @login_required(login_url="signin")
 def seebookings(request):
     book_list = Book.objects.filter(userid=request.user.id).order_by("-id")
     return render(request, "myapp/booklist.html", {"book_list": book_list})
 
 
-# =========================
-# SIGNUP
-# =========================
+# ==========================================
+# AUTHENTICATION MODULES
+# ==========================================
 def signup(request):
-    # if already logged in, don't show signup again
     if request.user.is_authenticated:
         return redirect("home")
 
     context = {}
-
     if request.method == "POST":
         name_r = request.POST.get("name", "").strip()
         email_r = request.POST.get("email", "").strip()
@@ -307,33 +272,18 @@ def signup(request):
             context["error"] = "Email already registered"
             return render(request, "myapp/signup.html", context)
 
-        user = User.objects.create_user(
-            username=name_r,
-            email=email_r,
-            password=password_r,
-        )
-
-        # auto login after signup
+        user = User.objects.create_user(username=name_r, email=email_r, password=password_r)
         login(request, user)
-
-        # thank page show after signup
-        return render(request, "myapp/thank.html", {
-            "user": user.username
-        })
+        return render(request, "myapp/thank.html", {"user": user.username})
 
     return render(request, "myapp/signup.html", context)
 
 
-# =========================
-# SIGNIN
-# =========================
 def signin(request):
-    # if already logged in, don't show signin again
     if request.user.is_authenticated:
         return redirect("home")
 
     context = {}
-
     if request.method == "POST":
         name_r = request.POST.get("name", "").strip()
         password_r = request.POST.get("password", "").strip()
@@ -343,13 +293,9 @@ def signin(request):
             return render(request, "myapp/signin.html", context)
 
         user = authenticate(request, username=name_r, password=password_r)
-
         if user:
             login(request, user)
-            return render(request, "myapp/success.html", {
-                "user": user.username,
-                "id": user.id
-            })
+            return render(request, "myapp/success.html", {"user": user.username, "id": user.id})
         else:
             context["error"] = "Provide valid credentials"
             return render(request, "myapp/signin.html", context)
@@ -357,22 +303,11 @@ def signin(request):
     return render(request, "myapp/signin.html", context)
 
 
-# =========================
-# SIGNOUT
-# =========================
 def signout(request):
     logout(request)
-    return render(request, "myapp/signin.html", {
-        "error": "You have been logged out"
-    })
+    return render(request, "myapp/signin.html", {"error": "You have been logged out"})
 
 
-# =========================
-# SUCCESS PAGE
-# =========================
 @login_required(login_url="signin")
 def success(request):
-    return render(request, "myapp/success.html", {
-        "user": request.user.username,
-        "id": request.user.id
-    })
+    return render(request, "myapp/success.html", {"user": request.user.username, "id": request.user.id})
