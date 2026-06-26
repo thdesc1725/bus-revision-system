@@ -1,293 +1,303 @@
-{% extends 'myapp/base.html' %}
+    {% extends 'myapp/base.html' %}
+{% load static %}
 {% block content %}
 
 <style>
+    :root {
+        --slate-dark: #0f172a;
+        --slate-navy: #1e293b;
+        --emerald: #10b981;
+        --emerald-hover: #059669;
+        --emerald-soft: #ecfdf5;
+        --sky: #f0fdfa;
+        --gold: #f59e0b;
+        --gold-soft: #fef3c7;
+        --text: #334155;
+        --muted: #64748b;
+        --line: #e2e8f0;
+        --soft: #f8fafc;
+        --white: #ffffff;
+        --shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+        --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.12);
+        --radius-xl: 24px;
+        --radius-lg: 18px;
+        --radius-md: 12px;
+    }
+
     body {
-        background: #f4f8fb;
+        background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     .page-header {
-        background: linear-gradient(135deg, rgba(0, 65, 106, 0.92), rgba(28, 181, 224, 0.92)),
-                    url('https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=1400&q=80');
-        background-size: cover;
-        background-position: center;
-        padding: 55px 20px;
+        background: linear-gradient(135deg, var(--slate-dark), var(--slate-navy));
+        padding: 60px 20px;
         color: white;
         text-align: center;
-        border-radius: 0 0 25px 25px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        animation: fadeIn 1.2s ease;
+        border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 40px;
     }
 
     .page-header h1 {
-        font-size: 40px;
-        font-weight: 700;
+        font-size: 38px;
+        font-weight: 800;
         margin-bottom: 10px;
+        letter-spacing: -0.5px;
     }
 
     .page-header p {
-        font-size: 17px;
+        font-size: 16px;
         margin-bottom: 0;
-        opacity: 0.95;
+        opacity: 0.8;
     }
 
     .booking-wrapper {
-        margin-top: 35px;
-        margin-bottom: 50px;
+        margin-bottom: 60px;
     }
 
     .booking-card {
-        background: #ffffff;
-        border-radius: 18px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.10);
-        padding: 28px;
-        animation: slideUp 1s ease;
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 35px;
+        border: 1px solid var(--line);
+        margin-bottom: 35px;
     }
 
     .booking-card h3 {
-        color: #00416A;
+        color: var(--slate-dark);
         font-weight: 700;
-        margin-bottom: 22px;
-        text-align: center;
+        margin-bottom: 25px;
+        font-size: 24px;
+        position: relative;
     }
 
     .table-responsive {
-        border-radius: 14px;
+        border-radius: var(--radius-md);
         overflow: hidden;
+        border: 1px solid var(--line);
     }
 
     .table {
         margin-bottom: 0;
-        background: white;
+        background: var(--white);
     }
 
     .table thead th {
-        background: linear-gradient(to right, #00416A, #1CB5E0);
-        color: white;
+        background: var(--slate-navy);
+        color: var(--white);
         border: none;
         font-size: 14px;
-        white-space: nowrap;
+        font-weight: 600;
+        padding: 16px;
         vertical-align: middle;
     }
 
     .table td {
         vertical-align: middle;
         font-size: 14px;
-        white-space: nowrap;
+        color: var(--text);
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
     }
 
     .table tbody tr:hover {
-        background: #eef8ff;
-        transition: 0.3s;
+        background: var(--soft);
     }
 
     .cancel-card {
-        margin-top: 30px;
-        background: #ffffff;
-        border-radius: 18px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.10);
-        padding: 28px;
-        animation: slideUp 1.2s ease;
+        background: var(--white);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 30px;
+        border: 1px solid var(--line);
     }
 
     .cancel-card h3 {
-        color: #dc3545;
+        color: #ef4444;
         font-weight: 700;
-        text-align: center;
+        font-size: 22px;
         margin-bottom: 20px;
     }
 
     .cancel-card label {
         font-weight: 600;
-        color: #333;
+        color: var(--slate-navy);
+        margin-bottom: 8px;
     }
 
     .cancel-card .form-control {
-        height: 48px;
-        border-radius: 12px;
-        border: 1px solid #ced4da;
+        height: 50px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--line);
+        background: var(--soft);
+        color: var(--text);
         box-shadow: none;
     }
 
     .cancel-card .form-control:focus {
-        border-color: #1CB5E0;
-        box-shadow: 0 0 0 0.15rem rgba(28,181,224,0.2);
+        border-color: var(--emerald);
+        background: var(--white);
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
     }
 
     .btn-cancel {
-        background: linear-gradient(to right, #dc3545, #ff5f6d);
+        background: #ef4444;
         color: white;
-        padding: 12px 32px;
-        border-radius: 30px;
+        padding: 12px 35px;
+        border-radius: 50px;
         border: none;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
-        transition: 0.3s;
-        box-shadow: 0 6px 16px rgba(220,53,69,0.25);
+        transition: 0.2s ease;
     }
 
     .btn-cancel:hover {
-        transform: translateY(-2px);
+        background: #dc2626;
         color: white;
-        box-shadow: 0 10px 20px rgba(220,53,69,0.30);
+        transform: translateY(-1px);
     }
 
     .empty-box {
         text-align: center;
-        padding: 35px 20px;
-        border-radius: 16px;
-        background: #f8fbff;
-        border: 1px dashed #bcd7ea;
-        color: #00416A;
+        padding: 50px 20px;
+        color: var(--muted);
     }
 
     .empty-box h4 {
         font-weight: 700;
+        color: var(--slate-dark);
         margin-bottom: 10px;
-    }
-
-    .empty-box p {
-        margin-bottom: 18px;
-        color: #5f6b76;
     }
 
     .badge-pill-custom {
         display: inline-block;
-        padding: 7px 14px;
-        border-radius: 30px;
+        padding: 6px 14px;
+        border-radius: 50px;
         font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.3px;
-    }
-
-    .badge-confirmed {
-        background: #d4f8e8;
-        color: #0d8a4f;
-    }
-
-    .badge-pending {
-        background: #fff4d6;
-        color: #b78103;
-    }
-
-    .badge-cancelled {
-        background: #ffe0e3;
-        color: #c62839;
-    }
-
-    .badge-paid {
-        background: #d4f8e8;
-        color: #0d8a4f;
-    }
-
-    .badge-payment-pending {
-        background: #fff4d6;
-        color: #b78103;
-    }
-
-    .badge-verification {
-        background: #dff3ff;
-        color: #0077b6;
-    }
-
-    .badge-failed {
-        background: #ffe0e3;
-        color: #c62839;
-    }
-
-    .badge-refunded {
-        background: #ece9ff;
-        color: #5e35b1;
-    }
-
-    .price-text {
-        font-weight: 700;
-        color: #00416A;
-    }
-
-    .route-text {
         font-weight: 600;
-        color: #333;
+    }
+
+    .badge-confirmed { background: #dcfce7; color: #16a34a; }
+    .badge-pending { background: var(--gold-soft); color: #d97706; }
+    .badge-cancelled { background: #fee2e2; color: #dc2626; }
+    .badge-paid { background: #dcfce7; color: #16a34a; }
+    .badge-payment-pending { background: var(--gold-soft); color: #d97706; }
+    .badge-verification { background: #e0f2fe; color: #0284c7; }
+    .badge-failed { background: #fee2e2; color: #dc2626; }
+    .badge-refunded { background: #f3e8ff; color: #7c3aed; }
+
+    .btn-ticket {
+        background: var(--emerald);
+        color: white !important;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        border: none;
+        transition: 0.2s ease;
+        cursor: pointer;
+    }
+
+    .btn-ticket:hover {
+        background: var(--emerald-hover);
+        transform: translateY(-1px);
     }
 
     .action-note {
-        margin-top: 12px;
+        margin-top: 15px;
         font-size: 13px;
-        color: #777;
-        text-align: center;
+        color: var(--muted);
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to   { opacity: 1; }
+    /* Modal Ticket Styling */
+    .ticket-modal-content {
+        border-radius: var(--radius-lg);
+        border: none;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
     }
-
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(35px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .ticket-header {
+        background: linear-gradient(135deg, var(--slate-dark), var(--slate-navy));
+        color: white;
+        padding: 25px;
+        border: none;
     }
-
-    @media (max-width: 991px) {
-        .page-header h1 {
-            font-size: 32px;
-        }
-
-        .booking-card,
-        .cancel-card {
-            padding: 20px;
-        }
-
-        .table td,
-        .table th {
-            font-size: 13px;
-        }
+    .ticket-body {
+        padding: 30px;
+        background: #fff;
+    }
+    .ticket-stub {
+        border-top: 2px dashed #cbd5e1;
+        position: relative;
+        margin-top: 20px;
+        padding-top: 20px;
+    }
+    .ticket-stub::before, .ticket-stub::after {
+        content: '';
+        position: absolute;
+        top: -10px;
+        width: 20px;
+        height: 20px;
+        background: #7f8c8d; /* matches background overlay mask tint */
+        border-radius: 50%;
+    }
+    .ticket-stub::before { left: -40px; background-color: rgba(0,0,0,0.5); }
+    .ticket-stub::after { right: -40px; background-color: rgba(0,0,0,0.5); }
+    
+    .ticket-data-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--muted);
+        margin-bottom: 2px;
+        font-weight: 600;
+    }
+    .ticket-data-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--slate-dark);
+        margin-bottom: 15px;
     }
 </style>
 
-<!-- PAGE HEADER -->
 <div class="page-header">
-    <h1>📋 </h1>
-    <p>Check your bus reservations, payment status and cancel tickets if needed.</p>
+    <h1>📋 Bookings History</h1>
+    <p>Check your bus reservations, payment records, and manage cancellations easily.</p>
 </div>
 
 <div class="container booking-wrapper">
 
-    <!-- FLASH MESSAGES -->
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-radius: var(--radius-md);">
                 {{ message }}
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
         {% endfor %}
     {% endif %}
 
-    <!-- BOOKING HISTORY -->
     <div class="booking-card">
-        <h3>Booking History</h3>
+        <h3>My Reservations</h3>
 
         {% if book_list %}
             <div class="table-responsive">
-                <table class="table table-bordered table-hover text-center">
+                <table class="table text-center">
                     <thead>
                         <tr>
                             <th>Booking ID</th>
-                            <th>User</th>
-                            <th>Bus</th>
+                            <th>Bus Name</th>
                             <th>Route</th>
                             <th>Seats</th>
-                            <th>Price / Seat</th>
                             <th>Total Price</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Payment</th>
-                            <th>Booking Status</th>
+                            <th>Travel Date</th>
+                            <th>Departure</th>
+                            <th>Payment Status</th>
+                            <th>Ticket</th> <th>Booking Status</th>
                         </tr>
                     </thead>
 
@@ -295,23 +305,20 @@
                     {% for row in book_list %}
                         <tr>
                             <td><b>#{{ row.id }}</b></td>
-                            <td>{{ row.name }}</td>
                             <td>{{ row.bus_name }}</td>
-                            <td class="route-text">{{ row.source }} → {{ row.dest }}</td>
+                            <td style="font-weight: 500;">{{ row.source }} → {{ row.dest }}</td>
                             <td>{{ row.nos }}</td>
-                            <td class="price-text">₹ {{ row.price }}</td>
-                            <td class="price-text">₹ {{ row.total_price }}</td>
+                            <td style="font-weight: 700; color: var(--slate-dark);">₹ {{ row.total_price }}</td>
                             <td>{{ row.date }}</td>
                             <td>{{ row.time }}</td>
 
-                            <!-- PAYMENT STATUS -->
                             <td>
                                 {% if row.payment_status == "PAID" %}
                                     <span class="badge-pill-custom badge-paid">Paid</span>
                                 {% elif row.payment_status == "PENDING" %}
                                     <span class="badge-pill-custom badge-payment-pending">Pending</span>
                                 {% elif row.payment_status == "PENDING_VERIFICATION" %}
-                                    <span class="badge-pill-custom badge-verification">Verification</span>
+                                    <span class="badge-pill-custom badge-verification">Verifying</span>
                                 {% elif row.payment_status == "FAILED" %}
                                     <span class="badge-pill-custom badge-failed">Failed</span>
                                 {% elif row.payment_status == "REFUNDED" %}
@@ -321,7 +328,26 @@
                                 {% endif %}
                             </td>
 
-                            <!-- BOOKING STATUS -->
+                            <td>
+                                {% if row.status == "CONFIRMED" %}
+                                    <button type="button" 
+                                            class="btn-ticket view-ticket-btn"
+                                            data-toggle="modal" 
+                                            data-target="#ticketModal"
+                                            data-id="{{ row.id }}"
+                                            data-bus="{{ row.bus_name }}"
+                                            data-route="{{ row.source }} → {{ row.dest }}"
+                                            data-seats="{{ row.nos }}"
+                                            data-price="₹ {{ row.total_price }}"
+                                            data-date="{{ row.date }}"
+                                            data-time="{{ row.time }}">
+                                        View Ticket
+                                    </button>
+                                {% else %}
+                                    <span style="color: var(--muted); font-style: italic;">—</span>
+                                {% endif %}
+                            </td>
+
                             <td>
                                 {% if row.status == "CONFIRMED" %}
                                     <span class="badge-pill-custom badge-confirmed">Confirmed</span>
@@ -342,40 +368,101 @@
             <div class="empty-box">
                 <h4>No bookings found</h4>
                 <p>You have not booked any bus tickets yet.</p>
-                <a href="{% url 'findbus' %}" class="btn btn-primary">Find a Bus</a>
+                <div class="mt-3">
+                    <a href="{% url 'findbus' %}" class="btn btn-primary" style="background: var(--emerald); border: none; border-radius: 50px; padding: 8px 24px;">Find a Bus</a>
+                </div>
             </div>
         {% endif %}
     </div>
 
-    <!-- CANCEL BOOKING -->
     <div class="cancel-card">
-        <h3>❌ Cancel Booking</h3>
-
+        <h3>❌ Cancel Reservation</h3>
         <form action="{% url 'cancellings' %}" method="post">
             {% csrf_token %}
-
             <div class="form-group">
-                <label for="booking_id">Booking ID</label>
-                <input
-                    id="booking_id"
-                    name="booking_id"
-                    class="form-control"
-                    type="number"
-                    placeholder="Enter your Booking ID"
-                    required
-                >
+                <label for="booking_id">Booking Reference ID</label>
+                <input id="booking_id" name="booking_id" class="form-control" type="number" placeholder="e.g. 1024" required>
             </div>
-
             <div class="text-center">
-                <button type="submit" class="btn btn-cancel">Cancel Booking</button>
+                <button type="submit" class="btn btn-cancel">Process Cancellation</button>
             </div>
-
-            <p class="action-note">
-                Enter the booking ID shown in the table above to cancel your ticket.
+            <p class="action-note text-center">
+                Please note: confirmed tickets can only be canceled prior to the bus departure window.
             </p>
         </form>
     </div>
-
 </div>
+
+<div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="ticketModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content ticket-modal-content">
+            <div class="modal-header ticket-header">
+                <h5 class="modal-title" id="ticketModalLabel" style="font-weight: 700; letter-spacing: 0.5px;">BOARDING PASS</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="ticket-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="ticket-data-label">Booking ID</div>
+                        <div class="ticket-data-value" id="modal-booking-id">#0000</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="ticket-data-label">Bus Operator</div>
+                        <div class="ticket-data-value" id="modal-bus-name">-</div>
+                    </div>
+                    <div class="col-12">
+                        <div class="ticket-data-label">Journey Route</div>
+                        <div class="ticket-data-value text-primary" id="modal-route" style="color: var(--emerald) !important;">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="ticket-data-label">Date of Travel</div>
+                        <div class="ticket-data-value" id="modal-date">-</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="ticket-data-label">Departure Time</div>
+                        <div class="ticket-data-value" id="modal-time">-</div>
+                    </div>
+                </div>
+                
+                <div class="ticket-stub">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="ticket-data-label">No. of Seats</div>
+                            <div class="ticket-data-value" id="modal-seats">-</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="ticket-data-label">Amount Paid</div>
+                            <div class="ticket-data-value" id="modal-price" style="font-size: 18px; color: var(--slate-dark);">-</div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <small class="text-muted" style="font-size: 11px; letter-spacing: 1px;">⚡ Thank you for traveling with us!</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ticketButtons = document.querySelectorAll('.view-ticket-btn');
+        
+        ticketButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Fetch fields out of data attributes
+                document.getElementById('modal-booking-id').innerText = '#' + this.getAttribute('data-id');
+                document.getElementById('modal-bus-name').innerText = this.getAttribute('data-bus');
+                document.getElementById('modal-route').innerText = this.getAttribute('data-route');
+                document.getElementById('modal-seats').innerText = this.getAttribute('data-seats');
+                document.getElementById('modal-price').innerText = this.getAttribute('data-price');
+                document.getElementById('modal-date').innerText = this.getAttribute('data-date');
+                document.getElementById('modal-time').innerText = this.getAttribute('data-time');
+            });
+        });
+    });
+</script>
 
 {% endblock %}
