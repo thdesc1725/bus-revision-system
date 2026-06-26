@@ -2,6 +2,11 @@
 {% load static %}
 {% block content %}
 
+<audio id="successSound" preload="auto" crossorigin="anonymous">
+    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_73d6ebef97.mp3" type="audio/mpeg">
+    <source src="https://cdn.freesound.org/previews/263/263133_4939223-lq.mp3" type="audio/mpeg">
+</audio>
+
 <style>
     :root{
         --navy:#0f2747;
@@ -1203,7 +1208,6 @@
 <div class="payment-page">
     <div class="container">
 
-        <!-- HERO -->
         <div class="payment-hero">
             <div class="payment-hero-content">
                 <div class="hero-badge">💳 Secure UPI Payment</div>
@@ -1217,7 +1221,6 @@
 
         <div class="payment-grid">
 
-            <!-- LEFT -->
             <div class="payment-card">
 
                 {% if error %}
@@ -1293,7 +1296,6 @@
                 </div>
             </div>
 
-            <!-- RIGHT -->
             <div class="summary-card">
                 <div class="summary-top">
                     <h4>Booking Summary</h4>
@@ -1356,7 +1358,6 @@
     </div>
 </div>
 
-<!-- ================= RIGHT SIDE PANEL ================= -->
 <div class="proof-overlay" id="proofOverlay"></div>
 
 <div class="proof-panel" id="proofPanel">
@@ -1370,7 +1371,6 @@
 
     <div class="proof-panel-body">
 
-        <!-- FORM AREA -->
         <div id="proofFormArea">
             <div class="proof-form-card">
                 <h5>Payment Verification Form</h5>
@@ -1442,7 +1442,6 @@
             </div>
         </div>
 
-        <!-- PROCESSING AREA -->
         <div class="process-screen" id="processScreen">
             <div class="pay-anim-wrap">
                 <div class="pay-orbit one"></div>
@@ -1467,7 +1466,6 @@
             </p>
         </div>
 
-        <!-- SUCCESS TICKET -->
         <div class="success-ticket" id="successTicket">
             <div class="ticket-card">
                 <div class="ticket-head">
@@ -1540,7 +1538,6 @@
             </div>
         </div>
 
-        <!-- hidden original submit backup -->
         <button id="realHiddenSubmit" class="hidden-submit" type="button"></button>
     </div>
 </div>
@@ -1555,11 +1552,23 @@
     const proofFormArea = document.getElementById("proofFormArea");
     const processScreen = document.getElementById("processScreen");
     const successTicket = document.getElementById("successTicket");
+    
+    // Audio Element Call
+    const successSound = document.getElementById("successSound");
 
     function openProofPanel(){
         proofPanel.classList.add("show");
         proofOverlay.classList.add("show");
         document.body.style.overflow = "hidden";
+        
+        // Browser Guard Unlock Sequence:
+        // Mobile browsers block background play. Jab user click karega hum audio context ready kar denge.
+        if (successSound) {
+            successSound.play().then(() => {
+                successSound.pause();
+                successSound.currentTime = 0;
+            }).catch(() => {});
+        }
     }
 
     function closeProofPanel(){
@@ -1589,7 +1598,7 @@
         });
     }
 
-    // Submit animation flow
+    // Submit Event Handler with Direct User Tap Audio Engine Trigger
     if(paymentProofForm){
         paymentProofForm.addEventListener("submit", function(e){
             e.preventDefault();
@@ -1602,20 +1611,34 @@
                 return;
             }
 
-            // Step 1: hide form, show processing animation
+            // CRITICAL STEP: User ke form click par turant bina delay ke sound play karo
+            // Taki mobile browser isko valid user interaction samajh kar play hone de.
+            if (successSound) {
+                successSound.currentTime = 0;
+                successSound.volume = 1.0; // Max multimedia mixer hardware track volume
+                
+                var playPromise = successSound.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(function(error) {
+                        console.log("Hardware output blocked: ", error);
+                    });
+                }
+            }
+
+            // UI Transitions: Form chupao, processing loader dikhao
             proofFormArea.style.display = "none";
             successTicket.classList.remove("show");
             processScreen.classList.add("show");
 
-            // Step 2: after 2 sec show success ticket
+            // Animation sequence delay before server handoff
             setTimeout(function(){
                 processScreen.classList.remove("show");
                 successTicket.classList.add("show");
 
-                // Step 3: after short delay submit real form to Django backend
+                // Form submit ho kar backend data processing ke liye chala jayega
                 setTimeout(function(){
                     paymentProofForm.submit();
-                }, 1200);
+                }, 1600);
 
             }, 2000);
         });
