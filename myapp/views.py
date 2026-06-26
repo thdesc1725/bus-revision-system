@@ -157,6 +157,7 @@ def payment_page(request, booking_id):
 
 @login_required(login_url="signin")
 def submit_payment(request, booking_id):
+    # User ownership validation
     book = get_object_or_404(Book, id=booking_id, userid=request.user.id)
 
     if request.method != "POST":
@@ -174,6 +175,7 @@ def submit_payment(request, booking_id):
             "error": "Please enter UPI reference number and upload screenshot."
         })
 
+    # Saving data parameters to database table row safely
     book.upi_reference = upi_reference
     book.payment_screenshot = screenshot
     book.payment_status = Book.PAYMENT_PENDING_VERIFICATION
@@ -211,13 +213,11 @@ def cancellings(request):
             return render(request, "myapp/error.html", context)
 
         try:
-            # Enforce request ownership boundary & lock row
             book = Book.objects.select_for_update().get(id=int(booking_id), userid=request.user.id)
 
             if book.status == Book.CANCELLED:
                 return render(request, "myapp/error.html", {"error": "This booking is already cancelled."})
 
-            # Hand back seats securely if booking was previously finalized
             if book.status == Book.CONFIRMED:
                 try:
                     bus = Bus.objects.select_for_update().get(id=book.busid)
