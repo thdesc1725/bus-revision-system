@@ -171,10 +171,10 @@
     .loader-logo-wrap{
         position:relative;
         z-index:5;
-        width:110px;
-        height:110px;
+        width: 310px;
+        height:310px;
         border-radius:50%;
-        background:#fff;
+        background:#fdfcfc;
         display:flex;
         align-items:center;
         justify-content:center;
@@ -235,7 +235,7 @@
         box-shadow: var(--shadow-lg);
         background:
             linear-gradient(135deg, rgba(8,24,48,.60), rgba(12,35,67,.38)),
-            url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+            url("{% static 'mysite/images/bus2.JPG' %}") center/cover no-repeat;
         border:1px solid rgba(255,255,255,.55);
         margin-bottom: -70px;
     }
@@ -633,12 +633,12 @@
 
 <!-- ================= LOADER ================= -->
 <div id="tripxLoader">
-    <div class="loader-bg-blur"></div>
+    <!-- <div class="loader-bg-blur"></div> -->
 
     <div class="loader-box">
-        <div class="outer-ring"></div>
+        <!-- <div class="outer-ring"></div> -->
 
-        <div class="bubble-ring">
+        <!-- <div class="bubble-ring">
             <span></span>
             <span></span>
             <span></span>
@@ -647,14 +647,14 @@
             <span></span>
             <span></span>
             <span></span>
-        </div>
+        </div> -->
 
-        <div class="cut-ring"></div>
-        <div class="center-glow"></div>
+        <!-- <div class="cut-ring"></div>
+        <div class="center-glow"></div> -->
 
         <!-- STABLE BUS LOGO -->
         <div class="loader-logo-wrap">
-            <img src="{% static 'mysite/images/logo.JPG' %}" alt="Bus Logo">
+            <img src="{% static 'mysite/images/animatedlogo.gif' %}" alt="Bus Logo">
         </div>
 
         <div class="loader-text-wrap">
