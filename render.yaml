@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: bus-booking
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn myproject.wsgi"
